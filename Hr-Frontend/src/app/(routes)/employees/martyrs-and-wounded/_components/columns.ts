@@ -1,0 +1,17 @@
+export const columnsMartyrsWounded: { label: string; value: string; className?: string }[] = [
+    { label: '#', value: 'id', className: 'font-bold' },
+    { label: 'اسم الموظف', value: 'fullName', className: 'font-bold' },
+    { label: 'رقم الاضبارة', value: 'lotNumber', className: 'font-bold' },
+    { label: 'الرقم الوظيفي', value: 'jobCode', className: 'hidden md:table-cell font-bold' },
+    { label: 'تاريخ الخروج من الخدمة', value: 'endDateOfService', className: 'hidden md:table-cell font-bold' },
+    { label: 'تاريخ الوفاة', value: 'dateOfDeath', className: 'hidden md:table-cell font-bold' },
+    { label: 'تاريخ الاصابة', value: 'dateOfMartyrdom', className: 'hidden md:table-cell font-bold' },
+    { label: 'رقم الامر الاداري باضافة الخدمة', value: 'administrativeOrderNo', className: 'hidden md:table-cell font-bold' },
+    { label: 'تاريخ الامر الاداري باضافة الخدمة', value: 'administrativeOrderDate', className: 'hidden md:table-cell font-bold' },
+    { label: 'النوع', value: 'healthStatus', className: 'hidden md:table-cell font-bold' },
+    { label: 'مفصول سياسيا', value: 'isPoliticallyDismissed', className: 'hidden md:table-cell font-bold' },
+    { label: 'المرفقات', value: 'isPoliticallyDismissed', className: 'hidden md:table-cell font-bold' },
+    // { label: 'اضافة خدمة', value: '', className: 'hidden md:table-cell font-bold' },
+    { label: 'الحالة', value: 'statusName', className: 'hidden md:table-cell font-bold' },
+    { label: 'الملاحظات', value: 'note', className: 'hidden md:table-cell font-bold' },
+];

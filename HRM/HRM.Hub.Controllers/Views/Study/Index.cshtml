@@ -1,0 +1,249 @@
+﻿@{
+    ViewData["Title"] = "تقارير واحصائيات";
+}
+
+
+<div class="row align-items-center">
+    <div class="border-0 mb-4">
+        <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <h3 class="fw-bold mb-0">@ViewData["Title"]</h3>
+        </div>
+    </div>
+</div> <!-- Row end  -->
+<div class="row clearfix g-3">
+    <div class="col-sm-12">
+        <div class="card mb-3">
+            <div class="card-body">
+
+
+
+
+                <div class="row g-3 mb-3 row-deck">
+                    <div class="col-md-12 col-lg-4 col-xl-4 col-xxl-4">
+                        <div class="card bg-info">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar lg rounded-1 no-thumbnail bg-light color-defult"><i class="bi bi-clipboard-data fs-4"></i></div>
+                                    <div class="flex-fill ms-4">
+                                        <div class="fs-6">عدد الشهادات</div>
+                                        <h5 class="mb-0 fs-4">74</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-4 col-xl-4 col-xxl-4">
+                        <div class="card bg-info">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar lg rounded-1 no-thumbnail bg-light color-defult"><i class="bi bi-journal-check fs-4"></i></div>
+                                    <div class="flex-fill ms-4">
+                                        <div class="fs-6">انواع الدراسة</div>
+                                        <h5 class="mb-0 fs-4">122</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-4 col-xl-4 col-xxl-4">
+                        <div class="card bg-info">
+                            <div class="card-body">
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar lg rounded-1 no-thumbnail bg-light color-defult"><i class="bi bi-list-check fs-4"></i></div>
+                                    <div class="flex-fill ms-4">
+                                        <div class="fs-6">الموقف</div>
+                                        <h5 class="mb-0 fs-4">376</h5>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                <div class="row mt-4"></div>
+
+
+                <div class="container mt-5">
+                    <div class="row">
+                        <div class="col-md-4">
+
+                            <h2 class="text-center">نوع الشهادة</h2>
+                            <canvas id="myChart" width="200" height="200"></canvas>
+                        </div>
+                        <div class="col-md-4">
+
+                            <h2 class="text-center">نوع الدراسة</h2>
+                            <canvas id="myChart1" width="200" height="200"></canvas>
+                        </div>
+                        <div class="col-md-4">
+
+                            <h2 class="text-center">الموقف</h2>
+                            <canvas id="myChart2" width="200" height="200"></canvas>
+                        </div>
+
+
+                        </div>
+                </div>
+
+              <div class="row mt-4"></div>
+                <div class="row mt-4"></div>
+<div class="row g-3 mb-3 row-deck">
+    <div class="col-md-12 col-lg-4 col-xl-4 col-xxl-4">
+        <div class="card">
+            <div class="card-header ">
+                <h6>عدد الشهادات</h6>
+            </div>
+            <div class="card-body">
+                                <table class="table font-weight-bold">
+                                    <thead class="bg_table">
+                        <tr>
+                            <th scope="col">اسم الشهادة</th>
+                            <th scope="col">العدد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>دبلوم</td>
+                            <td>30</td>
+                        </tr>
+                        <tr>
+                            <td>بكالوريوس</td>
+                            <td>44</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 col-lg-4 col-xl-4 col-xxl-4">
+        <div class="card">
+            <div class="card-header">
+                <h6>انواع الدراسة</h6>
+            </div>
+            <div class="card-body">
+                                <table class="table font-weight-bold ">
+                                    <thead class="bg_table">
+                        <tr>
+                            <th scope="col">نوع الدراسة</th>
+                            <th scope="col">العدد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>تفرغ تام</td>
+                            <td>60</td>
+                        </tr>
+                        <tr>
+                            <td>زمالة</td>
+                            <td>62</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 col-lg-4 col-xl-4 col-xxl-4">
+        <div class="card">
+            <div class="card-header">
+                <h6>الموقف</h6>
+            </div>
+            <div class="card-body">
+                                <table class="table font-weight-bold">
+                                    <thead class="bg_table">
+                        <tr>
+                            <th scope="col">الموقف</th>
+                            <th scope="col">العدد</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>تمديد</td>
+                            <td>200</td>
+                        </tr>
+                        <tr>
+                            <td>اجازة دراسية</td>
+                            <td>176</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+            
+
+                
+
+
+                <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+                <script>
+                    var ctx = document.getElementById('myChart').getContext('2d');
+                    var data = {
+                        labels: ['دبلوم عالي', 'دبلوم عالي معادل للماجستير', 'دكتوراه', 'ماجستير'],
+                        datasets: [{
+                            data: [30, 15, 20, 35], // قيم النسب المئوية هنا
+                            backgroundColor: ['#FF6384', '#FFCE56', '#36A2EB', '#4CAF50']
+                        }]
+                    };
+
+                    var options = {
+                        responsive: true
+                    };
+
+                    var myPieChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: data,
+                        options: options
+                    });
+                </script>
+
+                <script>
+                    var ctx = document.getElementById('myChart1').getContext('2d');
+                    var data = {
+                        labels: ['تفرغ تام', 'زمالة'],
+                        datasets: [{
+                            data: [90, 15], // قيم النسب المئوية هنا
+                            backgroundColor: ['#FF6384', '#FFCE56']
+                        }]
+                    };
+
+                    var options = {
+                        responsive: true
+                    };
+
+                    var myPieChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: data,
+                        options: options
+                    });
+                </script>
+
+                <script>
+                    var ctx = document.getElementById('myChart2').getContext('2d');
+                    var data = {
+                        labels: ['اجازة دراسية', 'تمديد'],
+                        datasets: [{
+                            data: [30, 70], // قيم النسب المئوية هنا
+                            backgroundColor: ['#36A2EB', '#FFCE56']
+                        }]
+                    };
+
+                    var options = {
+                        responsive: true
+                    };
+
+                    var myPieChart = new Chart(ctx, {
+                        type: 'pie',
+                        data: data,
+                        options: options
+                    });
+                </script>
+
+
+            </div>
+        </div>
+    </div>
+</div><!-- Row End -->

@@ -1,0 +1,222 @@
+﻿@{
+    ViewData["Title"] = "احصائيات المنسبين";
+}
+
+
+<div class="row align-items-center">
+    <div class="border-0 mb-4">
+        <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <h3 class="fw-bold mb-0">@ViewData["Title"]</h3>
+        </div>
+    </div>
+</div> <!-- Row end  -->
+<div class="row clearfix g-3">
+    <div class="col-sm-12">
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+                                <h6 class="mb-0 fw-bold ">التوزيع الاحصائي للملاك</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="row g-2 row-deck">
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body ">
+                                                <i class="icofont-users-alt-2 fs-3"></i>
+                                                <h6 class="mt-3 mb-0 fw-bold small-14">عدد الملاك</h6>
+                                                <span class="text-muted">14,500</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body ">
+                                                <i class="icofont-handshake-deal fs-3"></i>
+                                                <h6 class="mt-3 mb-0 fw-bold small-14">عدد المنسبين</h6>
+                                                <span class="text-muted">17</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body ">
+                                                <i class="icofont-direction-sign fs-3"></i>
+                                                <h6 class="mt-3 mb-0 fw-bold small-14">المنسبين من الجهاز</h6>
+                                                <span class="text-muted">100</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6 col-sm-6">
+                                        <div class="card">
+                                            <div class="card-body ">
+                                                <i class="icofont-direction-sign fs-3"></i>
+                                                <h6 class="mt-3 mb-0 fw-bold small-14">المنسبين الى الجهاز</h6>
+                                                <span class="text-muted">14</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6">
+                        <div class="card">
+                            <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-1 mb-1">
+                                <h6 class="mb-0 fw-bold ">
+                                    التوزيع الملاك
+                                </h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="mt-3" id="apex-MainCategories"></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="col-md-12 mt-4">
+
+                        <div class="row g-3 mb-3 row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-2 row-cols-xl-4 row-cols-xxl-4">
+                            <div class="col">
+                                <div class="card bg-primary">
+                                    <div class="card-body text-white d-flex align-items-center">
+                                        <i class="icofont-data fs-3"></i>
+                                        <div class="d-flex flex-column ms-3">
+                                            <h6 class="mb-0">
+                                                عدد المنسبين
+                                            </h6>
+                                            <span class="text-white">25</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card bg-primary">
+                                    <div class="card-body text-white d-flex align-items-center">
+                                        <i class="icofont-chart-flow fs-3"></i>
+                                        <div class="d-flex flex-column ms-3">
+                                            <h6 class="mb-0">
+                                                عدد المفرغين
+                                            </h6>
+                                            <span class="text-white">10</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card bg-primary">
+                                    <div class="card-body text-white d-flex align-items-center">
+                                        <i class="icofont-chart-flow-2 fs-3"></i>
+                                        <div class="d-flex flex-column ms-3">
+                                            <h6 class="mb-0">
+                                                عدد المكلفين
+                                            </h6>
+                                            <span class="text-white">75</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card bg-primary">
+                                    <div class="card-body text-white d-flex align-items-center">
+                                        <i class="icofont-tasks fs-3"></i>
+                                        <div class="d-flex flex-column ms-3">
+                                            <h6 class="mb-0">
+                                                عدد الممثلين
+                                            </h6>
+                                            <span class="text-white">88</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row clearfix g-3">
+                    <div class="col-sm-12">
+                        <div class="card mb-3">
+                            <div class="card-header py-3 d-flex justify-content-between">
+                                <h5 class="mb-0 fw-bold ">
+                                    اشعارات المنسبين
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-md-4">
+                                    <div class="row">
+                                        <div class="input-group flex-nowrap input-group-lg col" style="margin-bottom:30px">
+                                            <input type="search" class="form-control" placeholder="بحث عن اسم الموظف او رقم الموظف" aria-label="search" aria-describedby="addon-wrapping">
+                                            <button type="button" class="input-group-text" id="addon-wrapping"><i class="fa fa-search"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <table class="table table-hover table-bordered">
+                                        <thead>
+                                            <tr class="bg_table text-center ">
+                                                <th scope="col">#</th>
+                                                <th scope="col">اسم الموظف</th>
+                                                <th scope="col">الجهة المنسب منها</th>
+                                                <th scope="col">الجهة المنسب اليها</th>
+                                                <th scope="col">تاريخ التنسيب</th>
+                                                <th scope="col">تاريخ انتهاء التنسيب</th>
+                                                <th scope="col">الفترة المتبقية</th>
+                                                <th scope="col">التفاصيل</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="text-center">
+                                            <tr>
+                                                <td>#313313</td>
+                                                <td>حسن حافظ عبيد ناصر الموسوي</td>
+                                                <td>مديرية امن الأتصالات</td>
+                                                <td>الدائرة الأدارية والمالية</td>
+                                                <td>2023-01-01</td>
+                                                <td>2023-10-01</td>
+                                                <td><span class="badge badge_custom  w-100 bg-secondary">10 يوم</span></td>
+                                                <th><button class="btn btn-primary">عرض</button></th>
+                                            </tr>
+
+                                            <tr>
+                                                <td>#313313</td>
+                                                <td>حسن حافظ عبيد ناصر الموسوي</td>
+                                                <td>مديرية امن الأتصالات</td>
+                                                <td>الدائرة الأدارية والمالية</td>
+                                                <td>2023-01-01</td>
+                                                <td>2023-10-01</td>
+                                                <td><span class="badge badge_custom  w-100 bg-danger">5 يوم</span></td>
+                                                <th><button class="btn btn-primary">عرض</button></th>
+                                            </tr>
+
+                                        </tbody>
+                                        <tfoot>
+                                            <tr>
+                                                <td colspan="8" class="text-center">
+                                                    <nav aria-label="Page navigation">
+                                                        <ul class="pagination justify-content-center">
+                                                            <li class="page-item disabled">
+                                                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                                                            </li>
+                                                            <li class="page-item"><a class="page-link" href="#">1</a></li>
+                                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                            <li class="page-item">
+                                                                <a class="page-link" href="#">التالي</a>
+                                                            </li>
+                                                        </ul>
+                                                    </nav>
+                                                </td>
+                                            </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div><!-- Row End -->
+            </div><!-- Row End -->
+        </div>
+    </div>
+</div>

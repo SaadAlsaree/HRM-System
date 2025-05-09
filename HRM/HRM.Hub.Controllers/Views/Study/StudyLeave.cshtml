@@ -1,0 +1,454 @@
+﻿@{
+    ViewData["Title"] = "اجازات دراسية";
+}
+
+
+<div class="row align-items-center">
+    <div class="border-0 mb-4">
+        <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <h3 class="fw-bold mb-0">@ViewData["Title"]</h3>
+            <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal" data-bs-target="#addEmployeeModalLabel">
+                <i class="icofont-plus-circle me-2 fs-6"></i>اضافة
+            </button>
+        </div>
+    </div>
+
+</div> <!-- Row end  -->
+<div class="row clearfix g-3">
+    <div class="col-sm-12">
+        <div class="card mb-3">
+            <div class="card-body">
+
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <select class="form-select">
+                                    <option value="-1" selected>عرض كل الحالات</option>
+                                    <option>تم الإجراء</option>
+                                    <option>قيد التدقيق</option>
+                                    <option>قيد الانتظار</option>
+                                    <option>قيد محذوف</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group flex-nowrap input-group">
+                                    <input type="search" class="form-control" placeholder="بحث..." aria-label="search" aria-describedby="search_btn">
+                                    <button type="button" class="input-group-text btn btn-primary" id="search_btn"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-primary btn-block w-100">تحميل ملف Excel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-hover table-bordered">
+                    <thead class="bg_table">
+                        <tr class="text-center">
+                            <th>التسلسل</th>
+                            <th>اسم الموظف</th>
+                            <th>الملف الدراسي</th>
+                            <th>نوع الشهادة</th>
+                            <th>مدة الدراسة</th>
+                            <th>سنة القبول</th>
+                            <th>اسم الجامعة</th>
+                            <th>الاختصاص</th>
+                            <th> نوع الدراسة </th>
+                            <th>تاريخ الانفكاك</th>
+                            <th>تاريخ المباشرة</th>
+                            <th>الملاحظات</th>
+                            <th>المرفقات</th>
+                            <th scope="col">الحالة</th>
+                            <th>الاجرائات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <tr class="text-center">
+                            <td>1</td>
+                            <td>اسم الموظف 1</td>
+                            <td>ملف دراسة</td>
+                            <td>نوع الشهادة </td>
+                            <td>مدة الدراسة </td>
+                            <td>سنة القبول </td>
+                            <td>اسم الجامعة </td>
+                            <td>الاختصاص </td>
+                            <td>نوع الدراسة</td>
+                            <td>4/5/2021</td>
+                            <td>4/5/2025</td>
+                            <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#notesModalLabel1"><i class="icofont-eye"></i></button></td>
+                            <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#ViewAttachment"><i class="icofont-eye"></i></button></td>
+                            <td><span class="badge badge_custom  w-100 bg-success">تم الأجراء</span></td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="active">
+                                    <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editDetails"><i class="icofont-eye"></i></button>
+                                    <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editData"><i class="icofont-ui-edit"></i></button>
+                                    <button type="button" class="btn btn-danger text-light" data-bs-toggle="modal" data-bs-target="#deleteData"><i class="icofont-ui-delete"></i></button>
+                                </div>
+                            </td>
+                        </tr>
+
+                    </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="100" class="text-center">
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">التالي</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+
+
+                <!-- Modal لإضافة موظف -->
+                <div class="modal fade" id="addEmployeeModalLabel" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="myModalLabel">اجازات دراسية</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2">
+                                            <button class="btn btn-outline-secondary" type="button" id="search">
+                                                <i class="icofont-search"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <hr />
+                                <div class="row mt-4"></div>
+                                <div class="container">
+                                    <form>
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label for="employeeName" class="form-label">اسم الموظف</label>
+                                                    <input type="text" class="form-control" id="employeeName" placeholder="اسم الموظف">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8"></div>
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="studyFollowUp" class="form-label">سجل متابعة الاجازات الدارسية</label>
+                                                    <input type="text" class="form-control" id="studyFollowUp" placeholder="سجل متابعة الاجازات الدراسية">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="certificateType" class="form-label">نوع الشهادة</label>
+                                                    <select class="form-control" id="certificateType">
+                                                        <option>اختر نوع الشهادة</option>
+                                                        <option>نوع الشهادة 1</option>
+                                                        <option>نوع الشهادة 2</option>
+                                                        <option>نوع الشهادة 3</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="studyDuration" class="form-label">مدة الدراسة</label>
+                                                    <select class="form-control" id="studyDuration">
+                                                        <option>اختر مدة الدراسة</option>
+                                                        <option>مدة الدراسة 1</option>
+                                                        <option>مدة الدراسة 2</option>
+                                                        <option>مدة الدراسة 3</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="universityName" class="form-label">اسم الجامعة</label>
+                                                    <input type="text" class="form-control" id="universityName" placeholder="اسم الجامعة">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="major" class="form-label">الاختصاص</label>
+                                                    <input type="text" class="form-control" id="major" placeholder="الاختصاص">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="studyType" class="form-label">نوع الدراسة</label>
+                                                    <input type="text" class="form-control" id="studyType" placeholder="نوع الدراسة">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="sponsorship" class="form-label">عدد وتاريخ تنظيم الكفالة</label>
+                                                    <input type="text" class="form-control" id="sponsorship" placeholder="عدد وتاريخ تنظيم الكفالة">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="administrativeOrderInclusion" class="form-label">عدد وتاريخ الامر الاداري بالانفكاك</label>
+                                                    <input type="text" class="form-control" id="administrativeOrderInclusion" placeholder="عدد وتاريخ الامر الاداري بالانفكاك">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="separationDate" class="form-label">تاريخ الانفكاك</label>
+                                                    <input type="date" class="form-control" id="separationDate" placeholder="تاريخ الانفكاك">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="insideOutsideIraq" class="form-label">داخل أو خارج العراق</label>
+                                                    <select class="form-control" id="insideOutsideIraq">
+                                                        <option>اختر داخل أو خارج العراق</option>
+                                                        <option>داخل العراق</option>
+                                                        <option>خارج العراق</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="administrativeOrderInclusionDirect" class="form-label">عدد وتاريخ الامر الاداري بالمباشرة</label>
+                                                    <input type="text" class="form-control" id="administrativeOrderInclusionDirect" placeholder="عدد وتاريخ الامر الاداري بالمباشرة">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="directDate" class="form-label">تاريخ المباشرة</label>
+                                                    <input type="date" class="form-control" id="directDate" placeholder="تاريخ المباشرة">
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-md-12">
+                                                <div class="form-group">
+                                                    <label for="correspondenceOrNotes" class="form-label">المخاطبات أو الملاحظات</label>
+                                                    <textarea class="form-control" id="correspondenceOrNotes" rows="3" placeholder="المخاطبات أو الملاحظات"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="studyResult" class="form-label">نتيجة الدراسة</label>
+                                                    <select class="form-control" id="studyResult">
+                                                        <option>اختر نتيجة الدراسة</option>
+                                                        <option>نتيجة الدراسة 1</option>
+                                                        <option>نتيجة الدراسة 2</option>
+                                                        <option>نتيجة الدراسة 3</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-md-12">
+                                                <center>
+                                                    <button type="submit" class="btn btn-primary">حفظ</button>
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                                                </center>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+
+
+    <div class="modal fade" id="ViewAttachment" tabindex="-1" aria-labelledby="ViewAttachmentTitle" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="ViewAttachmentTitle">مرفقات قيد #<b id="recordName">حسن حافظ عبيد  ناصر الموسوي</b></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="card-body">
+
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                </div>
+                                <div class="border-0 mb-4 col-md-8">
+                                    <div class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                                        <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
+                                            <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
+                                                <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#view_attach" role="tab">عرض المرفقات</a></li>
+                                                <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#add_attach" role="tab">اضافة مرفقات</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div> <!-- Row end  -->
+                            <div class="row align-items-center">
+                                <div class="col-lg-12 col-md-12 flex-column">
+                                    <div class="tab-content mt-4">
+                                        <div class="tab-pane fade show active" id="view_attach">
+                                            <div class="row">
+                                                <div class="col-md-1">
+                                                </div>
+
+                                                <div class="col-md-10">
+                                                    <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0 w-100">
+                                                        <div class="input-group flex-nowrap input-group">
+                                                            <input type="search" class="form-control" placeholder="بحث..." aria-label="search" aria-describedby="search_btn">
+                                                            <button type="button" class="input-group-text btn btn-primary" id="search_btn"><i class="fa fa-search"></i></button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="flex-grow-1">
+                                                <div class="py-2 d-flex align-items-center border-bottom">
+                                                    <div class="d-flex ms-3 align-items-center flex-fill">
+                                                        <span class="avatar lg bg-lightgreen rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-file-pdf fs-5"></i></span>
+                                                        <div class="d-flex flex-column ps-3">
+                                                            <div>
+                                                                <span class="fw-bold ms-1">file1.pdf</span>
+                                                                <span class="text-muted ms-1 d-block">تخويل دخول السيارة 258825 2023-01-01</span>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <button type="button" class="btn bg-lightgreen text-end"><i class="icofont-cloud-download"></i></button>
+                                                </div>
+
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade" id="add_attach">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row g-3 mb-3">
+                                                        <div class="col-sm-12">
+                                                            <label for="fileimg" class="form-label">اختر الملف</label>
+                                                            <input type="File" class="form-control" id="fileimg">
+                                                        </div>
+                                                        <div class="col-sm-12">
+                                                            <label for="depone" class="form-label">رقم الكتاب</label>
+                                                            <input type="text" class="form-control" id="depone">
+                                                        </div>
+                                                        <div class="col-sm-12">
+                                                            <label for="abc" class="form-label">تاريخ الكتاب</label>
+                                                            <input type="date" class="form-control" id="abc">
+                                                        </div>
+                                                        <div class="col-sm-12">
+                                                            <label for="abc" class="form-label">عنوان الكتاب</label>
+                                                            <input type="text" class="form-control" id="abc">
+                                                        </div>
+                                                    </div>
+                                                    <div class="row g-3 mb-3">
+                                                        @* <div class="col-sm-12">
+                                                        <h6>اضف تفاصيل اخرى عن الملف</h6>
+                                                        </div>
+                                                        <div class="row g-3 mb-3" id="addfield">
+
+                                                        </div>
+                                                        <div class="row g-3 mb-3">
+                                                        <div class="col-md-10">
+
+                                                        </div>
+                                                        <div class="col-md-2">
+                                                        <button type="button" onclick="AddFieldToAttachment()" class="btn btn-outline-info"><i class="icofont-plus"></i></button>
+                                                        </div>
+                                                        </div> *@
+                                                        <button type="button" class="btn btn-primary">حفظ الملف</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteData" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title align-content-center fw-bold" id="depaddLabel">هل تريد حذف البيانات</h5>
+
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <button type="button" class="btn btn-danger" style="margin-right:50px">حذف</button>
+                        <button type="button" class="btn btn-dark" style="margin-right:200px">لا</button>
+                    </div>
+
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <!-- Modal لعرض الملاحظات -->
+    <div class="modal fade" id="notesModalLabel1" tabindex="-1" aria-labelledby="notesModalLabel1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="notesModalLabel1">ملاحظات الموظف رقم 1</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!--  عرض الملاحظات -->
+                    <label for="notes">ملاحظات</label>
+                    <textarea class="form-control" id="notes" rows="4" placeholder="ملاحظات"></textarea>
+                    <!--  تعديل وحذف الملاحظات هنا -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                    <button type="button" class="btn btn-primary">حفظ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

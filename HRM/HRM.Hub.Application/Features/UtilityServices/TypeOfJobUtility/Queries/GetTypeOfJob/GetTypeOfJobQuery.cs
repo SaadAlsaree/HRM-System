@@ -1,0 +1,9 @@
+using HRM.Hub.Application.Features.UtilityServices.BaseUtility.Query.GetAll;
+using HRM.Hub.Application.Helper.Pagination;
+namespace HRM.Hub.Application.Features.UtilityServices.TypeOfJobUtility.Queries.GetTypeOfJob;
+
+public class GetTypeOfJobQuery : IRequest<Response<PagedResult<GetTypeOfJobViewModel>>>, IPaginationQuery
+{
+    public int Page { get; set; }
+    public byte PageSize { get; set; }
+}

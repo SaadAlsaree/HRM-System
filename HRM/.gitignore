@@ -1,0 +1,8 @@
+.vs/
+bin/
+obj/
+*.cache
+*.ini
+*.dll
+*.csv
+*.xlsx

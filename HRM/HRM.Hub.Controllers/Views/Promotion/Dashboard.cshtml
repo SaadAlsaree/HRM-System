@@ -1,0 +1,937 @@
+﻿@{
+    ViewData["Title"] = "احصائيات";
+}
+
+<div class="row align-items-center">
+    <div class="border-0 mb-4">
+        <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <h3 class="fw-bold mb-0">@ViewData["Title"]</h3>
+            <div class="col-md-8">
+                <div class="d-flex project-tab flex-wrap w-sm-100">
+                    <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
+                        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#promotion_tab" role="tab">العلاوات</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#step_promotion_report" role="tab">تقارير العلاوات</a></li>
+                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#degree_promotion_report" role="tab">تقارير الترفيعات</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div><!-- Row end  -->
+
+<div class="row clearfix g-3">
+    <div class="col-md-12">
+
+
+
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="col-md-12">
+                    <div class="tab-content">
+                        <!-- promotion TAB-->
+                        <div class="tab-pane fade show active" id="promotion_tab" role="tabpanel">
+                            <div class="col-md-12 mb-4">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <select class="form-select">
+                                            <option value="-1" selected>عرض كل الحالات</option>
+                                            <option>تم الإجراء</option>
+                                            <option>قيد التدقيق</option>
+                                            <option>قيد الانتظار</option>
+                                            <option>قيد محذوف</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="promotion_emp_thanks_page_form_lotNo">من تاريخ</span>
+                                            <input type="date" class="form-control" id="promotion_emp_thanks_page_form_lotNo" aria-describedby="promotion_emp_thanks_page_form_lotNo">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="promotion_emp_thanks_page_to_lotNo">الى تاريخ</span>
+                                            <input type="date" class="form-control" id="promotion_emp_thanks_page_to_lotNo" aria-describedby="promotion_emp_thanks_page_to_lotNo">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-primary btn-block"><i class="fa fa-search"></i></button>
+                                    </div>
+                                    <div class="col-md-3">
+                                        <button type="button" class="btn btn-primary btn-block w-100">تحميل تقرير مستحقين العلاوات Excel</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr class="bg_table text-center">
+                                            <th scope="col">#</th>
+                                            <th scope="col">رقم الاضبارة</th>
+                                            <th scope="col">اسم الموظف</th>
+                                            <th scope="col">الدرجة الحالية</th>
+                                            <th scope="col">تاريخ التسكين</th>
+                                            <th scope="col">الفئة الحالية</th>
+                                            <th scope="col">تاريخ التسكين</th>
+                                            <th scope="col">الملاحظات</th>
+                                            <th scope="col">المرفقات</th>
+                                            <th scope="col">الحالة</th>
+                                            <th scope="col">الإجرائات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        <tr>
+                                            <td>1</td>
+                                            <td>52555</td>
+                                            <td>2023-12-10</td>
+                                            <td>وزارة التعليم</td>
+                                            <td>2023-12-10</td>
+                                            <td>شكر</td>
+                                            <td>1</td>
+                                            <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#view_notes"><i class="icofont-eye"></i></button></td>
+                                            <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#ViewAttachment"><i class="icofont-eye"></i></button></td>
+                                            <td><span class="badge badge_custom  w-100 bg-success">تم الأجراء</span></td>
+                                            <td>
+                                                <div class="btn-group" role="group" aria-label="active">
+                                                    <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editDetails"><i class="icofont-eye"></i></button>
+                                                    <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editData"><i class="icofont-ui-edit"></i></button>
+                                                    <button type="button" class="btn btn-danger text-light" data-bs-toggle="modal" data-bs-target="#deleteData"><i class="icofont-ui-delete"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="100" class="text-center">
+                                                <nav aria-label="Page navigation">
+                                                    <ul class="pagination justify-content-center">
+                                                        <li class="page-item disabled">
+                                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                                                        </li>
+                                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="#">التالي</a>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                        <!--STEP promotion report TAB-->
+                        <div class="tab-pane fade" id="step_promotion_report" role="tabpanel">
+                            <div class="col-md-12 mb-4">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <select class="form-select">
+                                            <option value="-1" selected>عرض كل الحالات</option>
+                                            <option>تم الإجراء</option>
+                                            <option>قيد التدقيق</option>
+                                            <option>قيد الانتظار</option>
+                                            <option>قيد محذوف</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="promotion_emp_thanks_page_form_lotNo">من</span>
+                                            <input type="date" class="form-control" id="promotion_emp_thanks_page_form_lotNo" aria-describedby="promotion_emp_thanks_page_form_lotNo">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="promotion_emp_thanks_page_to_lotNo">الى</span>
+                                            <input type="date" class="form-control" id="promotion_emp_thanks_page_to_lotNo" aria-describedby="promotion_emp_thanks_page_to_lotNo">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-primary btn-block"><i class="fa fa-search"></i></button>
+                                    </div>
+                                    <div class="col-md-1">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-primary btn-block w-100">تحميل تقرير</button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal" data-bs-target="#add_step_modal"><i class="icofont-plus-circle me-2 fs-6"></i>&nbsp;اضافة</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr class="bg_table text-center">
+                                            <th scope="col">#</th>
+                                            <th scope="col">الرقم الوظيفي</th>
+                                            <th scope="col">رقم الاضبارة</th>
+                                            <th scope="col">اسم الموظف</th>
+                                            <th scope="col">الدرجة</th>
+                                            <th scope="col">الفئة الحالية</th>
+                                            <th scope="col">تاريخ التسكين</th>
+                                            <th scope="col">الفئة المستحقة</th>
+                                            <th scope="col">تاريخ الاستحقاق</th>
+                                            <th scope="col">العنوان الوظيفي</th>
+                                            <th scope="col">الدائرة</th>
+                                            <th scope="col">رقم ارسال العلاوة</th>
+                                            <th scope="col">الملاحظات</th>
+                                            <th scope="col">المرفقات</th>
+                                            <th scope="col">الحالة</th>
+                                            <th scope="col">الإجرائات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        <tr>
+                                            <td>1</td>
+                                            <td>52555</td>
+                                            <td>52555</td>
+                                            <td>اسم الموظف</td>
+                                            <td>6</td>
+                                            <td>3</td>
+                                            <td>2023-12-10</td>
+                                            <td>4</td>
+                                            <td>2023-12-10</td>
+                                            <td>مهندس</td>
+                                            <td>ج36</td>
+                                            <td>23</td>
+                                            <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#view_notes"><i class="icofont-eye"></i></button></td>
+                                            <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#ViewAttachment"><i class="icofont-eye"></i></button></td>
+                                            <td><span class="badge badge_custom  w-100 bg-success">تم الأجراء</span></td>
+                                            <td>
+                                                <div class="btn-group" role="group" aria-label="active">
+                                                    <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editDetails"><i class="icofont-eye"></i></button>
+                                                    <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editData"><i class="icofont-ui-edit"></i></button>
+                                                    <button type="button" class="btn btn-danger text-light" data-bs-toggle="modal" data-bs-target="#deleteData"><i class="icofont-ui-delete"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="100" class="text-center">
+                                                <nav aria-label="Page navigation">
+                                                    <ul class="pagination justify-content-center">
+                                                        <li class="page-item disabled">
+                                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                                                        </li>
+                                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="#">التالي</a>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+
+                        <!--DEGREE promotion report TAB-->
+                        <div class="tab-pane fade" id="degree_promotion_report" role="tabpanel">
+                            <div class="col-md-12 mb-4">
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <select class="form-select">
+                                            <option value="-1" selected>عرض كل الحالات</option>
+                                            <option>تم الإجراء</option>
+                                            <option>قيد التدقيق</option>
+                                            <option>قيد الانتظار</option>
+                                            <option>قيد محذوف</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="promotion_emp_thanks_page_form_lotNo">من</span>
+                                            <input type="date" class="form-control" id="promotion_emp_thanks_page_form_lotNo" aria-describedby="promotion_emp_thanks_page_form_lotNo">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text" id="promotion_emp_thanks_page_to_lotNo">الى</span>
+                                            <input type="date" class="form-control" id="promotion_emp_thanks_page_to_lotNo" aria-describedby="promotion_emp_thanks_page_to_lotNo">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <button type="button" class="btn btn-primary btn-block"><i class="fa fa-search"></i></button>
+                                    </div>
+                                    <div class="col-md-1">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-primary btn-block w-100">تحميل تقرير</button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal" data-bs-target="#add_degree_modal"><i class="icofont-plus-circle me-2 fs-6"></i>&nbsp;اضافة</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-12 table-responsive">
+                                <table class="table table-hover table-bordered">
+                                    <thead>
+                                        <tr class="bg_table text-center">
+                                            <th scope="col">#</th>
+                                            <th scope="col">الرقم الوظيفي</th>
+                                            <th scope="col">رقم الاضبارة</th>
+                                            <th scope="col">اسم التشكيل</th>
+                                            <th scope="col">اسم الموظف</th>
+                                            <th scope="col">الدرجة الوظيفية</th>
+                                            <th scope="col">تاريخ التسكين</th>
+                                            <th scope="col">الفئة الحالية</th>
+                                            <th scope="col">تاريخ التسكين</th>
+                                            <th scope="col">العنوان الوظيفي</th>
+                                            <th scope="col">الامر الصادر بموجبه اخر ترفيع</th>
+                                            <th scope="col">تاريخ الامر</th>
+                                            <th scope="col">ارقام اوامر كتب الشكر و الجهة المانحة</th>
+                                            <th scope="col">تاريخ كتب الشكر</th>
+                                            <th scope="col">العقوبات (النوع,رقم الكتاب)</th>
+                                            <th scope="col">تاريخ العقوبة</th>
+                                            <th scope="col">الاجازات بدون راتب</th>
+                                            <th scope="col">من تاريخ</th>
+                                            <th scope="col">الى تاريخ</th>
+                                            <th scope="col">الدرجة الجديدة</th>
+                                            <th scope="col">تاريخ الاستحقاق</th>
+                                            <th scope="col">العنوان الوظيفي الجديد</th>
+                                            <th scope="col">التحصيل الدراسي</th>
+                                            <th scope="col">الملاحظات</th>
+                                            <th scope="col">المرفقات</th>
+                                            <th scope="col">الحالة</th>
+                                            <th scope="col">الإجرائات</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="text-center">
+                                        <tr>
+                                            <td>#</td>
+                                            <td>الرقم الوظيفي</td>
+                                            <td>رقم الاضبارة</td>
+                                            <td>اسم التشكيل</td>
+                                            <td>اسم الموظف</td>
+                                            <td>الدرجة الوظيفية</td>
+                                            <td>تاريخ التسكين</td>
+                                            <td>الفئة الوظيفية</td>
+                                            <td>تاريخ التسكين</td>
+                                            <td>العنوان الوظيفي</td>
+                                            <td>الامر الصادر بموجبه اخر ترفيع</td>
+                                            <td>تاريخ الامر</td>
+                                            <td>ارقام اوامر كتب الشكر و الجهة المانحة</td>
+                                            <td>تاريخ كتب الشكر</td>
+                                            <td>العقوبات (النوع,رقم الكتاب)</td>
+                                            <td>تاريخ العقوبة</td>
+                                            <td>الاجازات بدون راتب</td>
+                                            <td>من تاريخ</td>
+                                            <td>الى تاريخ</td>
+                                            <td>الدرجة الجديدة</td>
+                                            <td>تاريخ الاستحقاق</td>
+                                            <td>العنوان الوظيفي الجديد</td>
+                                            <td>التحصيل الدراسي</td>
+                                            <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#view_notes"><i class="icofont-eye"></i></button></td>
+                                            <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#ViewAttachment"><i class="icofont-eye"></i></button></td>
+                                            <td><span class="badge badge_custom  w-100 bg-success">تم الأجراء</span></td>
+                                            <td>
+                                                <div class="btn-group" role="group" aria-label="active">
+                                                    <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editDetails"><i class="icofont-eye"></i></button>
+                                                    <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editData"><i class="icofont-ui-edit"></i></button>
+                                                    <button type="button" class="btn btn-danger text-light" data-bs-toggle="modal" data-bs-target="#deleteData"><i class="icofont-ui-delete"></i></button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                    <tfoot>
+                                        <tr>
+                                            <td colspan="100" class="text-center">
+                                                <nav aria-label="Page navigation">
+                                                    <ul class="pagination justify-content-center">
+                                                        <li class="page-item disabled">
+                                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                                                        </li>
+                                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                        <li class="page-item">
+                                                            <a class="page-link" href="#">التالي</a>
+                                                        </li>
+                                                    </ul>
+                                                </nav>
+                                            </td>
+                                        </tr>
+                                    </tfoot>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+            <!--EDIT DATA MODAL-->
+            <div class="modal fade" id="editData" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title  fw-bold" id="depaddLabel">اضافة موظف</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="mb-3">
+                                <label for="exampleFormControlInput1111" class="form-label">اسم الموظف الثلاثي</label>
+                                <input type="search" class="form-control" id="exampleFormControlInput1111">
+                            </div>
+                            <div class="deadline-form">
+                                <form>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-sm-6">
+                                            <label for="deptwo" class="form-label">الدائرة او المديرية</label>
+                                            <select class="form-select" aria-label="Default select Project Category">
+                                                <option selected=""></option>
+                                                <option value="1"></option>
+                                                <option value="2"></option>
+                                                <option value="3"></option>
+                                                <option value="4"></option>
+                                                <option value="5"></option>
+                                                <option value="6"></option>
+                                                <option value="7"></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="deptwo" class="form-label">المنصب</label>
+                                            <select class="form-select" aria-label="Default select Project Category">
+                                                <option selected=""></option>
+                                                <option value="1"></option>
+                                                <option value="2"></option>
+                                                <option value="3"></option>
+                                                <option value="4"></option>
+                                                <option value="5"></option>
+                                                <option value="6"></option>
+                                                <option value="7"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-sm-6">
+                                            <label for="depone" class="form-label">الدائرة المنقول منها</label>
+                                            <select class="form-select" aria-label="Default select Project Category">
+                                                <option selected="">s</option>
+                                                <option value="1"></option>
+                                                <option value="2"></option>
+                                                <option value="3"></option>
+                                                <option value="4"></option>
+                                                <option value="5"></option>
+                                                <option value="6"></option>
+                                                <option value="7"></option>
+                                            </select>
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="deptwo" class="form-label">الدائرة المنقول اليها</label>
+                                            <select class="form-select" aria-label="Default select Project Category">
+                                                <option selected=""></option>
+                                                <option value="1"></option>
+                                                <option value="2"></option>
+                                                <option value="3"></option>
+                                                <option value="4"></option>
+                                                <option value="5"></option>
+                                                <option value="6"></option>
+                                                <option value="7"></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-sm-6">
+                                            <label for="depone" class="form-label">رقم الانفكاك</label>
+                                            <input type="text" class="form-control" id="depone">
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="deptwo" class="form-label">تاريح الانفكاك</label>
+                                            <input type="date" class="form-control" id="datetimePicker" name="datetime">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 mb-3">
+                                        <div class="col-sm-6">
+                                            <label for="depone" class="form-label">رقم المباشرة</label>
+                                            <input type="text" class="form-control" id="depone">
+                                        </div>
+                                        <div class="col-sm-6">
+                                            <label for="deptwo" class="form-label">تاريح المباشرة</label>
+                                            <input type="date" class="form-control" id="datetimePicker" name="datetime">
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="exampleFormControlInput1111" class="form-label">الاجرائات</label>
+                                        <input type="text" class="form-control" id="exampleFormControlInput1111">
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                            <button type="submit" class="btn btn-primary">تعديل</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--VIEW ATTACHMENT MODAL-->
+            <div class="modal fade" id="ViewAttachment" tabindex="-1" aria-labelledby="ViewAttachmentTitle" style="display: none;" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="ViewAttachmentTitle">مرفقات قيد #<b id="recordName">حسن حافظ عبيد  ناصر الموسوي</b></h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <div class="row align-items-center">
+                                        <div class="col-md-2">
+                                        </div>
+                                        <div class="border-0 mb-4 col-md-8">
+                                            <div class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                                                <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
+                                                    <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
+                                                        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#view_attach" role="tab">عرض المرفقات</a></li>
+                                                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#add_attach" role="tab">اضافة مرفقات</a></li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div> <!-- Row end  -->
+                                    <div class="row align-items-center">
+                                        <div class="col-lg-12 col-md-12 flex-column">
+                                            <div class="tab-content mt-4">
+                                                <div class="tab-pane fade show active" id="view_attach">
+                                                    <div class="row">
+                                                        <div class="col-md-1">
+                                                        </div>
+
+                                                        <div class="col-md-10">
+                                                            <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0 w-100">
+                                                                <div class="input-group flex-nowrap input-group">
+                                                                    <input type="search" class="form-control" placeholder="بحث..." aria-label="search" aria-describedby="search_btn">
+                                                                    <button type="button" class="input-group-text btn btn-primary" id="search_btn"><i class="fa fa-search"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex-grow-1">
+                                                        <div class="py-2 d-flex align-items-center border-bottom">
+                                                            <div class="d-flex ms-3 align-items-center flex-fill">
+                                                                <span class="avatar lg bg-lightgreen rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-file-pdf fs-5"></i></span>
+                                                                <div class="d-flex flex-column ps-3">
+                                                                    <div>
+                                                                        <span class="fw-bold ms-1">file1.pdf</span>
+                                                                        <span class="text-muted ms-1 d-block">تخويل دخول السيارة 258825 2023-01-01</span>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                            <button type="button" class="btn bg-lightgreen text-end"><i class="icofont-cloud-download"></i></button>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                                <div class="tab-pane fade" id="add_attach">
+                                                    <div class="card">
+                                                        <div class="card-body">
+                                                            <div class="row g-3 mb-3">
+                                                                <div class="col-sm-12">
+                                                                    <label for="fileimg" class="form-label">اختر الملف</label>
+                                                                    <input type="File" class="form-control" id="fileimg">
+                                                                </div>
+                                                                <div class="col-sm-12">
+                                                                    <label for="depone" class="form-label">رقم الكتاب</label>
+                                                                    <input type="text" class="form-control" id="depone">
+                                                                </div>
+                                                                <div class="col-sm-12">
+                                                                    <label for="abc" class="form-label">تاريخ الكتاب</label>
+                                                                    <input type="date" class="form-control" id="abc">
+                                                                </div>
+                                                                <div class="col-sm-12">
+                                                                    <label for="abc" class="form-label">عنوان الكتاب</label>
+                                                                    <input type="text" class="form-control" id="abc">
+                                                                </div>
+                                                            </div>
+                                                            <div class="row g-3 mb-3">
+                                                                @* <div class="col-sm-12">
+                                                                <h6>اضف تفاصيل اخرى عن الملف</h6>
+                                                                </div>
+                                                                <div class="row g-3 mb-3" id="addfield">
+
+                                                                </div>
+                                                                <div class="row g-3 mb-3">
+                                                                <div class="col-md-10">
+
+                                                                </div>
+                                                                <div class="col-md-2">
+                                                                <button type="button" onclick="AddFieldToAttachment()" class="btn btn-outline-info"><i class="icofont-plus"></i></button>
+                                                                </div>
+                                                                </div> *@
+                                                                <button type="button" class="btn btn-primary">حفظ الملف</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--NOTES MODAL-->
+            <div class="modal fade modal-lg" id="view_notes" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title align-content-center fw-bold" id="depaddLabel">الملاحظات</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="col-md-12">
+                                <label for="promotion_emp_disciplinary_page_form_note" class="form-label">الملاحظات</label>
+                                <textarea class="form-control" id="promotion_emp_disciplinary_page_form_note" rows="3" readonly></textarea>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--DELETE DATA MODAL-->
+            <div class="modal fade" id="deleteData" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title  fw-bold" id="deletedataLabel">هل تريد حذف البيانات نهائياً؟</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body justify-content-center flex-column d-flex">
+                            <i class="icofont-ui-delete text-danger display-2 text-center mt-2"></i>
+                            <p class="mt-4 fs-5 text-center">يرجى الانتباه, لا يمكن استرجاع البيانات بعد حذفها!</p>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                            <button type="button" class="btn btn-danger color-fff">حذف نهائياً</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--Edit MODAL-->
+            <div class="modal fade  modal-xl" id="editDetails" tabindex="-1" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title  fw-bold" id="depaddLabel"> المعلومات</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row mt-4"></div>
+                            <div class="row">
+                                <div class="col">
+
+                                    <label for="issueAuthority" style="font-weight: bold; font-size: 16px;">اسم الموظف </label>
+                                    <div class="form-control text-center" id="issueAuthority" style="font-size: 18px;">saf</div>
+
+                                </div>
+                                <div class="col">
+
+                                    <label for="studyType" style="font-weight: bold; font-size: 16px;">الجهة المنسب اليها</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">fasfsa</div>
+
+                                </div>
+                                <div class="col">
+
+                                    <label for="studyType" style="font-weight: bold; font-size: 16px;">مدة التنسيب بالشهر</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">fsafa</div>
+
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col">
+                                    <label for="studyType" style="font-weight: bold; font-size: 16px;">رقم الانفكاك</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">saffsa</div>
+                                </div>
+                                <div class="col">
+                                    <label for="studyType" style="font-weight: bold; font-size: 16px;">تاريخ الانفكاك</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">fsafsaf</div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label for="studyType" style="font-weight: bold; font-size: 16px;">رقم المباشرة</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">fasfsa</div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="studyType" style=" font-size: 16px;">تاريخ المباشرة</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">safasfasf</div>
+                                </div>
+                                <div class="col">
+                                    <label for="studyType" style=" font-size: 16px;">الامر الاداري بنتهاء التنسيب</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">sfafsaf</div>
+                                </div>
+
+                                <div class="col">
+                                    <label for="studyType" style=" font-size: 16px;"> رقم الانفكاك بعد انتهاء التنسيب</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">asfasf</div>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <div class="col">
+                                    <label for="studyType" style=" font-size: 16px;">تاريخ الانفكاك بعد انتهاء التنسيب</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">afsfs</div>
+                                </div>
+                                <div class="col">
+                                    <label for="studyType" style=" font-size: 16px;">رقم المباشرة بعد انتهاء التنسيب</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">asfasf</div>
+                                </div>
+                                <div class="col">
+                                    <label for="studyType" style=" font-size: 16px;">تاريخ المباشرة بعد انتهاء التنسيب</label>
+                                    <div class="form-control text-center" id="studyType" style="font-size: 18px;">saffsa</div>
+                                </div>
+                            </div>
+                            <div class="form-group text-center">
+                                <label for="studyType" style=" font-size: 16px;">الملاحظات</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">saffsa</div>
+                            </div>
+                            <div class="form-group text-center">
+                                <label for="studyType" style=" font-size: 16px;">الاجراءات</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">safasfsaf</div>
+                            </div>
+
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                            <button type="submit" class="btn btn-primary">اضافة</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div><!-- Row End -->
+<!-- Modal Popup Dialog for ADD STEP -->
+<div class="modal fade" id="add_step_modal" tabindex="-1" aria-labelledby="add_course" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <!-- Use modal-lg for a larger modal -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- Add a close button on the top right corner -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <!-- Modal Title -->
+                <h5 class="modal-title">اضافة علاوة</h5>
+            </div>
+            <div class="modal-body">
+                <div class="card-body">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-6 mt-4">
+                            <div class="input-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2" id="promotion_emp_info_page_search_text">
+                                    <button class="btn btn-outline-secondary" type="button" id="promotion_emp_info_page_search_button">
+                                        <i class="icofont-search me-2 fs-6"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+
+                        <div class="col-md-6">
+                            <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksNo" class="form-label">رقم الامر الاداري</label>
+                            <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksNo" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksDate" class="form-label">تاريخ الامر الاداري</label>
+                            <input type="date" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksDate" required>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_note" class="form-label">الملاحظات</label>
+                            <textarea class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_note" rows="3"></textarea>
+                        </div>
+
+
+                        <hr />
+                        <div class="col-md-12 table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                    <tr class="bg_table text-center">
+                                        <th scope="col">#</th>
+                                        <th scope="col">الرقم الاحصائي</th>
+                                        <th scope="col">رقم الاضبارة</th>
+                                        <th scope="col">اسم الموظف</th>
+                                        <th scope="col">الفئة الحالية</th>
+                                        <th scope="col">تاريخ التسكين</th>
+                                        <th scope="col">الفئة الجديدة</th>
+                                        <th scope="col">تاريخ الاستحقاق</th>
+                                        <th scope="col">الإجرائات</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    <tr>
+                                        <td>1</td>
+                                        <td>52555</td>
+                                        <td>52555</td>
+                                        <td>كرار حيدر عبدالامير عبد الياسري</td>
+                                        <td>3</td>
+                                        <td>10/10/2022</td>
+                                        <td>4</td>
+                                        <td>10/10/2023</td>
+                                        <td>
+                                            <div class="btn-group" role="group" aria-label="active">
+                                                <button type="button" class="btn btn-danger text-light" data-bs-toggle="modal" data-bs-target="#"><i class="icofont-ui-delete"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="100" class="text-center">
+                                            <nav aria-label="Page navigation">
+                                                <ul class="pagination justify-content-center">
+                                                    <li class="page-item disabled">
+                                                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                                                    </li>
+                                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="#">التالي</a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary mt-4">حفظ التغييرات</button>
+                        <button type="button" class="btn btn-secondary mt-4" data-bs-dismiss="modal">إغلاق</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal Popup Dialog for ADD DEGREE -->
+<div class="modal fade" id="add_degree_modal" tabindex="-1" aria-labelledby="add_course" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <!-- Use modal-lg for a larger modal -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <!-- Add a close button on the top right corner -->
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                <!-- Modal Title -->
+                <h5 class="modal-title">اضافة ترفيع</h5>
+            </div>
+            <div class="modal-body">
+                <div class="card-body">
+                    <div class="row g-4 align-items-center">
+                        <div class="col-md-6 mt-4">
+                            <div class="input-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2" id="promotion_emp_info_page_search_text">
+                                    <button class="btn btn-outline-secondary" type="button" id="promotion_emp_info_page_search_button">
+                                        <i class="icofont-search me-2 fs-6"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        <hr />
+
+                        <div class="col-md-6">
+                            <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksNo" class="form-label">رقم الامر الاداري</label>
+                            <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksNo" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksDate" class="form-label">تاريخ الامر الاداري</label>
+                            <input type="date" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksDate" required>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_note" class="form-label">الملاحظات</label>
+                            <textarea class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_note" rows="3"></textarea>
+                        </div>
+
+
+                        <hr />
+                        <div class="col-md-12 table-responsive">
+                            <table class="table table-hover table-bordered">
+                                <thead>
+                                    <tr class="bg_table text-center">
+                                        <th scope="col">#</th>
+                                        <th scope="col">الرقم الاحصائي</th>
+                                        <th scope="col">رقم الاضبارة</th>
+                                        <th scope="col">اسم الموظف</th>
+                                        <th scope="col">الدرجة الحالية</th>
+                                        <th scope="col">تاريخ التسكين</th>
+                                        <th scope="col">الفئة الحالية</th>
+                                        <th scope="col">تاريخ التسكين</th>
+                                        <th scope="col">الدرجة الجديدة</th>
+                                        <th scope="col">تاريخ الاستحقاق</th>
+                                        <th scope="col">الإجرائات</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="text-center">
+                                    <tr>
+                                        <td>1</td>
+                                        <td>52555</td>
+                                        <td>52555</td>
+                                        <td>كرار حيدر عبدالامير عبد الياسري</td>
+                                        <td>6</td>
+                                        <td>10/10/2022</td>
+                                        <td>4</td>
+                                        <td>10/10/2022</td>
+                                        <td>5</td>
+                                        <td>10/10/2023</td>
+                                        <td>
+                                            <div class="btn-group" role="group" aria-label="active">
+                                                <button type="button" class="btn btn-danger text-light" data-bs-toggle="modal" data-bs-target="#"><i class="icofont-ui-delete"></i></button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <td colspan="100" class="text-center">
+                                            <nav aria-label="Page navigation">
+                                                <ul class="pagination justify-content-center">
+                                                    <li class="page-item disabled">
+                                                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                                                    </li>
+                                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                    <li class="page-item">
+                                                        <a class="page-link" href="#">التالي</a>
+                                                    </li>
+                                                </ul>
+                                            </nav>
+                                        </td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary mt-4">حفظ التغييرات</button>
+                        <button type="button" class="btn btn-secondary mt-4" data-bs-dismiss="modal">إغلاق</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

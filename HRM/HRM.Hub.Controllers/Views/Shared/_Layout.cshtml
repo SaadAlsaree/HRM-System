@@ -1,0 +1,276 @@
+﻿<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - الإدارة الرقمية</title>
+
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Favicon-->
+    <link rel="icon" href="~/assets/images/ost-logo.png" type="image/x-icon">
+    <!-- plugin css file  -->
+    <link rel="stylesheet" href="~/assets/plugin/datatables/responsive.dataTables.min.css">
+    <link rel="stylesheet" href="~/assets/plugin/datatables/dataTables.bootstrap5.min.css">
+    <!-- project css file  -->
+    <link rel="stylesheet" href="~/assets/css/my-task.style.min.css" asp-append-version="true">
+    <style>
+        .bg_table{
+            background: #ffecb5;
+            color: #664d03
+        }
+        .select_more_style{
+            padding-top: .7rem;
+            padding-bottom: .7rem;
+        }
+
+        .page-item.active .page-link {
+            color:#fff !important;
+        }
+
+        .form-select{
+            background-position: left .75rem center !important;
+            padding: .375rem .75rem .375rem 2.25rem !important;
+        }
+        .badge_custom{
+            padding: 7px;
+            font-size: 12px;
+        }
+    </style>
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body class="rtl_mode">
+    <div id="mytask-layout" class="theme-indigo">
+        <!-- sidebar -->
+        @Html.AntiForgeryToken()
+        <div class="sidebar px-4 py-4 py-md-5 me-0">
+            <div class="d-flex flex-column h-100">
+                <a href="index.html" class="mb-0 brand-icon">
+                    <span class="logo-icon">
+                        <img src="~/assets/images/ost-logo.png" width="35" height="35" />
+                    </span>
+                    <span class="logo-text">الإدارة الرقمية</span>
+                </a>
+                <!-- Menu: main ul -->
+                <ul class="menu-list flex-grow-1 mt-3">
+                    <li><a class="m-link" href="/"><i class="icofont-paint"></i> <span>الإحصائيات العامة</span></a></li>
+                    <li class="collapsed">
+                        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#employee-Components" href="#">
+                            <i class="icofont-book fs-5"></i> <span>الموظفين</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+                        </a>
+                        <!-- Menu: Sub menu ul -->
+                        <ul class="sub-menu collapse" id="employee-Components">
+                            <li><a class="ms-link" href="/Employee/Index"> <span>عرض الموظفين</span></a></li>
+                            <li><a class="ms-link" href="/Employee/Disciplinary"> <span>العقوبات</span></a></li>
+                            <li><a class="ms-link" href="/Employee/Resignation"> <span>الأستقالة</span></a></li>
+                            <li><a class="ms-link" href="/Employee/Interruption"> <span>الأنقطاع</span></a></li>
+                            <li><a class="ms-link" href="/Employee/RaiseHand"> <span>سحب و رفع سحب اليد</span></a></li>
+                            <li><a class="ms-link" href="/Employee/Courses"> <span>الدورات التدريبية</span></a></li>
+                            <li><a class="ms-link" href="/Employee/Retirement"> <span>التقاعد</span></a></li>
+                            <li><a class="ms-link" href="/Employee/Martyrs"> <span>الشهداء و الجرحى</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="collapsed">
+                        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#Promotion-Components" href="#">
+                            <i class="icofont-book fs-5"></i> <span>العلاوات والترفيعات</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+                        </a>
+                        <!-- Menu: Sub menu ul -->
+                        <ul class="sub-menu collapse" id="Promotion-Components">
+                            <li><a class="ms-link" href="/Promotion/Dashboard"> <span>احصائيات</span></a></li>
+                            <li><a class="ms-link" href="/Promotion/Index"> <span>بحث موظف</span></a></li>
+                            <li><a class="ms-link" href="/Promotion/ServiceCalculation"> <span>احتسابات الخدمة</span></a></li>
+                            <li><a class="ms-link" href="/Promotion/ThanksAndSeniority"> <span>كتب الشكر والقدم</span></a></li>
+                            <li><a class="ms-link" href="/Promotion/Disciplinary"> <span>العقوبات</span></a></li>
+                            <li><a class="ms-link" href="/Promotion/Valuation"> <span>تقييم الموظفيين</span></a></li>
+                        </ul>
+                    </li>
+                    @* <li><a class="m-link" href="/Archives/Index"><i class="icofont-archive"></i> <span>الكشوفات</span></a></li>
+                    <li><a class="m-link" href="/Archives/Index"><i class="icofont-archive"></i> <span>التقاعد</span></a></li> *@
+                    <li class="collapsed">
+                        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#Book-Components" href="#">
+                            <i class="icofont-book fs-5"></i> <span>إدارة المنسبين</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+                        </a>
+                        <!-- Menu: Sub menu ul -->
+                        <ul class="sub-menu collapse" id="Book-Components">
+                            <li><a class="ms-link" href="/Movement/Dashboard"> <span>احصائيات</span></a></li>
+                            <li><a class="ms-link" href="/Movement/AssignmentOut"> <span>المنسبين من الجهاز</span></a></li>
+                            <li><a class="ms-link" href="/Movement/AssignmentIn"> <span>المنسبين الى الجهاز</span></a></li>
+                            <li><a class="ms-link" href="/Movement/Index"> <span>التنقلات</span></a></li>
+                            <li><a class="ms-link" href="/Movement/CurrentPositions"> <span>المناصب الحالية</span></a></li>
+                            <li><a class="ms-link" href="/Movement/OldPositions"> <span>المناصب السابقة</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="collapsed">
+                        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#Leave-Components" href="#">
+                            <i class="icofont-book fs-5"></i> <span>إدارة الأجازات</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+                        </a>
+                        <!-- Menu: Sub menu ul -->
+                        <ul class="sub-menu collapse" id="Leave-Components">
+                            <li><a class="ms-link" href="/Leave/Index"> <span>كشف اجازات الموظف</span></a></li>
+                            <li><a class="ms-link" href="/Leave/NormalLeave"> <span>الأجازات الأعتيادية</span></a></li>
+                            <li><a class="ms-link" href="/Leave/PartialLeave"> <span>الأجازات الزمنية</span></a></li>
+                            <li><a class="ms-link" href="/Leave/SicknessLeave"> <span>الأجازات المرضية</span></a></li>
+                            <li><a class="ms-link" href="/Leave/MotherhoodBornLeave"> <span>اجازات الإمومة والوضع</span></a></li>
+                            <li><a class="ms-link" href="/Leave/LongLeave"> <span>الأجازات الطويلة</span></a></li>
+                            <li><a class="ms-link" href="/Leave/TravelLeave"> <span>أجازات السفر</span></a></li>
+                            <li><a class="ms-link" href="/Leave/Absence"> <span>الغيابات</span></a></li>
+                        </ul>
+                    </li>
+                    <li class="collapsed">
+                        <a class="m-link" data-bs-toggle="collapse" data-bs-target="#Study-Components" href="#">
+                            <i class="icofont-book fs-5"></i> <span>الاجازات الدراسية</span> <span class="arrow icofont-dotted-down ms-auto text-end fs-5"></span>
+                        </a>
+                        <!-- Menu: Sub menu ul -->
+                        <ul class="sub-menu collapse" id="Study-Components">
+                            <li><a class="ms-link" href="/Study/Index"> <span>التقارير والاحصائيات</span></a></li>
+                            <li><a class="ms-link" href="/Study/StudyFile"> <span>الملفات الدراسية</span></a></li>
+                            <li><a class="ms-link" href="/Study/StudyLeave"> <span>الاجازات الدراسية</span></a></li>
+                            <li><a class="ms-link" href="/Study/StudyLeaveExtension"> <span>تمديد اجازة دراسية</span></a></li>
+                            <li><a class="ms-link" href="/Study/StudyAlert"> <span>الاشعارات والتنبيهات</span></a></li>
+                            <li><a class="ms-link" href="/Study/DocumentVerify"> <span>صحة الصدور</span></a></li>
+                        </ul>
+                    </li>
+                    <li><a class="m-link" href="/DocVerification/Index"><i class="icofont-archive"></i> <span>شعبة صحة الصدور</span></a></li>
+                    <li><a class="m-link" href="/Setting/Index"><i class="icofont-archive"></i> <span>اعدادات النظام</span></a></li>
+                </ul>
+
+            </div>
+        </div>
+
+        <!-- main body area -->
+        <div class="main px-lg-4 px-md-4">
+
+            <!-- Body: Header -->
+            <div class="header">
+                <nav class="navbar py-4">
+                    <div class="container-xxl">
+
+                        <!-- header rightbar icon -->
+                        <div class="h-right d-flex align-items-center mr-5 mr-lg-0 order-1" style="margin-right: auto;">
+                            <div class="dropdown notifications zindex-popover">
+                                <a class="nav-link dropdown-toggle pulse" href="#" role="button" data-bs-toggle="dropdown">
+                                    <i class="icofont-alarm fs-5"></i>
+                                    <span class="pulse-ring"></span>
+                                </a>
+                                <div id="NotificationsDiv" class="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-sm-end p-0 m-0">
+                                    <div class="card border-0 w380">
+                                        <div class="card-header border-0 p-3">
+                                            <h5 class="mb-0 font-weight-light d-flex justify-content-between">
+                                                <span>Notifications</span>
+                                                <span class="badge text-white">1</span>
+                                            </h5>
+                                        </div>
+                                        <div class="tab-content card-body">
+                                            <div class="tab-pane fade show active">
+                                                <ul class="list-unstyled list mb-0">
+                                                    <li class="py-2 mb-1 border-bottom">
+                                                        <a href="javascript:void(0);" class="d-flex">
+                                                            <img class="avatar rounded-circle" src="~/assets/images/xs/avatar1.jpg" alt="">
+                                                            <div class="flex-fill ms-2">
+                                                                <p class="d-flex justify-content-between mb-0 "><span class="font-weight-bold">عمر نبيل</span> <small>2د</small></p>
+                                                                <span class="">اعمام خاص بقسم التحليل</span>
+                                                            </div>
+                                                        </a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <a class="card-footer text-center border-top-0" href="#">عرض جميع الشعارات</a>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dropdown user-profile ml-2 ml-sm-3 d-flex align-items-center zindex-popover">
+                                <div class="u-info me-2">
+                                    <p class="mb-0 text-end line-height-sm "><span class="font-weight-bold">حسن حافظ</span></p>
+                                    <small>موظف - تكنولوجيا </small>
+                                </div>
+                                <a class="nav-link dropdown-toggle pulse p-0" href="#" role="button" data-bs-toggle="dropdown" data-bs-display="static">
+                                    <img class="avatar lg rounded-circle img-thumbnail" src="~/assets/images/profile_av.png" alt="profile">
+                                </a>
+                                <div class="dropdown-menu rounded-lg shadow border-0 dropdown-animation dropdown-menu-end p-0 m-0">
+                                    <div class="card border-0 w280">
+                                        <div class="card-body pb-0">
+                                            <div class="d-flex py-1">
+                                                <img class="avatar rounded-circle" src="~/assets/images/profile_av.png" alt="profile">
+                                                <div class="flex-fill ms-3">
+                                                    <p class="mb-0"><span class="font-weight-bold">حسن حافظ</span></p>
+                                                    <small class="">j313313@m14.local</small>
+                                                </div>
+                                            </div>
+
+                                            <div><hr class="dropdown-divider border-dark"></div>
+                                        </div>
+                                        <div class="list-group m-2 ">
+                                            <a href="members.html" class="list-group-item list-group-item-action border-0 "><i class="icofont-ui-user fs-6 me-3"></i>الملف الشخصي</a>
+                                            <div><hr class="dropdown-divider border-dark"></div>
+                                            <a href="/" class="list-group-item list-group-item-action border-0 "><i class="icofont-logout fs-6 me-3"></i>تسجيل خروج</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        @* <div class="order-0 col-lg-4 col-md-4 col-sm-12 col-12 mb-3 mb-md-0 ">
+                            <div class="input-group flex-nowrap input-group-lg">
+                                <input type="search" class="form-control" placeholder="ابحث عن اسم موظف او رقم اضبارة" aria-label="search" aria-describedby="addon-wrapping">
+                                <button type="button" class="input-group-text add-member-top" id="addon-wrappingone" data-bs-toggle="modal" data-bs-target="#addUser"><i class="fa fa-plus"></i></button>
+                                <button type="button" class="input-group-text" id="addon-wrapping"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div> *@
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Body: Body -->
+            <div class="body d-flex py-3">
+                <div class="container-xxl">
+
+                    @RenderBody()
+                </div>
+            </div>
+
+        </div>
+
+
+    </div>
+
+
+
+
+
+    <!-- Jquery Core Js -->
+    <script src="~/assets/bundles/libscripts.bundle.js"></script>
+    
+
+    <!-- Plugin Js-->
+    <script src="~/assets/bundles/apexcharts.bundle.js"></script>
+    <script src="~/assets/js/page/hr.js" asp-append-version="true"></script>
+    <!-- Jquery Page Js -->
+    <script src="~/assets/js/template.js" asp-append-version="true"></script>
+    <script src="~/assets/js/page/public.js" asp-append-version="true"></script>
+    <script src="~/assets/js/page/sweetalert2.js"></script>
+    <script>
+        // project data table
+        $(document).ready(function () {
+            $('#myProjectTable')
+                .addClass('nowrap')
+                .dataTable({
+                    responsive: true,
+                    columnDefs: [
+                        { targets: [-1, -3], className: 'dt-body-right' }
+                    ]
+                });
+            $('.deleterow').on('click', function () {
+                var tablename = $(this).closest('table').DataTable();
+                tablename
+                    .row($(this)
+                        .parents('tr'))
+                    .remove()
+                    .draw();
+
+            });
+        });
+    </script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

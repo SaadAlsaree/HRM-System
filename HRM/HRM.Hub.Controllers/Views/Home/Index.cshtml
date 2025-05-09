@@ -1,0 +1,233 @@
+﻿@{
+    ViewData["Title"] = "أحصائيات عامة";
+}
+
+
+<div class="row">
+    <div class="col-md-4">
+        <div class="row align-items-center">
+            <div class="col-md-6 col-lg-6 col-xl-12">
+                <div class="card bg-primary">
+                    <div class="card-body row">
+                        <div class="col">
+                            <span class="avatar lg bg-white rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-file-text fs-5"></i></span>
+                            <h1 class="mt-3 mb-0 fw-bold text-white">14,250</h1>
+                            <span class="text-white">
+                                مجموع الدرجات الوظيفية للجهاز
+                            </span>
+                        </div>
+                        <div class="col">
+                            <img class="img-fluid" src="/assets/images/interview.svg" alt="interview">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-6 col-xl-12 mt-1  flex-column">
+                <div class="card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center flex-fill">
+                            <span class="avatar lg light-success-bg rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-users-alt-2 fs-5"></i></span>
+                            <div class="d-flex flex-column ps-3  flex-fill">
+                                <h6 class="fw-bold mb-0 fs-4">14,000</h6>
+                                <span class="text-muted">ملاك الجهاز</span>
+                            </div>
+                            <i class="icofont-chart-bar-graph fs-3 text-muted"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex align-items-center flex-fill">
+                            <span class="avatar lg light-success-bg rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-holding-hands fs-5"></i></span>
+                            <div class="d-flex flex-column ps-3 flex-fill">
+                                <h6 class="fw-bold mb-0 fs-4">250</h6>
+                                <span class="text-muted">الدرجات الشاغرة</span>
+                            </div>
+                            <i class="icofont-chart-line fs-3 text-muted"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 mt-4 col-lg-6 col-xl-12">
+
+                <div class="card">
+                    <div class="card-header py-3">
+                        <h6 class="mb-0 fw-bold ">نشاطات اليوم</h6>
+                    </div>
+                    <div class="card-body mem-list " style="height:293px">
+                        <div class="timeline-item ti-danger border-bottom ms-2">
+                            <div class="d-flex">
+                                <span class="avatar d-flex justify-content-center align-items-center rounded-circle light-success-bg">حسن</span>
+                                <div class="flex-fill ms-3">
+                                    <div class="mb-1"><strong>اضافة ترفيع</strong></div>
+                                    <span class="d-flex text-muted">منذ 40 دقيقة</span>
+                                </div>
+                            </div>
+                        </div> <!-- timeline item end  -->
+                        <div class="timeline-item ti-info border-bottom ms-2">
+                            <div class="d-flex">
+                                <span class="avatar d-flex justify-content-center align-items-center rounded-circle bg-careys-pink">كرار</span>
+                                <div class="flex-fill ms-3">
+                                    <div class="mb-1"><strong>احتساب شهادة</strong></div>
+                                    <span class="d-flex text-muted">منذ 40 دقيقة</span>
+                                </div>
+                            </div>
+                        </div> <!-- timeline item end  -->
+                        <div class="timeline-item ti-info border-bottom ms-2">
+                            <div class="d-flex">
+                                <span class="avatar d-flex justify-content-center align-items-center rounded-circle bg-careys-pink">عمر</span>
+                                <div class="flex-fill ms-3">
+                                    <div class="mb-1"><strong>اضافة كتاب قدم</strong></div>
+                                    <span class="d-flex text-muted">منذ 1 ساعة</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="timeline-item ti-danger border-bottom ms-2">
+                            <div class="d-flex">
+                                <span class="avatar d-flex justify-content-center align-items-center rounded-circle light-success-bg">حسن</span>
+                                <div class="flex-fill ms-3">
+                                    <div class="mb-1"><strong>اضافة ترفيع</strong></div>
+                                    <span class="d-flex text-muted">منذ 40 دقيقة</span>
+                                </div>
+                            </div>
+                        </div> <!-- timeline item end  -->
+                    </div>
+                </div> <!-- .card: My Timeline -->
+            </div>
+        </div>
+
+    </div>
+    <div class="col-md-8">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+                        <h6 class="mb-0 fw-bold ">التوزيع الاحصائي للملاك</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2 row-deck">
+                            <div class="col-md-6 col-sm-6">
+                                <div class="card">
+                                    <div class="card-body ">
+                                        <i class="icofont-users-alt-2 fs-3"></i>
+                                        <h6 class="mt-3 mb-0 fw-bold small-14">عدد الملاك</h6>
+                                        <span class="text-muted">14,500</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="card">
+                                    <div class="card-body ">
+                                        <i class="icofont-handshake-deal fs-3"></i>
+                                        <h6 class="mt-3 mb-0 fw-bold small-14">عدد المنسبين</h6>
+                                        <span class="text-muted">17</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="card">
+                                    <div class="card-body ">
+                                        <i class="icofont-direction-sign fs-3"></i>
+                                        <h6 class="mt-3 mb-0 fw-bold small-14">المنسبين من الجهاز</h6>
+                                        <span class="text-muted">100</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6 col-sm-6">
+                                <div class="card">
+                                    <div class="card-body ">
+                                        <i class="icofont-direction-sign fs-3"></i>
+                                        <h6 class="mt-3 mb-0 fw-bold small-14">المنسبين الى الجهاز</h6>
+                                        <span class="text-muted">14</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card" style="padding-bottom: 10px;">
+                    <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-1 mb-1">
+                        <h6 class="mb-0 fw-bold ">
+                            التوزيع الملاك
+                        </h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="mt-3" id="apex-MainCategories"></div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-12 mt-4">
+                <div class="card">
+                    <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+                        <h6 class="mb-0 fw-bold ">الأوامر المنجزة خلال السنة الحالية</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="hiringsources"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-12 mt-4">
+        <div class="card light-danger-bg">
+            <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0">
+                <h6 class="mb-0 fw-bold ">انجازات الشهر الحالي</h6>
+            </div>
+            <div class="card-body">
+                <div class="row g-3 align-items-center">
+                    <div class="col-md-12 col-lg-4 col-xl-4 col-xxl-2">
+                        <p>هنالك 140 <span class="fw-bold">امر </span>غير منجز.</p>
+                        <div class="d-flex  justify-content-between text-center">
+                            <div class="">
+                                <h3 class="fw-bold">140</h3>
+                                <span class="small">غير منجز</span>
+                            </div>
+                            <div class="">
+                                <h3 class="fw-bold">130</h3>
+                                <span class="small">منجز </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-12 col-xl-12 col-xxl-10">
+                        <div class="row top-perfomer">
+                            <div class="col">
+                                <div class="card shadow">
+                                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                                        <h6 class="fw-bold my-2 small-14">شعبة العلاوات والترفيعات</h6>
+                                        <h4 class="fw-bold text-primary fs-3">80%</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card shadow">
+                                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                                        <h6 class="fw-bold my-2 small-14">شعبة الملاك</h6>
+                                        <h4 class="fw-bold text-primary fs-3">90%</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card shadow">
+                                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                                        <h6 class="fw-bold my-2 small-14">شعبة التقاعد</h6>
+                                        <h4 class="fw-bold text-primary fs-3">80%</h4>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col">
+                                <div class="card shadow">
+                                    <div class="card-body text-center d-flex flex-column justify-content-center">
+                                        <h6 class="fw-bold my-2 small-14">شعبة الأجازات الدراسية</h6>
+                                        <h4 class="fw-bold text-primary fs-3">50%</h4>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

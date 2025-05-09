@@ -1,0 +1,16 @@
+export const columnsAbsences: { label: string; value: string; className?: string }[] = [
+    { label: '#', value: 'id', className: 'font-bold' },
+    { label: 'الرقم الوظيفي', value: 'jobCode', className: 'font-bold' },
+    { label: 'اسم الموظف', value: 'fullName', className: 'font-bold' },
+    { label: 'رقم الكتاب', value: 'bookNo', className: 'font-bold' },
+    { label: 'تاريخ الكتاب', value: 'bookDate', className: 'font-bold' },
+    { label: 'تاريخ الغياب', value: 'absenceDate', className: 'font-bold' },
+    { label: 'رقم الأمر', value: 'absenceOrderNo', className: 'font-bold' },
+    { label: 'تاريخ الأمر', value: 'absenceOrderDate', className: 'font-bold' },
+    { label: 'رقم الأمر العودة', value: 'returnOrderNo', className: 'font-bold' },
+    { label: 'تاريخ الأمر العودة', value: 'returnOrderDate', className: 'font-bold' },
+    { label: 'عدد الأيام', value: 'countOfDays', className: 'font-bold' },
+    { label: 'الحالة', value: 'statusName', className: 'font-bold' },
+    { label: 'المرفقات', value: 'attachments', className: 'font-bold' },
+    { label: 'الملاحظات', value: 'note', className: 'font-bold' },
+];

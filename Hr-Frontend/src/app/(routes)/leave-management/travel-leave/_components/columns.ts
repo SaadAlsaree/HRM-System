@@ -1,0 +1,17 @@
+export const columnsTravelLeave: { label: string; value: string; className?: string }[] = [
+    { label: 'الرقم الوظيفي', value: 'jobCode', className: 'font-bold' },
+    { label: 'اسم الموظف', value: 'fullName', className: 'font-bold' },
+    { label: 'رقم الأمر الإداري', value: 'orderNo', className: 'font-bold' },
+    { label: 'تاريخ الأمر الإداري', value: 'orderDate', className: 'font-bold' },
+    { label: 'رقم التصريح الأمني', value: 'securityPermissionNo', className: 'font-bold' },
+    { label: 'تاريخ التصريح الأمني', value: 'securityPermissionDate', className: 'font-bold' },
+    { label: 'الدولة', value: 'country', className: 'font-bold' },
+    { label: 'تبدأ بتاريخ', value: 'startDate', className: 'font-bold' },
+    { label: 'تنتهي بتاريخ', value: 'endDate', className: 'font-bold' },
+    { label: 'عدد الأيام', value: 'countOfDays', className: 'font-bold' },
+    { label: 'الرصيد المتبقي', value: 'remainingBalance', className: 'font-bold' },
+    { label: 'الحالة', value: 'statusName', className: 'font-bold' },
+    { label: 'المرفقات', value: 'attachments', className: 'font-bold' },
+    { label: 'الملاحظات', value: 'note', className: 'font-bold' },
+    { label: 'الإجراءات', value: 'actions', className: 'font-bold' },
+];

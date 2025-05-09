@@ -1,0 +1,1336 @@
+﻿@{
+    ViewData["Title"] = "احتسابات الخدمة";
+}
+
+
+<div class="row align-items-center">
+    <div class="border-0 mb-4">
+        <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <h3 class="fw-bold mb-0">@ViewData["Title"]</h3>
+            <div class="col-auto d-flex w-sm-100">
+                <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal" data-bs-target="#service_calculation_page_add_calculation_modal"><i class="icofont-plus-circle me-2 fs-6"></i>&nbsp;اضافة</button>
+            </div>
+        </div>
+    </div>
+</div> <!-- Row end  -->
+
+<div class="row clearfix g-3">
+    <div class="col-md-12">
+        
+        <div class="card mb-3">
+            <div class="card-body">
+                <div class="col-md-12 mb-4">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <select class="form-select">
+                                <option value="-1" selected>عرض كل الحالات</option>
+                                <option>تم الإجراء</option>
+                                <option>قيد التدقيق</option>
+                                <option>قيد الانتظار</option>
+                                <option>قيد محذوف</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="input-group flex-nowrap input-group">
+                                <input type="search" class="form-control" placeholder="بحث..." aria-label="search" aria-describedby="search_btn">
+                                <button type="button" class="input-group-text btn btn-primary" id="search_btn"><i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary btn-block w-100">تحميل ملف Excel</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-12 table-responsive">
+                    <table class="table table-hover table-bordered" id="promotion_emp_thanks_page_form_table">
+                        <thead>
+                            <tr class="bg_table text-center">
+                                <th scope="col">#</th>
+                                <th scope="col">اسم الموظف</th>
+                                <th scope="col">رقم الكتاب</th>
+                                <th scope="col">تاريخ الكتاب</th>
+                                <th scope="col">نوع الاحتساب</th>
+                                <th scope="col">تاريخ الاحتساب</th>
+                                <th scope="col">عدد الاشهر المضافة</th>
+                                <th scope="col">عنوان الكتاب</th>
+                                <th scope="col">الملاحظات</th>
+                                <th scope="col">المرفقات</th>
+                                <th scope="col">الحالة</th>
+                                <th scope="col">الإجرائات</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-center">
+                            <tr>
+                                <td>1</td>
+                                <td>كرار حيدر عبدالامير عبد الياسري</td>
+                                <td>52555</td>
+                                <td>2023-12-10</td>
+                                <td>احتساب شهادة</td>
+                                <td>2023-12-10</td>
+                                <td>36</td>
+                                <td>شكر</td>
+                                <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#view_notes"><i class="icofont-eye"></i></button></td>
+                                <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#ViewAttachment"><i class="icofont-eye"></i></button></td>
+                                <td><span class="badge badge_custom  w-100 bg-success">تم الأجراء</span></td>
+                                <td>
+                                    <div class="btn-group" role="group" aria-label="active">
+                                        <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editDetails"><i class="icofont-eye"></i></button>
+                                        <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editData"><i class="icofont-ui-edit"></i></button>
+                                        <button type="button" class="btn btn-danger text-light" data-bs-toggle="modal" data-bs-target="#deleteData"><i class="icofont-ui-delete"></i></button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="100" class="text-center">
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination justify-content-center">
+                                            <li class="page-item disabled">
+                                                <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                                            </li>
+                                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                            <li class="page-item">
+                                                <a class="page-link" href="#">التالي</a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+        <!-- Modal Popup Dialog for ADD CALCULATION -->
+        <div class="modal fade" id="service_calculation_page_add_calculation_modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl">
+
+                <!-- Use modal-lg for a larger modal -->
+                <div class="modal-content">
+                    <div class="modal-header justify-content-lg-start">
+                        <!-- Add a close button on the top right corner -->
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        <!-- Modal Title -->
+                        <h5 class="modal-title">اضافة احتساب</h5>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mb-4">
+                            <!-- Navbar -->
+                            <div class="col-md-12">
+                                <div class="d-flex project-tab flex-wrap w-sm-100">
+                                    <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
+                                        <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#service_calculation_page_add_calculation_modal_add_thanks_tab" role="tab">كتاب شكر</a></li>
+                                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#service_calculation_page_add_calculation_modal_service_calculation_tab" role="tab">احتساب خدمة</a></li>
+                                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#service_calculation_page_add_calculation_modal_seniority_calculation_tab" role="tab">فترة قدم</a></li>
+                                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#service_calculation_page_add_calculation_modal_education_calculation_tab" role="tab">احتساب شهادة</a></li>
+                                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#service_calculation_page_add_calculation_modal_degree_speedup_tab" role="tab">تسريع درجة</a></li>
+                                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#service_calculation_page_add_calculation_modal_duedate_edit_tab" role="tab">تعديل تاريخ استحقاق</a></li>
+                                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#service_calculation_page_add_calculation_modal_education_correction_tab" role="tab">تصويب التحصيل الدراسي</a></li>
+                                        <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#service_calculation_page_add_calculation_modal_jobtitle_change_tab" role="tab">تغيير العنوان الوظيفي</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-content">
+
+                            <!--ADD THANKS TAB-->
+                            <div class="tab-pane fade show active" id="service_calculation_page_add_calculation_modal_add_thanks_tab" role="tabpanel">
+                                <!-- Container for structured content -->
+
+                                <div class="container">
+                                    <div class="card-body">
+                                        <div class="col-md-4 mt-4 mb-4">
+                                            <div class="input-group mb-2">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2" id="promotion_emp_info_page_search_text">
+                                                    <button class="btn btn-outline-secondary" type="button" id="promotion_emp_info_page_search_button">
+                                                        <i class="icofont-search me-2 fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <form id="service_calculation_page_add_calculation_modal_add_thanks_tab_form">
+                                            <div class="row g-4 align-items-center">
+
+
+
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_lotNo" class="form-label">رقم الاضبارة</label>
+                                                    <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_lotNo" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="promotion_emp_thanks_page_form_statisticalNo" class="form-label">الرقم الاحصائي</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_thanks_page_form_statisticalNo" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksNo" class="form-label">رقم الكتاب</label>
+                                                    <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksNo" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksDate" class="form-label">تاريخ الكتاب</label>
+                                                    <input type="date" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksDate" required>
+                                                </div>
+
+
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksreason" class="form-label">عدد الاشهر المضافة</label>
+                                                    <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksreason" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksfrom" class="form-label">الجهة المانحة</label>
+                                                    <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksfrom" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" class="form-label">تاريخ الاحتساب</label>
+                                                    <input type="date" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="formFileMultipleone" class="form-label">اضافة مرفق</label>
+                                                    <input class="form-control" type="file" id="formFileMultipleone" multiple>
+                                                </div>
+
+
+                                                <div class="col-md-12">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_note" class="form-label">الملاحظات</label>
+                                                    <textarea class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_note" rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary mt-4">حفظ التغييرات</button>
+                                                <button type="button" class="btn btn-secondary mt-4" data-bs-dismiss="modal">إغلاق</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!--SERVICE CALCULATION TAB-->
+                            <div class="tab-pane fade" id="service_calculation_page_add_calculation_modal_service_calculation_tab">
+                                <!-- Container for structured content -->
+
+                                <div class="container">
+                                    <div class="card-body">
+                                        <div class="col-md-4 mt-4 mb-4">
+                                            <div class="input-group mb-2">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2" id="promotion_emp_info_page_search_text">
+                                                    <button class="btn btn-outline-secondary" type="button" id="promotion_emp_info_page_search_button">
+                                                        <i class="icofont-search me-2 fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <form>
+                                            <div class="row g-4 align-items-center">
+
+
+
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_lotNo" class="form-label">رقم الاضبارة</label>
+                                                    <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_lotNo" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="promotion_emp_thanks_page_form_statisticalNo" class="form-label">الرقم الاحصائي</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_thanks_page_form_statisticalNo" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksNo" class="form-label">رقم الامر الاداري</label>
+                                                    <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksNo" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksDate" class="form-label">تاريخ الامر الاداري</label>
+                                                    <input type="date" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksDate" required>
+                                                </div>
+
+
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksreason" class="form-label">نوع الخدمة</label>
+                                                    <select class="form-select">
+                                                        <option value="فصل سياسي">فصل سياسي</option>
+                                                        <option value="خدمة جهادية">خدمة جهادية</option>
+                                                        <option value="خدمة عقد">خدمة عقد</option>
+                                                        <option value="خدمة ملاك">خدمة ملاك</option>
+                                                        <option value="خدمة اجر يومي">خدمة اجر يومي</option>
+                                                        <option value="خدمة محاماة">خدمة محاماة</option>
+                                                        <option value="خدمة صحافة">خدمة صحافة</option>
+                                                        <option value="خدمة هندسية">خدمة هندسية</option>
+                                                        <option value="خدمة ضمان اجتماعي">خدمة ضمان اجتماعي</option>
+                                                    </select>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksfrom" class="form-label">الوزارة</label>
+                                                    <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_thanksfrom" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" class="form-label">الدائرة</label>
+                                                    <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="formFileMultipleone" class="form-label">اضافة مرفق</label>
+                                                    <input class="form-control" type="file" id="formFileMultipleone" multiple>
+                                                </div>
+
+
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" class="form-label">من تاريخ</label>
+                                                    <input type="date" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" class="form-label">الى تاريخ</label>
+                                                    <input type="date" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" required>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" class="form-label">عدد السنين</label>
+                                                    <input type="number" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" class="form-label">عدد الاشهر</label>
+                                                    <input type="number" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" readonly>
+                                                </div>
+                                                <div class="col-md-2">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" class="form-label">عدد الايام</label>
+                                                    <input type="number" class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_calculationdate" readonly>
+                                                </div>
+                                                
+
+
+                                                <div class="col-md-12">
+                                                    <label for="service_calculation_page_add_calculation_modal_add_thanks_tab_note" class="form-label">الملاحظات</label>
+                                                    <textarea class="form-control" id="service_calculation_page_add_calculation_modal_add_thanks_tab_note" rows="3"></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary mt-4">حفظ التغييرات</button>
+                                                <button type="button" class="btn btn-secondary mt-4" data-bs-dismiss="modal">إغلاق</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!--SENIORITY CALCULATION TAB-->
+                            <div class="tab-pane fade" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab">
+                                <!-- Container for structured content -->
+
+                                <div class="container">
+                                    <div class="card-body">
+                                        <div class="col-md-4 mt-4 mb-4">
+                                            <div class="input-group mb-2">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2" id="promotion_emp_info_page_search_text">
+                                                    <button class="btn btn-outline-secondary" type="button" id="promotion_emp_info_page_search_button">
+                                                        <i class="icofont-search me-2 fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <form id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_form">
+                                            <div class="row g-4 align-items-center">
+
+                                                <div class="col-md-4">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_lotNo" class="form-label">رقم الاضبارة</label>
+                                                    <input type="number" class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_lotNo" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_statisticalNo" class="form-label">الرقم الاحصائي</label>
+                                                    <input type="number" class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_statisticalNo" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_senioritytype" class="form-label">نوع القدم</label>
+                                                    <input type="text" class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_senioritytype" required>
+                                                </div>
+
+
+                                                <div class="col-md-4">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_bookNo" class="form-label">رقم الكتاب</label>
+                                                    <input type="number" class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_bookNo" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_bookDate" class="form-label">تاريخ الكتاب</label>
+                                                    <input type="date" class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_bookDate" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_senioritymonth" class="form-label">عدد أشهر القدم</label>
+                                                    <input type="number" class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_senioritymonth" required>
+                                                </div>
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_calculationDate" class="form-label">تاريخ الاحتساب</label>
+                                                    <input type="date" class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_calculationDate" required>
+                                                </div>
+                                                <!--Need IDs-->
+                                                <div class="col-md-4">
+                                                    <label class="form-label">تم الاحتساب</label>
+                                                    <div class="border p-2">
+                                                        <label class="fancy-checkbox">
+                                                            <input type="checkbox" name="checkbox">
+                                                            <span>تأشير</span>
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="formFileMultipleone" class="form-label">اضافة مرفق</label>
+                                                    <input class="form-control" type="file" id="formFileMultipleone" multiple>
+                                                </div>
+
+
+
+                                                <div class="col-md-12">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_note" class="form-label">الملاحظات</label>
+                                                    <textarea class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_note" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary mt-4">حفظ التغييرات</button>
+                                                <button type="button" class="btn btn-secondary mt-4" data-bs-dismiss="modal">إغلاق</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!--EDUCATION CALCULATION TAB (NEED IDs)-->
+                            <div class="tab-pane fade" id="service_calculation_page_add_calculation_modal_education_calculation_tab">
+                                <!-- Container for structured content -->
+
+                                <div class="container">
+                                    <div class="card-body">
+                                        <div class="col-md-4 mt-4 mb-4">
+                                            <div class="input-group mb-2">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2" id="promotion_emp_info_page_search_text">
+                                                    <button class="btn btn-outline-secondary" type="button" id="promotion_emp_info_page_search_button">
+                                                        <i class="icofont-search me-2 fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <form id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_form">
+                                            <div class="row g-4 align-items-center">
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_lotNo" class="form-label">رقم الاضبارة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_lotNo" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousdegree" class="form-label">الرقم الاحصائي</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousdegree" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousjobtitle" class="form-label">العنوان الوظيفي السابق</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousjobtitle" readonly>
+                                                </div>
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatedegree" class="form-label">الدرجة السابقة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatedegree" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previouscategory" class="form-label">الفئة السابقة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previouscategory" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatecategory" class="form-label">التحصيل الدراسي السابق</label>
+                                                    <input type="text" class="form-control" id="a-p-d-d-category" readonly>
+                                                </div>
+
+
+                                                <hr />
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newdegree" class="form-label">الدرجة الجديدة</label>
+                                                    <input type="text" class="form-control" id="newdegree" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" class="form-label">تاريخ التسكين</label>
+                                                    <input type="date" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" class="form-label">العنوان الوظيفي الجديد</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" required>
+                                                </div>
+
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newcategory" class="form-label">الفئة الجديدة</label>
+                                                    <input type="text" class="form-control" id="newcategory" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" class="form-label">تاريخ التسكين</label>
+                                                    <input type="date" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatecategory" class="form-label">التحصيل الدراسي الجديد</label>
+                                                    <input type="text" class="form-control" id="a-p-d-d-category" required>
+                                                </div>
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_adminorderNo" class="form-label">رقم الامر الاداري</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_adminorderNo" required>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" class="form-label">تاريخ الامر الاداري</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="formFileMultipleone" class="form-label">اضافة مرفق</label>
+                                                    <input class="form-control" type="file" id="formFileMultipleone" multiple>
+                                                </div>
+
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newdegree" class="form-label">من</label>
+                                                    <input type="text" class="form-control" id="newdegree" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newcategory" class="form-label">الى</label>
+                                                    <input type="text" class="form-control" id="newcategory" required>
+                                                </div>
+
+
+
+                                                <!--Need IDs-->
+
+
+                                                <div class="col-md-12">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_note" class="form-label">الملاحظات</label>
+                                                    <textarea class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_note" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary mt-4">حفظ التغييرات</button>
+                                                <button type="button" class="btn btn-secondary mt-4" data-bs-dismiss="modal">إغلاق</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!--DEGREE SPEEDUP CALCULATION TAB (NEED IDs)-->
+                            <div class="tab-pane fade" id="service_calculation_page_add_calculation_modal_degree_speedup_tab">
+                                <!-- Container for structured content -->
+
+                                <div class="container">
+                                    <div class="card-body">
+                                        <div class="col-md-4 mt-4 mb-4">
+                                            <div class="input-group mb-2">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2" id="promotion_emp_info_page_search_text">
+                                                    <button class="btn btn-outline-secondary" type="button" id="promotion_emp_info_page_search_button">
+                                                        <i class="icofont-search me-2 fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <form id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_form">
+                                            <div class="row g-4 align-items-center">
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_lotNo" class="form-label">رقم الاضبارة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_lotNo" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousdegree" class="form-label">الرقم الاحصائي</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousdegree" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousjobtitle" class="form-label">العنوان الوظيفي السابق</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousjobtitle" readonly>
+                                                </div>
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatedegree" class="form-label">الدرجة السابقة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatedegree" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previouscategory" class="form-label">الفئة السابقة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previouscategory" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatecategory" class="form-label">التحصيل الدراسي السابق</label>
+                                                    <input type="text" class="form-control" id="a-p-d-d-category" readonly>
+                                                </div>
+
+
+                                                <hr />
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newdegree" class="form-label">الدرجة الجديدة</label>
+                                                    <input type="text" class="form-control" id="newdegree" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" class="form-label">تاريخ التسكين</label>
+                                                    <input type="date" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" class="form-label">العنوان الوظيفي الجديد</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" required>
+                                                </div>
+
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newcategory" class="form-label">الفئة الجديدة</label>
+                                                    <input type="text" class="form-control" id="newcategory" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" class="form-label">تاريخ التسكين</label>
+                                                    <input type="date" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatecategory" class="form-label">التحصيل الدراسي الجديد</label>
+                                                    <input type="text" class="form-control" id="a-p-d-d-category" required>
+                                                </div>
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_adminorderNo" class="form-label">رقم الامر الاداري</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_adminorderNo" required>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" class="form-label">تاريخ الامر الاداري</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="formFileMultipleone" class="form-label">اضافة مرفق</label>
+                                                    <input class="form-control" type="file" id="formFileMultipleone" multiple>
+                                                </div>
+
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newdegree" class="form-label">من</label>
+                                                    <input type="text" class="form-control" id="newdegree" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newcategory" class="form-label">الى</label>
+                                                    <input type="text" class="form-control" id="newcategory" required>
+                                                </div>
+
+
+
+                                                <!--Need IDs-->
+
+
+                                                <div class="col-md-12">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_note" class="form-label">الملاحظات</label>
+                                                    <textarea class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_note" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary mt-4">حفظ التغييرات</button>
+                                                <button type="button" class="btn btn-secondary mt-4" data-bs-dismiss="modal">إغلاق</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!--DUE DATE EDIT TAB (NEED IDs)-->
+                            <div class="tab-pane fade" id="service_calculation_page_add_calculation_modal_duedate_edit_tab">
+                                <!-- Container for structured content -->
+
+                                <div class="container">
+                                    <div class="card-body">
+                                        <div class="col-md-4 mt-4 mb-4">
+                                            <div class="input-group mb-2">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2" id="promotion_emp_info_page_search_text">
+                                                    <button class="btn btn-outline-secondary" type="button" id="promotion_emp_info_page_search_button">
+                                                        <i class="icofont-search me-2 fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <form id="promotion_emp_info_page_add_promotion_modal_form">
+                                            <div class="row g-4 align-items-center">
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_lotNo" class="form-label">رقم الاضبارة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_lotNo" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousdegree" class="form-label">الدرجةالوظيفية</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousdegree" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatedegree" class="form-label">تاريخ التسكين القديم للدرجة</label>
+                                                    <input type="date" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatedegree" readonly>
+                                                </div>
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousdegree" class="form-label">الرقم الاحصائي</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousdegree" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previouscategory" class="form-label">الفئة الوظيفية</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previouscategory" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatecategory" class="form-label">تاريخ التسكين القديم للفئة</label>
+                                                    <input type="date" class="form-control" id="a-p-d-d-category" readonly>
+                                                </div>
+
+
+                                                <hr />
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newdegree" class="form-label">تاريخ التسكين الجديد للدرجة</label>
+                                                    <input type="date" class="form-control" id="newdegree" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatenewdegree" class="form-label">تاريخ التسكين الجديد للفئة</label>
+                                                    <input type="date" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatenewdegree" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="formFileMultipleone" class="form-label">اضافة مرفق</label>
+                                                    <input class="form-control" type="file" id="formFileMultipleone" multiple>
+                                                </div>
+
+
+
+                                                <div class="col-md-6">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newcategory" class="form-label">رقم الامر الاداري</label>
+                                                    <input type="text" class="form-control" id="newcategory" required>
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" class="form-label">تاريخ الامر الاداري</label>
+                                                    <input type="date" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" required>
+                                                </div>
+
+
+
+
+                                                <div class="col-md-12">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_note" class="form-label">الملاحظات</label>
+                                                    <textarea class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_note" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary mt-4">حفظ التغييرات</button>
+                                                <button type="button" class="btn btn-secondary mt-4" data-bs-dismiss="modal">إغلاق</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <!--EDUCATION CORRECTION TAB (NEED IDs)-->
+                            <div class="tab-pane fade" id="service_calculation_page_add_calculation_modal_education_correction_tab">
+                                <!-- Container for structured content -->
+
+                                <div class="container">
+                                    <div class="card-body">
+                                        <div class="col-md-4 mt-4 mb-4">
+                                            <div class="input-group mb-2">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2" id="promotion_emp_info_page_search_text">
+                                                    <button class="btn btn-outline-secondary" type="button" id="promotion_emp_info_page_search_button">
+                                                        <i class="icofont-search me-2 fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <form id="service_calculation_page_add_calculation_modal_education_correction_tab_form">
+                                            <div class="row g-4 align-items-center">
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_lotNo" class="form-label">رقم الاضبارة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_lotNo" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousdegree" class="form-label">الرقم الاحصائي</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousdegree" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousjobtitle" class="form-label">العنوان الوظيفي السابق</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousjobtitle" readonly>
+                                                </div>
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatedegree" class="form-label">الدرجة السابقة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatedegree" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previouscategory" class="form-label">الفئة السابقة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previouscategory" readonly>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatecategory" class="form-label">التحصيل الدراسي السابق</label>
+                                                    <input type="text" class="form-control" id="a-p-d-d-category" readonly>
+                                                </div>
+
+
+                                                <hr />
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newdegree" class="form-label">الدرجة الجديدة</label>
+                                                    <input type="text" class="form-control" id="newdegree" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" class="form-label">تاريخ التسكين</label>
+                                                    <input type="date" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" class="form-label">العنوان الوظيفي الجديد</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" required>
+                                                </div>
+
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newcategory" class="form-label">الفئة الجديدة</label>
+                                                    <input type="text" class="form-control" id="newcategory" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" class="form-label">تاريخ التسكين</label>
+                                                    <input type="date" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatecategory" class="form-label">التحصيل الدراسي الجديد</label>
+                                                    <input type="text" class="form-control" id="a-p-d-d-category" required>
+                                                </div>
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_adminorderNo" class="form-label">رقم الامر الاداري</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_adminorderNo" required>
+                                                </div>
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" class="form-label">تاريخ الامر الاداري</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="formFileMultipleone" class="form-label">اضافة مرفق</label>
+                                                    <input class="form-control" type="file" id="formFileMultipleone" multiple>
+                                                </div>
+
+
+
+
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newdegree" class="form-label">من</label>
+                                                    <input type="text" class="form-control" id="newdegree" required>
+                                                </div>
+                                                <div class="col-md-4">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newcategory" class="form-label">الى</label>
+                                                    <input type="text" class="form-control" id="newcategory" required>
+                                                </div>
+
+
+
+                                                <!--Need IDs-->
+
+
+                                                <div class="col-md-12">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_note" class="form-label">الملاحظات</label>
+                                                    <textarea class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_note" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary mt-4">حفظ التغييرات</button>
+                                                <button type="button" class="btn btn-secondary mt-4" data-bs-dismiss="modal">إغلاق</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                            <!--JOBTITLE CHANGE TAB (NEED IDs)-->
+                            <div class="tab-pane fade" id="service_calculation_page_add_calculation_modal_jobtitle_change_tab">
+                                <!-- Container for structured content -->
+
+                                <div class="container">
+                                    <div class="card-body">
+                                        <div class="col-md-4 mt-4 mb-4">
+                                            <div class="input-group mb-2">
+                                                <div class="input-group">
+                                                    <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2" id="promotion_emp_info_page_search_text">
+                                                    <button class="btn btn-outline-secondary" type="button" id="promotion_emp_info_page_search_button">
+                                                        <i class="icofont-search me-2 fs-6"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <hr />
+                                        <form id="service_calculation_page_add_calculation_modal_education_correction_tab_form">
+                                            <div class="row g-4 align-items-center">
+
+                                                <div class="col-md-3">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_lotNo" class="form-label">رقم الاضبارة</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_lotNo" readonly>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousdegree" class="form-label">الرقم الاحصائي</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousdegree" readonly>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousjobtitle" class="form-label">الدرجة الوظيفية</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousjobtitle" readonly>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_previousjobtitle" class="form-label">العنوان الوظيفي السابق</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_previousjobtitle" readonly>
+                                                </div>
+
+
+
+                                                <hr />
+
+
+
+                                                <div class="col-md-3">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" class="form-label">العنوان الوظيفي الجديد</label>
+                                                    <input type="text" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_newjobtitle" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_newcategory" class="form-label">رقم الامر الاداري</label>
+                                                    <input type="text" class="form-control" id="newcategory" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" class="form-label">تاريخ الامر الاداري</label>
+                                                    <input type="date" class="form-control" id="promotion_emp_info_page_add_promotion_modal_form_duedatenewcategory" required>
+                                                </div>
+                                                <div class="col-md-3">
+                                                    <label for="formFileMultipleone" class="form-label">اضافة مرفق</label>
+                                                    <input class="form-control" type="file" id="formFileMultipleone" multiple>
+                                                </div>
+
+
+                                                <!--Need IDs-->
+
+
+                                                <div class="col-md-12">
+                                                    <label for="service_calculation_page_add_calculation_modal_seniority_calculation_tab_note" class="form-label">الملاحظات</label>
+                                                    <textarea class="form-control" id="service_calculation_page_add_calculation_modal_seniority_calculation_tab_note" rows="3" required></textarea>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="submit" class="btn btn-primary mt-4">حفظ التغييرات</button>
+                                                <button type="button" class="btn btn-secondary mt-4" data-bs-dismiss="modal">إغلاق</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!--NOTES MODAL-->
+        <div class="modal fade modal-lg" id="view_notes" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title align-content-center fw-bold" id="depaddLabel">الملاحظات</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="col-md-12">
+                            <label for="promotion_emp_disciplinary_page_form_note" class="form-label">الملاحظات</label>
+                            <textarea class="form-control" id="promotion_emp_disciplinary_page_form_note" rows="3" readonly></textarea>
+                        </div>
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <!--EDIT DATA MODAL-->
+        <div class="modal fade" id="editData" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title  fw-bold" id="depaddLabel">اضافة موظف</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="exampleFormControlInput1111" class="form-label">اسم الموظف الثلاثي</label>
+                            <input type="search" class="form-control" id="exampleFormControlInput1111">
+                        </div>
+                        <div class="deadline-form">
+                            <form>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-sm-6">
+                                        <label for="deptwo" class="form-label">الدائرة او المديرية</label>
+                                        <select class="form-select" aria-label="Default select Project Category">
+                                            <option selected=""></option>
+                                            <option value="1"></option>
+                                            <option value="2"></option>
+                                            <option value="3"></option>
+                                            <option value="4"></option>
+                                            <option value="5"></option>
+                                            <option value="6"></option>
+                                            <option value="7"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="deptwo" class="form-label">المنصب</label>
+                                        <select class="form-select" aria-label="Default select Project Category">
+                                            <option selected=""></option>
+                                            <option value="1"></option>
+                                            <option value="2"></option>
+                                            <option value="3"></option>
+                                            <option value="4"></option>
+                                            <option value="5"></option>
+                                            <option value="6"></option>
+                                            <option value="7"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-sm-6">
+                                        <label for="depone" class="form-label">الدائرة المنقول منها</label>
+                                        <select class="form-select" aria-label="Default select Project Category">
+                                            <option selected="">s</option>
+                                            <option value="1"></option>
+                                            <option value="2"></option>
+                                            <option value="3"></option>
+                                            <option value="4"></option>
+                                            <option value="5"></option>
+                                            <option value="6"></option>
+                                            <option value="7"></option>
+                                        </select>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="deptwo" class="form-label">الدائرة المنقول اليها</label>
+                                        <select class="form-select" aria-label="Default select Project Category">
+                                            <option selected=""></option>
+                                            <option value="1"></option>
+                                            <option value="2"></option>
+                                            <option value="3"></option>
+                                            <option value="4"></option>
+                                            <option value="5"></option>
+                                            <option value="6"></option>
+                                            <option value="7"></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-sm-6">
+                                        <label for="depone" class="form-label">رقم الانفكاك</label>
+                                        <input type="text" class="form-control" id="depone">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="deptwo" class="form-label">تاريح الانفكاك</label>
+                                        <input type="date" class="form-control" id="datetimePicker" name="datetime">
+                                    </div>
+                                </div>
+                                <div class="row g-3 mb-3">
+                                    <div class="col-sm-6">
+                                        <label for="depone" class="form-label">رقم المباشرة</label>
+                                        <input type="text" class="form-control" id="depone">
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <label for="deptwo" class="form-label">تاريح المباشرة</label>
+                                        <input type="date" class="form-control" id="datetimePicker" name="datetime">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="exampleFormControlInput1111" class="form-label">الاجرائات</label>
+                                    <input type="text" class="form-control" id="exampleFormControlInput1111">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                        <button type="submit" class="btn btn-primary">تعديل</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--VIEW ATTACHMENT MODAL-->
+        <div class="modal fade" id="ViewAttachment" tabindex="-1" aria-labelledby="ViewAttachmentTitle" style="display: none;" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="ViewAttachmentTitle">مرفقات قيد #<b id="recordName">حسن حافظ عبيد  ناصر الموسوي</b></h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="card-body">
+
+                                <div class="row align-items-center">
+                                    <div class="col-md-2">
+                                    </div>
+                                    <div class="border-0 mb-4 col-md-8">
+                                        <div class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                                            <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
+                                                <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
+                                                    <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#view_attach" role="tab">عرض المرفقات</a></li>
+                                                    <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#add_attach" role="tab">اضافة مرفقات</a></li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div> <!-- Row end  -->
+                                <div class="row align-items-center">
+                                    <div class="col-lg-12 col-md-12 flex-column">
+                                        <div class="tab-content mt-4">
+                                            <div class="tab-pane fade show active" id="view_attach">
+                                                <div class="row">
+                                                    <div class="col-md-1">
+                                                    </div>
+
+                                                    <div class="col-md-10">
+                                                        <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0 w-100">
+                                                            <div class="input-group flex-nowrap input-group">
+                                                                <input type="search" class="form-control" placeholder="بحث..." aria-label="search" aria-describedby="search_btn">
+                                                                <button type="button" class="input-group-text btn btn-primary" id="search_btn"><i class="fa fa-search"></i></button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1">
+                                                    <div class="py-2 d-flex align-items-center border-bottom">
+                                                        <div class="d-flex ms-3 align-items-center flex-fill">
+                                                            <span class="avatar lg bg-lightgreen rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-file-pdf fs-5"></i></span>
+                                                            <div class="d-flex flex-column ps-3">
+                                                                <div>
+                                                                    <span class="fw-bold ms-1">file1.pdf</span>
+                                                                    <span class="text-muted ms-1 d-block">تخويل دخول السيارة 258825 2023-01-01</span>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <button type="button" class="btn bg-lightgreen text-end"><i class="icofont-cloud-download"></i></button>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                            <div class="tab-pane fade" id="add_attach">
+                                                <div class="card">
+                                                    <div class="card-body">
+                                                        <div class="row g-3 mb-3">
+                                                            <div class="col-sm-12">
+                                                                <label for="fileimg" class="form-label">اختر الملف</label>
+                                                                <input type="File" class="form-control" id="fileimg">
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <label for="depone" class="form-label">رقم الكتاب</label>
+                                                                <input type="text" class="form-control" id="depone">
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <label for="abc" class="form-label">تاريخ الكتاب</label>
+                                                                <input type="date" class="form-control" id="abc">
+                                                            </div>
+                                                            <div class="col-sm-12">
+                                                                <label for="abc" class="form-label">عنوان الكتاب</label>
+                                                                <input type="text" class="form-control" id="abc">
+                                                            </div>
+                                                        </div>
+                                                        <div class="row g-3 mb-3">
+                                                            @* <div class="col-sm-12">
+                                                            <h6>اضف تفاصيل اخرى عن الملف</h6>
+                                                            </div>
+                                                            <div class="row g-3 mb-3" id="addfield">
+
+                                                            </div>
+                                                            <div class="row g-3 mb-3">
+                                                            <div class="col-md-10">
+
+                                                            </div>
+                                                            <div class="col-md-2">
+                                                            <button type="button" onclick="AddFieldToAttachment()" class="btn btn-outline-info"><i class="icofont-plus"></i></button>
+                                                            </div>
+                                                            </div> *@
+                                                            <button type="button" class="btn btn-primary">حفظ الملف</button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <!--DELETE DATA MODAL-->
+        <div class="modal fade" id="deleteData" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title  fw-bold" id="deletedataLabel">هل تريد حذف البيانات نهائياً؟</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body justify-content-center flex-column d-flex">
+                        <i class="icofont-ui-delete text-danger display-2 text-center mt-2"></i>
+                        <p class="mt-4 fs-5 text-center">يرجى الانتباه, لا يمكن استرجاع البيانات بعد حذفها!</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إلغاء</button>
+                        <button type="button" class="btn btn-danger color-fff">حذف نهائياً</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--Edit MODAL-->
+        <div class="modal fade  modal-xl" id="editDetails" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title  fw-bold" id="depaddLabel"> المعلومات</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row mt-4"></div>
+                        <div class="row">
+                            <div class="col">
+
+                                <label for="issueAuthority" style="font-weight: bold; font-size: 16px;">اسم الموظف </label>
+                                <div class="form-control text-center" id="issueAuthority" style="font-size: 18px;">saf</div>
+
+                            </div>
+                            <div class="col">
+
+                                <label for="studyType" style="font-weight: bold; font-size: 16px;">الجهة المنسب اليها</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">fasfsa</div>
+
+                            </div>
+                            <div class="col">
+
+                                <label for="studyType" style="font-weight: bold; font-size: 16px;">مدة التنسيب بالشهر</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">fsafa</div>
+
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <label for="studyType" style="font-weight: bold; font-size: 16px;">رقم الانفكاك</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">saffsa</div>
+                            </div>
+                            <div class="col">
+                                <label for="studyType" style="font-weight: bold; font-size: 16px;">تاريخ الانفكاك</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">fsafsaf</div>
+                            </div>
+                            <div class="col-md-4">
+                                <label for="studyType" style="font-weight: bold; font-size: 16px;">رقم المباشرة</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">fasfsa</div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <label for="studyType" style=" font-size: 16px;">تاريخ المباشرة</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">safasfasf</div>
+                            </div>
+                            <div class="col">
+                                <label for="studyType" style=" font-size: 16px;">الامر الاداري بنتهاء التنسيب</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">sfafsaf</div>
+                            </div>
+
+                            <div class="col">
+                                <label for="studyType" style=" font-size: 16px;"> رقم الانفكاك بعد انتهاء التنسيب</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">asfasf</div>
+                            </div>
+                        </div>
+                        <div class="row">
+
+                            <div class="col">
+                                <label for="studyType" style=" font-size: 16px;">تاريخ الانفكاك بعد انتهاء التنسيب</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">afsfs</div>
+                            </div>
+                            <div class="col">
+                                <label for="studyType" style=" font-size: 16px;">رقم المباشرة بعد انتهاء التنسيب</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">asfasf</div>
+                            </div>
+                            <div class="col">
+                                <label for="studyType" style=" font-size: 16px;">تاريخ المباشرة بعد انتهاء التنسيب</label>
+                                <div class="form-control text-center" id="studyType" style="font-size: 18px;">saffsa</div>
+                            </div>
+                        </div>
+                        <div class="form-group text-center">
+                            <label for="studyType" style=" font-size: 16px;">الملاحظات</label>
+                            <div class="form-control text-center" id="studyType" style="font-size: 18px;">saffsa</div>
+                        </div>
+                        <div class="form-group text-center">
+                            <label for="studyType" style=" font-size: 16px;">الاجراءات</label>
+                            <div class="form-control text-center" id="studyType" style="font-size: 18px;">safasfsaf</div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                        <button type="submit" class="btn btn-primary">اضافة</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+    </div>
+</div><!-- Row End -->

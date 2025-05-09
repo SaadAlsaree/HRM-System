@@ -1,0 +1,426 @@
+﻿@{
+    ViewData["Title"] = "عنوان الصفحة";
+
+}
+
+
+<div class="container-xxl">
+    <div class="row clearfix mb-5">
+        <div class="col-md-2">
+            <select class="form-select form-select">
+                <option value="-1" selected>عرض كل الموظفين</option>
+                <option>تقاعد</option>
+                <option>دراسات</option>
+                <option>ملاك</option>
+                <option>منسب</option>
+                <option>مكلف</option>
+                <option>ممثل</option>
+                <option>منتدب</option>
+                <option>متوفي</option>
+                <option>شهيد</option>
+                <option>جريح</option>
+                <option>مستمر بالخدمة</option>
+                <option>غير مستمر بالخدمة</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <select class="form-select form-select">
+                <option value="-1" selected>عرض كل الحالات</option>
+                <option>تم الإجراء</option>
+                <option>قيد التدقيق</option>
+                <option>قيد الانتظار</option>
+                <option>قيد محذوف</option>
+            </select>
+        </div>
+        <div class="col-md-3">
+            <div class="input-group flex-nowrap input-group">
+                <input type="search" class="form-control" placeholder="بحث..." aria-label="search" aria-describedby="search_btn">
+                <button type="button" class="input-group-text btn btn-primary" id="search_btn"><i class="fa fa-search"></i></button>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <select class="form-select form-select">
+                <option value="-1" selected>بحث عام</option>
+                <option>بحث بواسطة اسم الام</option>
+            </select>
+        </div>
+        <div class="col-md-2">
+            <button type="button" class="btn btn-dark ms-1 w-100 " data-bs-toggle="modal" data-bs-target="#CreateEmployee"><i class="icofont-plus-circle me-2 fs-6"></i>اضافة موظف</button>
+        </div>
+    </div><!-- Row End -->
+    <div class="row">
+        <div class="col-md-3 mt-2">
+            <div class="card teacher-card mb-3 flex-column">
+                <div class="card-body d-flex teacher-fulldeatil flex-column">
+                    <div class="profile-teacher text-center w220 mx-auto">
+                        <a href="/Employee/Profile">
+                            <img src="~/assets/images/lg/14.jpg" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
+                        </a>
+                        <button class="btn btn-light" style="position: absolute;top:15px;right: 15px;" data-bs-toggle="modal" data-bs-target="#expedit"><i class="icofont-edit"></i></button>
+                        <div class="about-info d-flex align-items-center mt-3 justify-content-center flex-column">
+                            <span class="text-muted small">الرقم الوظيفي : Con-0001</span>
+                        </div>
+                    </div>
+                    <div class="teacher-info   w-100">
+                        <h6 class="mb-0 mt-2  fw-bold d-block fs-6 text-center">حسن حافظ عبيد ناصر الموسوي</h6>
+                        <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted text-center mx-auto d-block">معاون مهندس</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mt-2">
+
+            <div class="card teacher-card mb-3 flex-column">
+                <div class="card-body d-flex teacher-fulldeatil flex-column">
+                    <div class="profile-teacher text-center w220 mx-auto">
+                        <a href="/Employee/Profile">
+                            <img src="~/assets/images/lg/13.jpg" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
+                        </a>
+                        <button class="btn btn-light" style="position: absolute;top:15px;right: 15px;" data-bs-toggle="modal" data-bs-target="#expedit"><i class="icofont-edit"></i></button>
+                        <div class="about-info d-flex align-items-center mt-3 justify-content-center flex-column">
+                            <span class="text-muted small">الرقم الوظيفي : Con-0001</span>
+                        </div>
+                    </div>
+                    <div class="teacher-info   w-100">
+                        <h6 class="mb-0 mt-2  fw-bold d-block fs-6 text-center">عمر نبيل ابراهيم يونس</h6>
+                        <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted text-center mx-auto d-block">معاون مهندس</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mt-2">
+            <div class="card teacher-card mb-3 flex-column">
+                <div class="card-body d-flex teacher-fulldeatil flex-column">
+                    <div class="profile-teacher text-center w220 mx-auto">
+                        <a href="/Employee/Profile">
+                            <img src="~/assets/images/lg/12.jpg" alt="" class="avatar xl rounded-circle img-thumbnail shadow-sm">
+                        </a>
+                        <button class="btn btn-light" style="position: absolute;top:15px;right: 15px;" data-bs-toggle="modal" data-bs-target="#expedit"><i class="icofont-edit"></i></button>
+                        <div class="about-info d-flex align-items-center mt-3 justify-content-center flex-column">
+                            <span class="text-muted small">الرقم الوظيفي : Con-0001</span>
+                        </div>
+                    </div>
+                    <div class="teacher-info   w-100">
+                        <h6 class="mb-0 mt-2  fw-bold d-block fs-6 text-center">عبدالله قاسم صادق محمد</h6>
+                        <span class="py-1 fw-bold small-11 mb-0 mt-1 text-muted text-center mx-auto d-block">معاون مهندس</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Create Employee-->
+<div class="modal fade" id="CreateEmployee" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title  fw-bold " id="createprojectlLabel"> اضافة موظف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+
+
+                <div class="row mb-3">
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">الرقم الوظيفي</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل الرقم الوظيفي">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">رقم الاضبارة</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل رقم الاضبارة">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label"> رمز الموظف</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل رمز الموظف">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">الأسم الأول</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل الأسم الأول">
+                    </div>
+
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">الأسم الثاني</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل الأسم الثاني">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">الأسم الثالث</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل الأسم الثالث">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">الأسم الرابع</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل الأسم الرابع">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">اللقب</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل اللقب">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">أسم الأم الأول</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل أسم الأم الأول">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">اسم الأم الثاني</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل أسم الأم الثاني">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">اسم الأم الثالث</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل أسم الأم الثالث">
+                    </div>
+                    <div class="col-md-2 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">لقب الأم</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل لقب الأم">
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label class="form-label">الجنس</label>
+                        <select class="form-select">
+                            <option selected="">حدد جنس الموظف</option>
+                            <option value="1">ذكر</option>
+                            <option value="2">انثى</option>
+                        </select>
+                    </div>
+
+                    <div class="col-md-3 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">محل الولادة</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل محل الولادة">
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">تاريخ الميلاد</label>
+                        <input type="date" class="form-control" id="exampleFormControlInput877">
+                    </div>
+
+                    <div class="col-md-3 mt-2">
+                        <label class="form-label">الحالة الأجتماعية</label>
+                        <select class="form-select" name="" id="CrimeTypeAdd">
+                            <option value="موظف">اعزب</option>
+                            <option value="موظف">متزوج</option>
+                            <option value="موظف">ارمل</option>
+                            <option value="موظف">مطلق</option>
+                        </select>
+                    </div>
+                    <hr class="mt-2" />
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label">هل الموظف خاضع للفحص الطبي؟</label>
+                        <select class="form-select" name="">
+                            <option value="موظف">نعم</option>
+                            <option value="موظف">كلا</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label">هل الموظف لديه لائحة سلوك؟</label>
+                        <select class="form-select" name="">
+                            <option value="موظف">نعم</option>
+                            <option value="موظف">كلا</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <label class="form-label">هل الموظف لديه صحة صدور بالوثيقة الدراسية؟</label>
+                        <select class="form-select" name="">
+                            <option value="موظف">نعم</option>
+                            <option value="موظف">كلا</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label for="exampleFormControlInput877" class="form-label">تاريخ التعيين</label>
+                        <input type="date" class="form-control" id="exampleFormControlInput877">
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label class="form-label">هل الموظف منقول من خارج الجهاز؟</label>
+                        <select class="form-select" name="">
+                            <option value="موظف">نعم</option>
+                            <option value="موظف">كلا</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label class="form-label">تعيين 220</label>
+                        <select class="form-select" name="">
+                            <option value="موظف">نعم</option>
+                            <option value="موظف">كلا</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mt-2">
+                        <label class="form-label">حالة الموظف</label>
+                        <select class="form-select" name="">
+                            <option selected="">حدد حالة الموظف</option>
+                            <option value="موظف">مستمر في الجهاز</option>
+                            <option value="موظف">متوفي</option>
+                            <option value="موظف">شهيد</option>
+                            <option value="موظف">استقالة</option>
+                            <option value="موظف">نقل خدمات</option>
+                            <option value="موظف">تقاعد</option>
+                            <option value="موظف">عزل</option>
+                        </select>
+                    </div>
+                    
+                    <hr class="mt-2" />
+                    <div class="col-md-12 mt-2">
+
+                        <label for="notesemployee" class="form-label">الملاحظات</label>
+                        <textarea class="form-control" id="notesemployee" rows="3"></textarea>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary">حفظ معلومات الموظف</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Edit Employee-->
+
+<div class="modal fade" id="EditEmployee" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title  fw-bold " id="createprojectlLabel"> اضافة موظف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+
+                    <div class="col-md-4">
+
+                        <label for="exampleFormControlInput877" class="form-label"> </label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="">
+
+                    </div>
+                    <div class="col-md-4">
+
+                        <label for="exampleFormControlInput877" class="form-label">رقم الاضبارة</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل رقم الاضبارة">
+
+                    </div>
+                    <div class="col-md-4">
+
+                        <label for="exampleFormControlInput877" class="form-label"> رمز الموظف</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل رمز الموظف ">
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+
+                        <label for="exampleFormControlInput877" class="form-label">الرقم الوظيفي</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل الرقم الوظيفي">
+
+                    </div>
+                    <div class="col-md-4">
+
+                        <label for="exampleFormControlInput877" class="form-label">الرقم الوطني</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل الرقم الوظني">
+
+                    </div>
+                    <div class="col-md-4">
+
+                        <label for="exampleFormControlInput877" class="form-label">الرقم الوطني</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل الرقم الوظني">
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+
+                        <label for="exampleFormControlInput877" class="form-label">الرقم العائلي</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل الرقم العائلي">
+
+                    </div>
+                    <div class="col-md-4">
+
+                        <label for="exampleFormControlInput877" class="form-label"> محل الولادة</label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل محل الولادة">
+
+                    </div>
+                    <div class="col-md-4">
+
+                        <label for="exampleFormControlInput877" class="form-label">  تاريخ الميلاد</label>
+                        <input type="date" class="form-control" id="exampleFormControlInput877">
+
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label">الجنس</label>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios11" value="option1" checked>
+                                    <label class="form-check-label" for="exampleRadios11">
+                                        ذكر
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="exampleRadios" id="exampleRadios22" value="option2">
+                                    <label class="form-check-label" for="exampleRadios22">
+                                        انثى
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <label for="exampleFormControlInput877" class="form-label"> رقم الهاتف </label>
+                        <input type="text" class="form-control" id="exampleFormControlInput877" placeholder="ادخل رقم الهاتف">
+
+                    </div>
+                    <div class="col-md-4">
+
+                        <div class="form-group">
+                            <label class="text-lg-right "> المنصب</label>
+                            <select class="form-select" name="" id="CrimeTypeAdd">
+                                <option value="موظف">موظف</option>
+                                <option value="موظف">مدير قسم</option>
+                                <option value="موظف">مدير مديرية</option>
+                            </select>
+                        </div>
+
+                    </div>
+                    <div class="col-md-4">
+
+                        <div class="form-group">
+                            <label class="text-lg-right "> الحالة</label>
+                            <select class="form-select" name="" id="CrimeTypeAdd">
+                                <option value="موظف">مكلف</option>
+                                <option value="موظف"> مفرغ</option>
+                                <option value="موظف"> ممثل</option>
+                            </select>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                <button type="button" class="btn btn-primary">حفظ</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal  Delete Employee-->
+<div class="modal fade" id="deleteEmployee" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title  fw-bold" id="deleteprojectLabel">حذف موظف</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body justify-content-center flex-column d-flex">
+                <i class="icofont-ui-delete text-danger display-2 text-center mt-2"></i>
+                <p class="mt-4 fs-5 text-center">هل انت متاكد من حذف الموظف ؟</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">الغاء</button>
+                <button type="button" class="btn btn-danger color-fff">حذف</button>
+            </div>
+        </div>
+    </div>
+</div>

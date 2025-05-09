@@ -1,0 +1,344 @@
+﻿@{
+    ViewData["Title"] = "ملف دراسي";
+}
+
+
+<div class="row align-items-center">
+    <div class="border-0 mb-4">
+        <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <h3 class="fw-bold mb-0">@ViewData["Title"]</h3>
+            <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal" data-bs-target="#addEmployeeModal">
+                <i class="icofont-plus-circle me-2 fs-6"></i>اضافة
+            </button>
+        </div>
+    </div>
+
+</div> <!-- Row end  -->
+<div class="row clearfix g-3">
+    <div class="col-sm-12">
+        <div class="card mb-3">
+            <div class="card-body">
+
+
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="row">
+                            <div class="col-md-2">
+                                <select class="form-select">
+                                    <option value="-1" selected>عرض كل الحالات</option>
+                                    <option>تم الإجراء</option>
+                                    <option>قيد التدقيق</option>
+                                    <option>قيد الانتظار</option>
+                                    <option>قيد محذوف</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="input-group flex-nowrap input-group">
+                                    <input type="search" class="form-control" placeholder="بحث..." aria-label="search" aria-describedby="search_btn">
+                                    <button type="button" class="input-group-text btn btn-primary" id="search_btn"><i class="fa fa-search"></i></button>
+                                </div>
+                            </div>
+
+                            <div class="col-md-3">
+                            </div>
+                            <div class="col-md-2">
+                                <button type="button" class="btn btn-primary btn-block w-100">تحميل ملف Excel</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <table class="table table-hover table-bordered">
+                    <thead class="bg_table">
+                            <tr class="text-center">
+                                <th>التسلسل</th>
+                                <th>اسم الموظف</th>
+                                <th>رقم الموظف</th>
+                                <th>رقم الكتاب</th>
+                                <th>تاريخ الكتاب</th>
+                            <th>الملاحظات</th>
+                            <th>المرفقات</th>
+                            <th scope="col">الحالة</th>
+                                <th>الاجرائات</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            
+                            <tr class="text-center">
+                                <td>1</td>
+                                <td>اسم الموظف 1</td>
+                                <td>12345</td>
+                                <td>كتاب 1</td>
+                                <td>2023-09-15</td>
+                            <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#notesModalLabel1"><i class="icofont-eye"></i></button></td>
+                            <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#ViewAttachment"><i class="icofont-eye"></i></button></td>
+                            <td><span class="badge badge_custom  w-100 bg-success">تم الأجراء</span></td>
+                            <td>
+                                <div class="btn-group" role="group" aria-label="active">
+                                    <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editDetails"><i class="icofont-eye"></i></button>
+                                    <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editData"><i class="icofont-ui-edit"></i></button>
+                                    <button type="button" class="btn btn-danger text-light" data-bs-toggle="modal" data-bs-target="#deleteData"><i class="icofont-ui-delete"></i></button>
+                                </div>
+                            </td>
+                            </tr>
+                           
+                        </tbody>
+                    <tfoot>
+                        <tr>
+                            <td colspan="100" class="text-center">
+                                <nav aria-label="Page navigation">
+                                    <ul class="pagination justify-content-center">
+                                        <li class="page-item disabled">
+                                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                                        </li>
+                                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                        <li class="page-item">
+                                            <a class="page-link" href="#">التالي</a>
+                                        </li>
+                                    </ul>
+                                </nav>
+                            </td>
+                        </tr>
+                    </tfoot>
+                    </table>
+                    </div>
+
+
+
+
+
+                 
+                  
+               
+
+            <!-- Modal لإضافة موظف -->
+            <div class="modal fade" id="addEmployeeModal" tabindex="-1" aria-labelledby="addEmployeeModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addEmployeeModalLabel">ملف دراسي جديد</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div class="modal-body">
+                        
+                            <div class="row">
+                                <div class="col-md-11">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="البحث عن اسم أو رقم الاضبارة...">
+                                        <div class="input-group-append ml-4">
+                                            <button class="btn btn-primary" type="button">
+                                                <i class="icofont-search"></i>
+                                            </button>
+
+
+
+                                        </div>
+                                    </div>
+                                </div>
+                         
+                            <!-- بيانات للعرض فقط -->
+                                <div class="row mt-4"></div>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">الاسم</label>
+                                    <div class="form-control" id="name">باسم</div>
+                            </div>
+                                <div class="mb-3">
+                                    <label for="name" class="form-label">رقم الموظف</label>
+                                    <div class="form-control" id="name">4533</div>
+                                </div>
+
+                            <hr>
+                            <!-- بيانات يتم إدخالها -->
+                            <div class="mb-3">
+                                <label for="bookNumber">رقم الكتاب</label>
+                                <input type="text" class="form-control" id="bookNumber" placeholder="رقم الكتاب">
+                            </div>
+                            <div class="mb-3">
+                                <label for="bookDate">تاريخ الكتاب</label>
+                                <input type="date" class="form-control" id="bookDate">
+                            </div>
+
+                                <div class="mb-3">
+                                    <label for="formFileMultipleone" class="form-label">الملفات المرفقة</label>
+                                    <input class="form-control" type="file" id="formFileMultipleone" multiple="">
+                                </div>
+                           
+                            <div class="mb-3">
+                                <label for="notes">ملاحظات</label>
+                                <textarea class="form-control" id="notes" rows="4" placeholder="ملاحظات"></textarea>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                            <button type="button" class="btn btn-primary">حفظ</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div><!-- Row End -->
+
+
+
+
+
+<div class="modal fade" id="ViewAttachment" tabindex="-1" aria-labelledby="ViewAttachmentTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ViewAttachmentTitle">مرفقات قيد #<b id="recordName">حسن حافظ عبيد  ناصر الموسوي</b></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                            </div>
+                            <div class="border-0 mb-4 col-md-8">
+                                <div class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                                    <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
+                                        <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
+                                            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#view_attach" role="tab">عرض المرفقات</a></li>
+                                            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#add_attach" role="tab">اضافة مرفقات</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- Row end  -->
+                        <div class="row align-items-center">
+                            <div class="col-lg-12 col-md-12 flex-column">
+                                <div class="tab-content mt-4">
+                                    <div class="tab-pane fade show active" id="view_attach">
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                            </div>
+
+                                            <div class="col-md-10">
+                                                <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0 w-100">
+                                                    <div class="input-group flex-nowrap input-group">
+                                                        <input type="search" class="form-control" placeholder="بحث..." aria-label="search" aria-describedby="search_btn">
+                                                        <button type="button" class="input-group-text btn btn-primary" id="search_btn"><i class="fa fa-search"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="py-2 d-flex align-items-center border-bottom">
+                                                <div class="d-flex ms-3 align-items-center flex-fill">
+                                                    <span class="avatar lg bg-lightgreen rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-file-pdf fs-5"></i></span>
+                                                    <div class="d-flex flex-column ps-3">
+                                                        <div>
+                                                            <span class="fw-bold ms-1">file1.pdf</span>
+                                                            <span class="text-muted ms-1 d-block">تخويل دخول السيارة 258825 2023-01-01</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn bg-lightgreen text-end"><i class="icofont-cloud-download"></i></button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="add_attach">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-sm-12">
+                                                        <label for="fileimg" class="form-label">اختر الملف</label>
+                                                        <input type="File" class="form-control" id="fileimg">
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label for="depone" class="form-label">رقم الكتاب</label>
+                                                        <input type="text" class="form-control" id="depone">
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label for="abc" class="form-label">تاريخ الكتاب</label>
+                                                        <input type="date" class="form-control" id="abc">
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label for="abc" class="form-label">عنوان الكتاب</label>
+                                                        <input type="text" class="form-control" id="abc">
+                                                    </div>
+                                                </div>
+                                                <div class="row g-3 mb-3">
+                                                    @* <div class="col-sm-12">
+                                                    <h6>اضف تفاصيل اخرى عن الملف</h6>
+                                                    </div>
+                                                    <div class="row g-3 mb-3" id="addfield">
+
+                                                    </div>
+                                                    <div class="row g-3 mb-3">
+                                                    <div class="col-md-10">
+
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                    <button type="button" onclick="AddFieldToAttachment()" class="btn btn-outline-info"><i class="icofont-plus"></i></button>
+                                                    </div>
+                                                    </div> *@
+                                                    <button type="button" class="btn btn-primary">حفظ الملف</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteData" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title align-content-center fw-bold" id="depaddLabel">هل تريد حذف البيانات</h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <button type="button" class="btn btn-danger" style="margin-right:50px">حذف</button>
+                    <button type="button" class="btn btn-dark" style="margin-right:200px">لا</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!-- Modal لعرض الملاحظات -->
+<div class="modal fade" id="notesModalLabel1" tabindex="-1" aria-labelledby="notesModalLabel1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notesModalLabel1">ملاحظات الموظف رقم 1</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!--  عرض الملاحظات -->
+                <label for="notes">ملاحظات</label>
+                <textarea class="form-control" id="notes" rows="4" placeholder="ملاحظات"></textarea>
+                <!--  تعديل وحذف الملاحظات هنا -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                <button type="button" class="btn btn-primary">حفظ</button>
+            </div>
+        </div>
+    </div>
+</div>

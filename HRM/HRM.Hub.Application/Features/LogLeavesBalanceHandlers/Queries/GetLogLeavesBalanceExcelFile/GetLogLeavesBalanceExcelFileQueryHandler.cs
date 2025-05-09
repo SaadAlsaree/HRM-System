@@ -1,0 +1,73 @@
+﻿namespace HRM.Hub.Application.Features.LogLeavesBalanceHandlers.Queries.GetLogLeavesBalanceExcelFile;
+public class GetLogLeavesBalanceExcelFileQueryHandler :
+    ExportFileHandler<LogLeavesBalance, GetLogLeavesBalanceExcelFileQuery>,
+    IRequestHandler<GetLogLeavesBalanceExcelFileQuery, Response<byte[]>>
+{
+
+
+    private string[] _headers;
+    private string _title;
+    private string _titleSheet;
+
+    public GetLogLeavesBalanceExcelFileQueryHandler(IBaseRepository<LogLeavesBalance> logLeavesBalanceRepository)
+        : base(logLeavesBalanceRepository)
+    {
+        _headers = new string[]
+        {
+            "#",
+            "الرقم الوظيفة",
+            "الرقم الإحصائي",
+            "أسم الموظف",
+            "رقم الأمر الإداري",
+            "تاريخ الأمر الإداري",
+            "تاريخ الغياب",
+            "عدد الأيام",
+            "الملاحظات",
+            "الحالة"
+        };
+        _title = "إدارة الغيابات";
+        _titleSheet = "الغيابات";
+
+    }
+
+    public override Expression<Func<LogLeavesBalance, List<object>>> Selector => x => new List<object>()
+    {
+        x.EmployeeId,
+        x.Employee.JobCode,
+        x.Employee.LotNumber,
+        x.Employee.FullName,
+        x.BookNo,
+        x.BookDate,
+        x.NameOfIssuing,
+        x.CountOfDay,
+        x.Note,
+        x.StatusId.GetDisplayName()
+    };
+
+    public override Func<IQueryable<LogLeavesBalance>, IIncludableQueryable<LogLeavesBalance, object>> Include => inc => inc.Include(z => z.Employee);
+
+    public override string[] Headers
+    {
+        get => _headers;
+        set => _headers = value;
+    }
+    public override string Title
+    {
+        get => _title;
+        set => _title = value;
+    }
+    public override string TitleSheet
+    {
+        get => _titleSheet;
+        set => _titleSheet = value;
+    }
+
+    public async Task<Response<byte[]>> Handle(GetLogLeavesBalanceExcelFileQuery request, CancellationToken cancellationToken)
+    {
+        var result = await HandleBase(request, cancellationToken);
+        if (result == null)
+            return Response<byte[]>.Fail(new MessageResponse() { Message = "لا يمكن تنفيذ الامر اعد المحاولة لاحقا",Code = "FileError" });
+        return Response<byte[]>.Success(result);
+    }
+
+}

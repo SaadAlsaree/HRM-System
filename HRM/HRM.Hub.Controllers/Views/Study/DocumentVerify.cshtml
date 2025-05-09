@@ -1,0 +1,622 @@
+﻿@{
+    ViewData["Title"] = "صحة صدور";
+}
+   
+
+<div class="row align-items-center">
+    <div class="border-0 mb-4">
+        <div class="card-header py-3 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+            <h3 class="fw-bold mb-0">@ViewData["Title"]</h3>
+            <button type="button" class="btn btn-dark btn-set-task w-sm-100" data-bs-toggle="modal" data-bs-target="#myModalLabel">
+                <i class="icofont-plus-circle me-2 fs-6"></i>اضافة
+            </button>
+        </div>
+    </div>
+
+</div> <!-- Row end  -->
+<div class="row clearfix g-3">
+    <div class="col-sm-12">
+        <div class="card mb-3">
+            <div class="card-body">
+
+
+                <div class="row">
+                    <div class="col-md-5">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="البحث..." aria-label="Search" aria-describedby="basic-addon2">
+                            <button type="button" class="input-group-text btn btn-primary" id="search_btn"><i class="fa fa-search"></i></button>
+                               
+                           
+                        </div>
+                    </div>
+                </div>
+
+              
+
+
+            <div >
+                <form>
+                    <div class="row mt-4"></div>
+                    <!-- السطر الأول -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="name" class="form-label">الاسم</label>
+                                <div class="form-control" id="name">باسم</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="employeeStatus" class="form-label">حالة الموظف</label>
+                                <div class="form-control" id="employeeStatus">باسم</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="issueAuthority" class="form-label">شهادة التعيين</label>
+                                <div class="form-control" id="issueAuthority">باسم</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="issueAuthority" class="form-label">شنوع الشهادة</label>
+                                <div class="form-control" id="issueAuthority">باسم</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4"></div>
+                    <!-- السطر الثاني -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="issueAuthority" class="form-label align">تاريخ التخرج</label>
+                                <div class="form-control" id="issueAuthority">باسم</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="studyType" class="form-label">نوع الدراسة</label>
+                                <div class="form-control" id="studyType">باسم</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="studyType" class="form-label">التحصيل الدراسي بعد التعيين</label>
+                                <div class="form-control" id="studyType">باسم</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="studyType" class="form-label">الدائرة</label>
+                                <div class="form-control" id="studyType">باسم</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row mt-4"></div>
+                    <!-- السطر الثالث -->
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="studyType" class="form-label">ألامر الاداري</label>
+                                <div class="form-control" id="studyType">باسم</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="studyType" class="form-label">أمر المباشرة</label>
+                                <div class="form-control" id="studyType">باسم</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="studyType" class="form-label">الدرجة </label>
+                                <div class="form-control" id="studyType">باسم</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <label for="Type" class="form-label">العنوان</label>
+                                <div class="form-control" id="Type">باسم</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+            <div class="row mt-4"></div>
+
+                <div class="row mt-4"></div>
+
+            <div class="row">
+                <div class="col-md-12 mb-4">
+                    <div class="row">
+                        <div class="col-md-2">
+                            <select class="form-select">
+                                <option value="-1" selected>عرض كل الحالات</option>
+                                <option>تم الإجراء</option>
+                                <option>قيد التدقيق</option>
+                                <option>قيد الانتظار</option>
+                                <option>قيد محذوف</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            
+                        </div>
+
+                        <div class="col-md-3">
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary btn-block w-100">تحميل ملف Excel</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+            <table class="table  table-hover table-bordered">
+
+       
+                <thead class="bg_table">
+                  
+                    <tr class="text-center">
+                             <th scope="col">اسم الموظف</th>
+                            <th scope="col">عدد الوثيقة</th>
+                            <th scope="col">التاريخ</th>
+                            <th scope="col" >هل لديه صحة صدور</th>
+                            <th scope="col" >هل الوثيقة صحيحة</th>
+                            <th scope="col" >الجهة المرسلة</th>
+                            <th scope="col" >تاريخ الإرسال</th>
+                            <th scope="col" > عرض الملاحظات</th>
+                            <th scope="col" >اضافة المرفقات</th>
+                        <th scope="col">الحالة</th>
+                            <th scope="col" >الاجراءات </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="text-center">
+                        <td class="text-center">حسن حافظ عبيد</td>
+                            <td class="text-center">12345</td>
+                            <td class="text-center">2023-09-15</td>
+                            <td class="text-center">نعم</td>
+                            <td class="text-center">نعم </td>
+                            <td class="text-center">الجهة المرسلة</td>
+                            <td class="text-center">2023-09-20</td>
+                        <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#notesModalLabel1"><i class="icofont-eye"></i></button></td>
+                        <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#ViewAttachment"><i class="icofont-eye"></i></button></td>
+
+                        <td><span class="badge badge_custom  w-100 bg-success">تم الأجراء</span></td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="active">
+                                <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editDetails"><i class="icofont-eye"></i></button>
+                                <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editData"><i class="icofont-ui-edit"></i></button>
+                                <button type="button" class="btn btn-danger text-light" data-bs-toggle="modal" data-bs-target="#deleteData"><i class="icofont-ui-delete"></i></button>
+                            </div>
+                        </td>
+                        </tr>
+                    <tr class="text-center">
+                        <td class="text-center">باسم عامر جعفر</td>
+                            <td class="text-center">12345</td>
+                            <td class="text-center">2023-09-15</td>
+                            <td class="text-center">نعم</td>
+                            <td class="text-center">نعم </td>
+                            <td class="text-center">الجهة المرسلة</td>
+                            <td class="text-center">2023-09-20</td>
+                        <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#notesModalLabel1"><i class="icofont-eye"></i></button></td>
+                        <td><button type="button" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#ViewAttachment"><i class="icofont-eye"></i></button></td>
+
+                        <td><span class="badge badge_custom  w-100 bg-success">تم الأجراء</span></td>
+                        <td>
+                            <div class="btn-group" role="group" aria-label="active">
+                                <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editDetails"><i class="icofont-eye"></i></button>
+                                <button type="button" class="btn btn-primary text-light" data-bs-toggle="modal" data-bs-target="#editData"><i class="icofont-ui-edit"></i></button>
+                                <button type="button" class="btn btn-danger text-light" data-bs-toggle="modal" data-bs-target="#deleteData"><i class="icofont-ui-delete"></i></button>
+                            </div>
+                        </td>
+                        </tr>
+                    </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="100" class="text-center">
+                            <nav aria-label="Page navigation">
+                                <ul class="pagination justify-content-center">
+                                    <li class="page-item disabled">
+                                        <a class="page-link" href="#" tabindex="-1" aria-disabled="true">السابق</a>
+                                    </li>
+                                    <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="#">التالي</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                        </td>
+                    </tr>
+                </tfoot>
+                </table>
+
+
+
+
+
+                <div class="modal fade" id="myModalLabel" tabindex="-1" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered modal-xl">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="myModalLabel">صحة الصدور</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <div class="input-group">
+                                            <input type="text" class="form-control" placeholder="البحث عن اسم أو رقم الاضبارة...">
+                                            <div class="input-group-append ml-2">
+                                                <button class="btn btn-primary" type="button">
+                                                    <i class="icofont-search"></i>
+                                                </button>
+
+
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                            <div class="container">
+                        <div class="row mt-4"></div>
+                            <form>
+                                <div class="row mt-4">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="name">الاسم</label>
+                                            <input type="text" class="form-control" id="name" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="employeeStatus">حالة الموظف</label>
+                                            <input type="text" class="form-control" id="employeeStatus" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="issueAuthority">جهة صحة الصدور</label>
+                                            <input type="text" class="form-control" id="issueAuthority" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="certificateOfAppointment">شهادة التعيين</label>
+                                            <input type="text" class="form-control" id="certificateOfAppointment">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="certificateType">نوع الشهادة</label>
+                                            <input type="text" class="form-control" id="certificateType" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="specificMajor">التخصص الدقيق</label>
+                                            <input type="text" class="form-control" id="specificMajor" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="graduationDate">تاريخ التخرج</label>
+                                            <input type="text" class="form-control" id="graduationDate" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="studyType">نوع الدراسة</label>
+                                            <input type="text" class="form-control" id="studyType" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="educationalAttainment">التحصيل الدراسي بعد التعيين</label>
+                                            <input type="text" class="form-control" id="educationalAttainment" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="department">الدائرة</label>
+                                            <input type="text" class="form-control" id="department" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="administrativeMatters">ألامر الاداري</label>
+                                            <input type="text" class="form-control" id="administrativeMatters" >
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="directOrder">أمر المباشرة</label>
+                                            <input type="text" class="form-control" id="directOrder" >
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row mt-4">
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="Title">العنوان</label>
+                                            <input type="text" class="form-control" id="Title">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="form-group">
+                                            <label for="degree">الدرجة </label>
+                                            <input type="text" class="form-control" id="degree">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="form-group">
+                                            <label for="degreeAndTitle">هل لديه صحة صدور</label>
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio" class="form-check-input" id="forgedYes" name="forgedRadio" value="نعم">
+                                                <label class="form-check-label" for="forgedYes">نعم</label>
+                                            </div>
+                                            <div class="form-check form-check-inline">
+                                                <input type="radio" class="form-check-input" id="forgedNo" name="forgedRadio" value="لا">
+                                                <label class="form-check-label" for="forgedNo">لا</label>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="container mt-4">
+                                        <div class="row">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="issueAuthority" class="form-label">عدد الوثيقة</label>
+                                                    <input type="text" class="form-control" id="documentNumber">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="issueAuthority" class="form-label">التاريخ</label>
+                                                    <input type="date" class="form-control" id="documentDate">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-2">
+                                                <div class="form-group">
+                                                    <label for="degreeAndTitle">هل هذه الوثيقة مزورة  </label>
+                                                    <div class="form-check form-check-inline">
+                                                        <input type="radio" class="form-check-input" id="forgedYes" name="forgedRadio" value="نعم">
+                                                        <label class="form-check-label" for="forgedYes">نعم</label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <input type="radio" class="form-check-input" id="forgedNo" name="forgedRadio" value="لا">
+                                                        <label class="form-check-label" for="forgedNo">لا</label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="row mt-4">
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="issueAuthority" class="form-label">الجهة المرسلة</label>
+                                                    <input type="text" class="form-control" id="sender">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <div class="form-group">
+                                                    <label for="issueAuthority" class="form-label">تاريخ الارسال</label>
+                                                    <input type="date" class="form-control" id="sendDate" placeholder="تاريخ الإرسال">
+                                                </div>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <div class="form-group">
+                                                    <label for="issueAuthority" class="form-label">الملاحظات</label>
+                                                    <textarea class="form-control" rows="4"></textarea>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+
+
+
+
+
+                              
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary">حفظ</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                              
+                            </div>
+
+                        </div>
+                        </div>
+
+                   
+
+
+                    </div>
+                </div>
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Row End -->
+
+
+
+
+<div class="modal fade" id="ViewAttachment" tabindex="-1" aria-labelledby="ViewAttachmentTitle" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ViewAttachmentTitle">مرفقات قيد #<b id="recordName">حسن حافظ عبيد  ناصر الموسوي</b></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+
+                        <div class="row align-items-center">
+                            <div class="col-md-2">
+                            </div>
+                            <div class="border-0 mb-4 col-md-8">
+                                <div class="card-header p-0 no-bg bg-transparent d-flex align-items-center px-0 justify-content-between border-bottom flex-wrap">
+                                    <div class="d-flex py-2 project-tab flex-wrap w-sm-100">
+                                        <ul class="nav nav-tabs tab-body-header rounded ms-3 prtab-set w-sm-100" role="tablist">
+                                            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#view_attach" role="tab">عرض المرفقات</a></li>
+                                            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#add_attach" role="tab">اضافة مرفقات</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- Row end  -->
+                        <div class="row align-items-center">
+                            <div class="col-lg-12 col-md-12 flex-column">
+                                <div class="tab-content mt-4">
+                                    <div class="tab-pane fade show active" id="view_attach">
+                                        <div class="row">
+                                            <div class="col-md-1">
+                                            </div>
+
+                                            <div class="col-md-10">
+                                                <div class="card-header py-3 d-flex justify-content-between bg-transparent border-bottom-0 w-100">
+                                                    <div class="input-group flex-nowrap input-group">
+                                                        <input type="search" class="form-control" placeholder="بحث..." aria-label="search" aria-describedby="search_btn">
+                                                        <button type="button" class="input-group-text btn btn-primary" id="search_btn"><i class="fa fa-search"></i></button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="flex-grow-1">
+                                            <div class="py-2 d-flex align-items-center border-bottom">
+                                                <div class="d-flex ms-3 align-items-center flex-fill">
+                                                    <span class="avatar lg bg-lightgreen rounded-circle text-center d-flex align-items-center justify-content-center"><i class="icofont-file-pdf fs-5"></i></span>
+                                                    <div class="d-flex flex-column ps-3">
+                                                        <div>
+                                                            <span class="fw-bold ms-1">file1.pdf</span>
+                                                            <span class="text-muted ms-1 d-block">تخويل دخول السيارة 258825 2023-01-01</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <button type="button" class="btn bg-lightgreen text-end"><i class="icofont-cloud-download"></i></button>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane fade" id="add_attach">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row g-3 mb-3">
+                                                    <div class="col-sm-12">
+                                                        <label for="fileimg" class="form-label">اختر الملف</label>
+                                                        <input type="File" class="form-control" id="fileimg">
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label for="depone" class="form-label">رقم الكتاب</label>
+                                                        <input type="text" class="form-control" id="depone">
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label for="abc" class="form-label">تاريخ الكتاب</label>
+                                                        <input type="date" class="form-control" id="abc">
+                                                    </div>
+                                                    <div class="col-sm-12">
+                                                        <label for="abc" class="form-label">عنوان الكتاب</label>
+                                                        <input type="text" class="form-control" id="abc">
+                                                    </div>
+                                                </div>
+                                                <div class="row g-3 mb-3">
+                                                    @* <div class="col-sm-12">
+                                                    <h6>اضف تفاصيل اخرى عن الملف</h6>
+                                                    </div>
+                                                    <div class="row g-3 mb-3" id="addfield">
+
+                                                    </div>
+                                                    <div class="row g-3 mb-3">
+                                                    <div class="col-md-10">
+
+                                                    </div>
+                                                    <div class="col-md-2">
+                                                    <button type="button" onclick="AddFieldToAttachment()" class="btn btn-outline-info"><i class="icofont-plus"></i></button>
+                                                    </div>
+                                                    </div> *@
+                                                    <button type="button" class="btn btn-primary">حفظ الملف</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="deleteData" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-md modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title align-content-center fw-bold" id="depaddLabel">هل تريد حذف البيانات</h5>
+
+            </div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <button type="button" class="btn btn-danger" style="margin-right:50px">حذف</button>
+                    <button type="button" class="btn btn-dark" style="margin-right:200px">لا</button>
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+</div>
+
+               
+
+<!-- Modal لعرض الملاحظات -->
+<div class="modal fade" id="notesModalLabel1" tabindex="-1" aria-labelledby="notesModalLabel1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="notesModalLabel1">ملاحظات الموظف رقم 1</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!--  عرض الملاحظات -->
+                <label for="notes">ملاحظات</label>
+                <textarea class="form-control" id="notes" rows="4" placeholder="ملاحظات"></textarea>
+                <!--  تعديل وحذف الملاحظات هنا -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">إغلاق</button>
+                <button type="button" class="btn btn-primary">حفظ</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,145 @@
+﻿using MediatR;
+using System.Net;
+using HRM.Hub.Application.Features.PromotionHandlers.Commands.CreatePromotion;
+using HRM.Hub.Application.Features.PromotionHandlers.Commands.UpdatePromotion;
+using HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotion;
+using HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotionById;
+using HRM.Hub.Domain.Common;
+using Microsoft.AspNetCore.Mvc;
+using HRM.Hub.Persistence.Helpers;
+using HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotions;
+using HRM.Hub.Application.Features.Services.Commands.ChangeStatus;
+using HRM.Hub.Application.Features.Services.Commands.DeleteRecord;
+using HRM.Hub.Domain.Common.Enums;
+using HRM.Hub.Application.Features.Attachment.Commands.CreateAttachment;
+using HRM.Hub.Application.Features.Attachment.Queries.GetAttachment;
+using HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotionExcelFile;
+
+namespace HRM.Hub.Controllers.Controllers.APIs;
+
+[ApiController]
+[Produces("application/json")]
+[Route("hub/hrm/v1/api/[controller]")]
+//[Authorize(AuthenticationSchemes = "Bearer", Policy = "")]
+[Tags("Promotions")]
+public sealed class PromotionsController : Base<PromotionsController>
+{
+    private readonly IMediator _mediator;
+
+    public PromotionsController(IMediator mediator, ILogger<PromotionsController> logger) : base(logger)
+    {
+        _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+    }
+
+    #region Promotions
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpGet]
+    [ProducesResponseType(typeof(Response<IEnumerable<GetPromotionViewModel>>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<IEnumerable<GetPromotionViewModel>>>> GetAll(
+        [FromQuery] GetPromotionQuery query)
+    {
+        return await Okey(() => _mediator.Send(query));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpGet("{PromotionId:Guid}")]
+    [ProducesResponseType(typeof(Response<GetPromotionByIdViewModel>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<GetPromotionByIdViewModel>>> GetById(Guid PromotionId)
+    {
+        var query = new GetPromotionByIdQuery
+        {
+            Id = PromotionId
+        };
+        return await Okey(() => _mediator.Send(query));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPost]
+    [ProducesResponseType(typeof(Response<IEnumerable<GetPromotionViewModel>>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<IEnumerable<GetPromotionViewModel>>>> Create(
+        [FromBody] CreatePromotionCommend commend)
+    {
+        return await Okey(() => _mediator.Send(commend));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPut("{PromotionId:Guid}")]
+    [ProducesResponseType(typeof(Response<GetPromotionViewModel>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<GetPromotionViewModel>>> Update(
+        Guid PromotionId,
+        [FromBody] UpdatePromotionCommend command)
+    {
+        command.Id = PromotionId;
+        return await Okey(() => _mediator.Send(command));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpDelete("{id}")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> ChangeStatus(Guid id)
+    {
+        return await Okey(() => _mediator.Send(new DeleteRecordCommand<Guid>()
+        {
+            Id = id,
+            TableName = TableNames.Promotion
+        }));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPatch]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> ChangeStatus([FromBody] ChangeStatusCommand<Guid> command)
+    {
+        command.TableName = TableNames.Promotion;
+        return await Okey(() => _mediator.Send(command));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpGet("[action]")]
+    [ProducesResponseType(typeof(Response<GetStatsPromotionsViewModel>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<GetStatsPromotionsViewModel>>> GetStats(
+        [FromQuery] GetStatsPromotionsQuery query)
+    {
+        return await Okey(() => _mediator.Send(query));
+    }
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPost("[action]")]
+    [ProducesResponseType(typeof(Response<IEnumerable<GetAttachmentViewModel>>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<IEnumerable<GetAttachmentViewModel>>>> UploadAttachment(
+        [FromForm] CreateAttachmentCommend commend)
+    {
+        commend.TableName = TableNames.Promotion;
+        return await Okey(() => _mediator.Send(commend));
+    }
+    #endregion
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpGet("[action]")]
+    [ProducesResponseType(typeof(Response<byte[]>), StatusCodes.Status200OK)]
+    [FileResultContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Response<byte[]>>> ExportFile([FromQuery] GetPromotionExcelFileQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+
+            if (response.Succeeded)
+                return File(response.Data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"{DateTime.Now}.xlsx");
+
+            return BadRequest(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { ex.Message });
+        }
+    }
+}
