@@ -19,8 +19,6 @@ public class AddEmployeeCommend : IRequest<Response<bool>>
     public string MotherSurName { get; set; }
     [SwaggerIgnore]
     public string FullMotherNameNorm { get; set; }
-    public string WifeName { get; set; }
-    public int ChildrenCount { get; set; }
     public GenderEnum GenderId { get; set; }
     public string BirthPlace { get; set; }
     public DateOnly BirthDate { get; set; }

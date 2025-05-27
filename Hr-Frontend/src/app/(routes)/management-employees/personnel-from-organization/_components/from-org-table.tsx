@@ -1,6 +1,6 @@
 'use client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Settings2, Paperclip } from 'lucide-react';
+import { Settings2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -8,6 +8,8 @@ import SelectStatus from '@/app/_components/select-status';
 import { IAffiliatesFromOrg } from '../page';
 import AffiliatesFromOrgForm from './from-org-form';
 import { assignmentServices } from '@/services/system-settings/assignments.service';
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import moment from 'moment';
 
 type Props = {
     columns: { label: string; value: string; className?: string }[];
@@ -29,6 +31,7 @@ const AffiliatesFromOrgTable = ({ affiliatesFromOrgData, columns }: Props) => {
     };
 
     return (
+        <ScrollArea className="w-[1400px]">
         <Table>
             <TableHeader>
                 <TableRow>
@@ -51,34 +54,34 @@ const AffiliatesFromOrgTable = ({ affiliatesFromOrgData, columns }: Props) => {
                         <TableCell>{item.orderDate}</TableCell>
                         <TableCell>{item.assignedFromOrganization}</TableCell>
                         <TableCell>{item.assignedToOrganization}</TableCell>
-                        <TableCell>{item.typeOfAssignmentId}</TableCell>
+                        <TableCell>{item.typeOfAssignmentName}</TableCell>
                         <TableCell>{item.durationOfAssignment}</TableCell>
                         <TableCell>{item.releaseOrderNo}</TableCell>
                         <TableCell>{item.releaseOrderDate}</TableCell>
                         <TableCell>{item.releaseDate}</TableCell>
                         <TableCell>{item.hireOrderNo}</TableCell>
                         <TableCell>{item.hireOrderDate}</TableCell>
-                        <TableCell>{item.hireDate}</TableCell>
+                        <TableCell>{moment(item.hireDate).format('YYYY-MM-DD')}</TableCell>
                         <TableCell>{item.assignmentOrderNo}</TableCell>
                         <TableCell>{item.assignmentOrderDate}</TableCell>
                         <TableCell>
-                            {item.attachments?.map((attachment, index) => (
-                                <a key={index} href={attachment} target='_blank' rel='noopener noreferrer'>
-                                    <Paperclip className='h-4 w-4' />
-                                </a>
-                            ))}
+                          
                         </TableCell>
                         <TableCell>{item.note}</TableCell>
                         <TableCell>
-                            <div className='flex items-center gap-2'>
-                                <SelectStatus id={item.id} status={item.status.toString()} onChange={handleStatusChange} />
-                                <AffiliatesFromOrgForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
-                            </div>
+                            
+                                <SelectStatus id={item.id?.toString() || "0"} status={item.status?.toString() || "0"} onChange={handleStatusChange} />
+                        </TableCell>
+                        <TableCell>
+                        <AffiliatesFromOrgForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
+
                         </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
         </Table>
+        <ScrollBar orientation="horizontal" />
+        </ScrollArea>
     );
 };
 

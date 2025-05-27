@@ -8,66 +8,83 @@ import { correctingAcademicAchievementService } from '@/services/correcting-acad
 import { academicCertificateTypeService } from '@/services/system-settings/academic-certificate-type.service';
 
 interface Props {
-    searchParams: {
-        page: string;
-        PageSize: string;
-    };
+   searchParams: {
+      page: string;
+      PageSize: string;
+   };
 }
 
 export interface IAcademicAchievement {
-    id: string;
-    employeeId: string;
-    fullName: string;
-    jobCode: string;
-    lotNumber: string;
-    jobTitleFromName: string;
-    degreeFromName: string;
-    jobCategoryFromName: string;
-    jobDescriptionFromName: string;
-    jobDescriptionToId: number;
-    jobDegreeToId: number;
-    dueDateDegree: string;
-    dueDateCategory: string;
-    academicAchievementId: number;
-    isCertificateCalculation: boolean;
-    createBy: string;
-    jobTitleToId: number;
-    jobCategoryToId: number;
-    bookNo: string;
-    bookDate: string;
-    statusName: string;
-    status: number;
-    note: string;
-    attachments?: string[];
+   degreeFromId: number;
+   degreeFromName: string;
+   degreeToId: number;
+   degreeToName: string;
+
+   jobCategoryFromId: number;
+   jobCategoryFromName: string;
+   jobCategoryToId: number;
+   jobCategoryToName: string;
+
+   jobTitleFromId: number;
+   jobTitleFromName: string;
+   jobDescriptionFromId: number;
+   jobDescriptionFromName: string;
+
+   jobTitleToId: number;
+   jobTitleToName: string;
+   jobDescriptionToId: number;
+   jobDescriptionToName: string;
+
+   isCertificateCalculation: boolean;
+
+   dueDateDegree: string; // Format: YYYY-MM-DD
+   dueDateCategory: string; // Format: YYYY-MM-DD
+   bookNo: string;
+   bookDate: string; // Format: YYYY-MM-DD
+   note: string;
+
+   academicAchievementId: number;
+   academicAchievementName: string;
+
+   id: string; // UUID
+   employeeId: string; // UUID
+   fullName: string;
+   jobCode: string;
+   lotNumber: string;
+   statusName: string;
+   status: number;
 }
 
 const AcademicAchievementPage = async ({ searchParams }: Props) => {
-    const Page = parseInt(searchParams.page) || 1;
-    const PageSize = parseInt(searchParams.PageSize) || 10;
+   const Page = parseInt(searchParams.page) || 1;
+   const PageSize = parseInt(searchParams.PageSize) || 10;
 
-    const data = await correctingAcademicAchievementService.getCorrectingAcademicAchievement({ Page, PageSize});
-    const academicAchievementData = data?.data?.items ?? [];
-    const totalCount = data?.totalCount ?? 0;
+   const data = await correctingAcademicAchievementService.getCorrectingAcademicAchievement({ Page, PageSize });
+   const academicAchievementData = data?.data?.items ?? [];
+   const totalCount = data?.data?.totalCount;
 
-    const academicCertificate = await academicCertificateTypeService.getAcademicCertificateTypes();
-    const academicCertificateData = academicCertificate?.data?.items ?? [];
+   const academicCertificate = await academicCertificateTypeService.getAcademicCertificateTypes();
+   const academicCertificateData = academicCertificate?.data?.items ?? [];
 
-
-    return (
-        <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>
-            <div className='w-full'>
-                <AcademicAchievementToolbar academicCertificateType={academicCertificateData} />
-            </div>
+   return (
+      <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>
+         <div className='w-full'>
+            <AcademicAchievementToolbar academicCertificateType={academicCertificateData} />
+         </div>
+         <Separator />
+         <div className='w-full'>
+            <AcademicAchievementTable
+               columns={columnsAcademicAchievement}
+               academicAchievementData={academicAchievementData}
+               academicCertificateType={academicCertificateData}
+            />
             <Separator />
-            <div className='w-full'>
-                <AcademicAchievementTable columns={columnsAcademicAchievement} academicAchievementData={academicAchievementData} academicCertificateType={academicCertificateData} />
-                <Separator />
-                <div className='p-2'>
-                    <Pagination itemCount={totalCount} pageSize={PageSize} currentPage={Page} />
-                </div>
+            <div className='p-2'>
+               <Pagination itemCount={totalCount} pageSize={PageSize} currentPage={Page} />
             </div>
-        </div>
-    );
+         </div>
+      </div>
+   );
 };
 
 export default AcademicAchievementPage;

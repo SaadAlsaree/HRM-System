@@ -1,8 +1,7 @@
 'use client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-import { Settings2, AlignJustify, NotepadText, Paperclip } from 'lucide-react';
+import { Settings2, AlignJustify } from 'lucide-react';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 
@@ -10,7 +9,7 @@ import SelectStatus from '@/app/_components/select-status';
 import { IEmployeeEvaluation } from '../page';
 import EmployeeEvaluationForm from './employee-evaluatio-form';
 import { valuationsService } from '@/services/valuations.service';
-import { Button } from '@/components/ui/button';
+import EmployeeEvaluationAttachment from './employee-evaluatio-attachment';
 
 type Props = {
    columns: { label: string; value: string; className?: string }[];
@@ -22,7 +21,7 @@ const EmployeeEvaluationTable = ({ employeeEvaluationData, columns }: Props) => 
 
    const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
       try {
-         const response = await valuationsService.patchValuation({ id: id?.toString() || '0', statusId: Number(value) });
+         const response = await valuationsService.patchValuation({ id: String(id), statusId: Number(value) });
          toast.success(response?.message || 'تم تحديث الحالة بنجاح.');
          router.refresh();
       } catch (error) {
@@ -55,31 +54,14 @@ const EmployeeEvaluationTable = ({ employeeEvaluationData, columns }: Props) => 
                   <TableCell>{item.bookDate}</TableCell>
                   <TableCell>{item.recommendation}</TableCell>
                   <TableCell>{item.valuationType}</TableCell>
-                  <TableCell>{item.valuationPoints}</TableCell>
                   <TableCell>
-                     {item.attachments?.map((attachment, index) => (
-                        <a key={index} href={attachment} target='_blank' rel='noopener noreferrer'>
-                           <Paperclip className='h-4 w-4' />
-                        </a>
-                     ))}
+                     <EmployeeEvaluationAttachment employeeId={item.employeeId} PrimaryTableId={item.id} />
                   </TableCell>
                   <TableCell>
-                     <Popover>
-                        <PopoverTrigger asChild>
-                           <Button variant='ghost' size='icon'>
-                              <NotepadText className='justify-center' />
-                           </Button>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                           <pre>{item?.note}</pre>
-                        </PopoverContent>
-                     </Popover>
+                     <SelectStatus id={item.id} status={item.status.toString()} onChange={handleStatusChange} />
                   </TableCell>
                   <TableCell>
-                     <div className='flex items-center gap-2'>
-                        <SelectStatus id={item.id} status={item.statusName} onChange={handleStatusChange} />
-                        <EmployeeEvaluationForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
-                     </div>
+                     <EmployeeEvaluationForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
                   </TableCell>
                </TableRow>
             ))}

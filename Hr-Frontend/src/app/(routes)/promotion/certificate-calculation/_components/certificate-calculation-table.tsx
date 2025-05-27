@@ -8,10 +8,11 @@ import { useRouter } from 'next/navigation';
 
 import SelectStatus from '@/app/_components/select-status';
 import { ICertificateCalculation } from '../page';
-import { leavesService } from '@/services/Leaves/leaves.service';
 import CertificateCalculationForm from './certificate-calculation-form';
 import { Button } from '@/components/ui/button';
 import CertificateCalculationAttachment from './certificate-calculation-attachment';
+import { correctingAcademicAchievementService } from '@/services/correcting-academic-achievement.service';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 type Props = {
    columns: { label: string; value: string; className?: string }[];
@@ -23,7 +24,10 @@ const CertificateCalculationTable = ({ certificateCalculationData, columns }: Pr
 
    const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
       try {
-         const response = await leavesService.patchLeave({ id: String(id) || 0, statusId: String(value) });
+         const response = await correctingAcademicAchievementService.patchCorrectingAcademicAchievement({
+            id: String(id) || 0,
+            statusId: Number(value)
+         });
          toast.success(response?.message || 'تم تحديث الحالة بنجاح.');
          router.refresh();
       } catch (error) {
@@ -33,60 +37,62 @@ const CertificateCalculationTable = ({ certificateCalculationData, columns }: Pr
    };
 
    return (
-      <Table>
-         <TableHeader>
-            <TableRow>
-               {columns.map((column) => (
-                  <TableHead align='right' key={column.value} className={column.className}>
-                     {column.label}
+      <ScrollArea className='w-[1380px] whitespace-nowrap '>
+         <Table>
+            <TableHeader>
+               <TableRow>
+                  {columns.map((column) => (
+                     <TableHead align='right' key={column.value} className={column.className}>
+                        {column.label}
+                     </TableHead>
+                  ))}
+                  <TableHead className='w-[100px] text-center'>
+                     <AlignJustify className='justify-center' />
                   </TableHead>
-               ))}
-               <TableHead className='w-[100px] text-center'>
-                  <AlignJustify className='justify-center' />
-               </TableHead>
-            </TableRow>
-         </TableHeader>
-         <TableBody>
-            {certificateCalculationData.map((item) => (
-               <TableRow key={item.id}>
-                  <TableCell>{item.jobCode}</TableCell>
-                  <TableCell>{item.fullName}</TableCell>
-                  <TableCell>{item.lotNumber}</TableCell>
-                  <TableCell>{item.oldJobTitle}</TableCell>
-                  <TableCell>{item.oldDegree}</TableCell>
-                  <TableCell>{item.oldCategory}</TableCell>
-                  <TableCell>{item.newDegree}</TableCell>
-                  <TableCell>{item.newJobTitle}</TableCell>
-                  <TableCell>{item.newCategory}</TableCell>
-                  <TableCell>{item.degreePlacementDate}</TableCell>
-                  <TableCell>{item.categoryPlacementDate}</TableCell>
-                  <TableCell>{item.orderNo}</TableCell>
-                  <TableCell>{item.orderDate}</TableCell>
-                  <TableCell>
-                     <CertificateCalculationAttachment employeeId={item.employeeId} PrimaryTableId={item.id} />
-                  </TableCell>
-                  <TableCell>
-                     <Popover>
-                        <PopoverTrigger asChild>
-                           <Button variant='ghost' size='icon'>
-                              <NotepadText className='justify-center' />
-                           </Button>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                           <pre>{item?.note}</pre>
-                        </PopoverContent>
-                     </Popover>
-                  </TableCell>
-                  <TableCell>
-                     <div className='flex items-center gap-2'>
-                        <SelectStatus id={item.id} status={item.status.toString()} onChange={handleStatusChange} />
-                        <CertificateCalculationForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
-                     </div>
-                  </TableCell>
                </TableRow>
-            ))}
-         </TableBody>
-      </Table>
+            </TableHeader>
+            <TableBody>
+               {certificateCalculationData?.map((item) => (
+                  <TableRow key={item?.id}>
+                     <TableCell>{item?.jobCode}</TableCell>
+                     <TableCell>{item?.fullName}</TableCell>
+                     <TableCell>{item?.lotNumber}</TableCell>
+                     <TableCell>{item?.jobTitleFromName}</TableCell>
+                     <TableCell>{item?.degreeFromName}</TableCell>
+                     <TableCell>{item?.jobCategoryFromName}</TableCell>
+                     <TableCell>{item?.degreeToName}</TableCell>
+                     <TableCell>{item?.jobTitleToName}</TableCell>
+                     <TableCell>{item?.jobCategoryToName}</TableCell>
+                     <TableCell>{item?.dueDateDegree}</TableCell>
+                     <TableCell>{item?.bookNo}</TableCell>
+                     <TableCell>{item?.bookDate}</TableCell>
+                     <TableCell>
+                        <CertificateCalculationAttachment employeeId={item?.employeeId} PrimaryTableId={item?.id} />
+                     </TableCell>
+                     <TableCell>
+                        <Popover>
+                           <PopoverTrigger asChild>
+                              <Button variant='ghost' size='icon'>
+                                 <NotepadText className='justify-center' />
+                              </Button>
+                           </PopoverTrigger>
+                           <PopoverContent>
+                              <pre>{item?.note}</pre>
+                           </PopoverContent>
+                        </Popover>
+                     </TableCell>
+                     <TableCell>
+                        <SelectStatus id={item.id} status={item.status.toString()} onChange={handleStatusChange} />
+                     </TableCell>
+                     <TableCell>
+                        <CertificateCalculationForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
+                     </TableCell>
+                  </TableRow>
+               ))}
+            </TableBody>
+         </Table>
+         <ScrollBar orientation='horizontal' />
+      </ScrollArea>
    );
 };
 

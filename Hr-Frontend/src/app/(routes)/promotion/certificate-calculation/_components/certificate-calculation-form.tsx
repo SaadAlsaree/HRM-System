@@ -19,21 +19,28 @@ import { correctingAcademicAchievementService } from '@/services/correcting-acad
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { jobTitleService } from '@/services/system-settings/job-title.service';
 import { jobDegreeService } from '@/services/system-settings/job-degree.service';
+import { academicAchievementService } from '@/services/system-settings/academic-chievement.service';
+import { jobCategoryService } from '@/services/system-settings/job-category.service';
+import { jobDescriptionService } from '@/services/system-settings/job-description.service';
 
 const formSchema = z.object({
-   employeeId: z.string().min(1, 'الرقم الوظيفي مطلوب'),
-   fullName: z.string().min(1, 'اسم الموظف مطلوب'),
-   orderNo: z.string().min(1, 'رقم الأمر الإداري مطلوب'),
-   orderDate: z.string().min(1, 'تاريخ الأمر الإداري مطلوب'),
-   oldJobTitle: z.string().optional(),
-   oldJobDescription: z.string().optional(),
-   oldDegree: z.string().optional(),
-   oldCategory: z.string().optional(),
-   jobTitleToId: z.string().min(1, 'الدرجة الجديدة مطلوب'),
-   degreeToId: z.string().min(1, 'حقل الدرجة الجديدة مطلوب'),
-   degreePlacementDate: z.string().min(1, 'تاريخ تسكين الدرجة مطلوب'),
-   status: z.string().optional(),
-   note: z.string().optional()
+   employeeId: z.string().optional(),
+   degreeFromId: z.number().optional(),
+   degreeToId: z.coerce.number().optional(),
+   jobCategoryFromId: z.number().optional(),
+   jobCategoryToId: z.coerce.number(),
+   jobTitleFromId: z.number().optional(),
+   jobDescriptionFromId: z.coerce.number(),
+   jobTitleToId: z.coerce.number(),
+   jobDescriptionToId: z.coerce.number(),
+   dueDateDegree: z.coerce.string(),
+   dueDateCategory: z.coerce.string(),
+   academicAchievementId: z.coerce.number(),
+   isCertificateCalculation: z.coerce.boolean(),
+   bookNo: z.coerce.string(),
+   bookDate: z.coerce.string(),
+   note: z.coerce.string(),
+   createBy: z.string().optional()
 });
 
 type Props = {
@@ -54,6 +61,9 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
    const [selectedUser, setSelectedUser] = useState<IEmployeeSearch | null>(null);
    const [jobTitleList, setJobTitleList] = useState<selectType[]>([]);
    const [degreeList, setDegreeList] = useState<selectType[]>([]);
+   const [academicAchievementList, setAcademicAchievementList] = useState<selectType[]>([]);
+   const [jobCategoryList, setJobCategoryList] = useState<selectType[]>([]);
+   const [jobDescriptionList, setJobDescriptionList] = useState<selectType[]>([]);
 
    const getDegreeList = async () => {
       const degreeList = await jobDegreeService.getJobDegree({ Page: 1, PageSize: 100 });
@@ -77,33 +87,69 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
       }));
       setJobTitleList(newJobTitleList);
    };
+
+   const getJobCategoryList = async () => {
+      const jobCategoryList = await jobCategoryService.getJobCategory({ Page: 1, PageSize: 100 });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const newJobCategoryList = jobCategoryList.data.items.map((item: any) => ({
+         label: item.name,
+         value: item.id.toString()
+      }));
+      setJobCategoryList(newJobCategoryList);
+   };
+
+   const getAcademicAchievementList = async () => {
+      const academicAchievementList = await academicAchievementService.getAcademicAchievements({ Page: 1, PageSize: 100 });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const newAcademicAchievementList = academicAchievementList.data.items.map((item: any) => ({
+         label: item.name,
+         value: item.id.toString()
+      }));
+      setAcademicAchievementList(newAcademicAchievementList);
+   };
+
+   const getJobDescriptionList = async () => {
+      const jobDescriptionList = await jobDescriptionService.getJobDescription({ Page: 1, PageSize: 100 });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const newJobDescriptionList = jobDescriptionList.data.items.map((item: any) => ({
+         label: item.name,
+         value: item.id.toString()
+      }));
+      setJobDescriptionList(newJobDescriptionList);
+   };
+
    const handleUserSelect = (user: IEmployeeSearch | null) => {
       setSelectedUser(user);
       form.setValue('employeeId', user?.employeeId ?? '');
-      form.setValue('fullName', user?.fullName ?? '');
+      form.setValue('degreeFromId', user?.jobDegreeId ?? 0);
+      form.setValue('jobCategoryFromId', user?.jobCategoryId ?? 0);
+      form.setValue('jobTitleFromId', user?.jobTitleId ?? 0);
+      form.setValue('jobDescriptionFromId', user?.jobDescriptionId ?? 0);
+      form.setValue('createBy', user?.employeeId ?? '');
    };
    const router = useRouter();
 
    useEffect(() => {
       getJobTitleList();
       getDegreeList();
+      getAcademicAchievementList();
+      getJobCategoryList();
+      getJobDescriptionList();
    }, []);
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         employeeId: data?.employeeId ?? '',
-         fullName: data?.fullName ?? '',
-         orderNo: data?.orderNo ?? '',
-         orderDate: data?.orderDate ?? '',
-         oldJobTitle: data?.oldJobTitle ?? '',
-         oldJobDescription: data?.oldJobDescription ?? '',
-         oldDegree: data?.oldDegree ?? '',
-         oldCategory: data?.oldCategory ?? '',
-         jobTitleToId: data?.jobTitleToId ?? '',
-         degreeToId: data?.degreeToId ?? '',
-         degreePlacementDate: data?.degreePlacementDate ?? '',
-         status: data?.statusName ?? '',
-         note: data?.note ?? ''
+         jobTitleToId: data?.jobTitleToId ?? 0,
+         degreeToId: data?.degreeToId ?? 0,
+         dueDateDegree: data?.dueDateDegree,
+         dueDateCategory: data?.dueDateCategory ?? '',
+         academicAchievementId: data?.academicAchievementId ?? 0,
+         isCertificateCalculation: data?.isCertificateCalculation ?? false,
+         bookNo: data?.bookNo ?? '',
+         bookDate: data?.bookDate ?? '',
+         note: data?.note ?? '',
+         jobCategoryToId: data?.jobCategoryToId ?? 0,
+         jobDescriptionToId: data?.jobDescriptionToId ?? 0
       }
    });
 
@@ -113,9 +159,7 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
          if (data) {
             const payload = {
                ...values,
-               employeeId: selectedUser?.employeeId ?? data.employeeId ?? '',
-               degreeToId: parseInt(values.degreeToId, 10),
-               jobTitleToId: parseInt(values.jobTitleToId, 10)
+               employeeId: selectedUser?.employeeId ?? data.employeeId ?? ''
             };
             await correctingAcademicAchievementService.updateCorrectingAcademicAchievement(data.id as string, payload);
             console.log('payload', payload);
@@ -132,16 +176,15 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
          } else {
             const payload = {
                ...values,
-               employeeId: selectedUser?.employeeId ?? '',
-               degreeToId: parseInt(values.degreeToId, 10),
-               jobTitleToId: parseInt(values.jobTitleToId, 10)
+               employeeId: selectedUser?.employeeId ?? ''
             };
             if (selectedUser === null) {
                toast.error('يجب اختيار موظف');
                setSubmitting(false);
                return;
             }
-            await correctingAcademicAchievementService.createCorrectingAcademicAchievement(payload);
+            const response = await correctingAcademicAchievementService.createCorrectingAcademicAchievement(payload);
+            console.log('response', response);
             console.log('payload', payload);
             toast(
                <pre className=' w-[340px] rounded-md'>
@@ -162,7 +205,7 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
          setOpen(false);
       }
    }
-   //    console.log(form.formState.errors);
+   console.log(form.formState.errors);
    return (
       <div>
          <Dialog open={open} onOpenChange={setOpen}>
@@ -234,7 +277,7 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
                         render={({ field }) => (
                            <FormItem>
                               <FormLabel>العنوان الوظيفي الجديد</FormLabel>
-                              <Select onValueChange={field.onChange}>
+                              <Select onValueChange={field.onChange} defaultValue={data?.jobTitleToId?.toString()}>
                                  <FormControl>
                                     <SelectTrigger>
                                        <SelectValue placeholder='العنوان الوظيفي الجديد' />
@@ -260,7 +303,7 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
                         render={({ field }) => (
                            <FormItem>
                               <FormLabel>الدرجة الجديدة</FormLabel>
-                              <Select onValueChange={field.onChange}>
+                              <Select onValueChange={field.onChange} defaultValue={data?.degreeToId?.toString()}>
                                  <FormControl>
                                     <SelectTrigger>
                                        <SelectValue placeholder='الدرجة الجديدة' />
@@ -282,7 +325,58 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
 
                      <FormField
                         control={form.control}
-                        name='degreePlacementDate'
+                        name='jobCategoryToId'
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>الفئة الوظيفية الجديدة</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={data?.jobCategoryToId?.toString()}>
+                                 <FormControl>
+                                    <SelectTrigger>
+                                       <SelectValue placeholder='الفئة الوظيفية الجديدة' />
+                                    </SelectTrigger>
+                                 </FormControl>
+                                 <SelectContent>
+                                    {jobCategoryList.map((option, index) => (
+                                       <SelectItem key={index} value={option.value}>
+                                          {option.label}
+                                       </SelectItem>
+                                    ))}
+                                 </SelectContent>
+                              </Select>
+
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     <FormField
+                        control={form.control}
+                        name='jobDescriptionToId'
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>الوصف الوظيفي الجديد</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={data?.jobDescriptionToId?.toString()}>
+                                 <FormControl>
+                                    <SelectTrigger>
+                                       <SelectValue placeholder='الوصف الوظيفي الجديد' />
+                                    </SelectTrigger>
+                                 </FormControl>
+                                 <SelectContent>
+                                    {jobDescriptionList.map((option, index) => (
+                                       <SelectItem key={index} value={option.value}>
+                                          {option.label}
+                                       </SelectItem>
+                                    ))}
+                                 </SelectContent>
+                              </Select>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     <FormField
+                        control={form.control}
+                        name='dueDateDegree'
                         render={({ field }) => (
                            <FormItem>
                               <FormLabel>تاريخ تسكين الدرجة</FormLabel>
@@ -296,7 +390,21 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
 
                      <FormField
                         control={form.control}
-                        name='orderNo'
+                        name='dueDateCategory'
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>تاريخ تسكين الفئة الوظيفية</FormLabel>
+                              <FormControl>
+                                 <Input placeholder='تاريخ تسكين الفئة الوظيفية' type='date' {...field} />
+                              </FormControl>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     <FormField
+                        control={form.control}
+                        name='bookNo'
                         render={({ field }) => (
                            <FormItem>
                               <FormLabel>رقم الأمر الإداري</FormLabel>
@@ -309,7 +417,7 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
                      />
                      <FormField
                         control={form.control}
-                        name='orderDate'
+                        name='bookDate'
                         render={({ field }) => (
                            <FormItem>
                               <FormLabel>تاريخ الأمر الإداري</FormLabel>
@@ -320,6 +428,31 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
                            </FormItem>
                         )}
                      />
+                     <FormField
+                        control={form.control}
+                        name='academicAchievementId'
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>التحصيل الدراسي الجديد</FormLabel>
+                              <Select onValueChange={field.onChange} defaultValue={data?.academicAchievementId?.toString()}>
+                                 <FormControl>
+                                    <SelectTrigger>
+                                       <SelectValue placeholder='التحصيل الدراسي الجديد' />
+                                    </SelectTrigger>
+                                 </FormControl>
+                                 <SelectContent>
+                                    {academicAchievementList.map((option, index) => (
+                                       <SelectItem key={index} value={option.value}>
+                                          {option.label}
+                                       </SelectItem>
+                                    ))}
+                                 </SelectContent>
+                              </Select>
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
                      <div className='col-span-3'>
                         <FormField
                            control={form.control}

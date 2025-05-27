@@ -4,13 +4,25 @@ public class CreateChangeDegreeHandler : CreateHandler<ChangeDegrees, CreateChan
 IRequestHandler<CreateChangeDegreeCommand, Response<bool>>
 {
     private readonly IBaseRepository<Promotion> _repositoryPromotion;
-    public CreateChangeDegreeHandler(IBaseRepository<ChangeDegrees> repository, IBaseRepository<Promotion> repositoryPromotion) : base(repository)
+    private readonly IBaseRepository<Leaves> _repositoryLeave;
+    public CreateChangeDegreeHandler(IBaseRepository<ChangeDegrees> repository, IBaseRepository<Promotion> repositoryPromotion, IBaseRepository<Leaves> repositoryLeave) : base(repository)
     {
         _repositoryPromotion = repositoryPromotion;
+        _repositoryLeave = repositoryLeave;
     }
 
     public async Task<Response<bool>> Handle(CreateChangeDegreeCommand request, CancellationToken cancellationToken)
     {
+
+        var findLeave = await _repositoryLeave.Find(z => z.Id == request.EmployeeId, cancellationToken: cancellationToken);
+        if (findLeave != null)
+        {
+            if (findLeave.SalaryStatusId == SalaryStatus.WithoutSalary && findLeave.CountOfDays > 120)
+            {
+                return ErrorsMessage.NotFoundData.ToErrorMessage(false);
+            }
+        }
+
         var findPromotion = await _repositoryPromotion.Find(z => z.Id == request.EmployeeId, cancellationToken: cancellationToken);
         if (findPromotion == null)
             return ErrorsMessage.NotFoundData.ToErrorMessage(false);

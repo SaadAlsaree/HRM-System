@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiClient from '@/services/axios.service';
 import { Status } from '@/types/enums';
-import { IPagination, UploadAttachmentPayload } from '@/types';
+import { IPagination } from '@/types';
 
 export interface ChangeDegreePayload {
     id?: string;
@@ -48,9 +48,9 @@ export interface UpdateChangeDegreePayload {
 
 
 interface patchChangeDegreePayload {
-    id: string;
-    statusId: number;
-    tableName: Status;
+    id: string | number | null;
+    statusId: number | string | null;
+    tableName?: Status;
 }
 
 interface ChangeDegreeParams extends IPagination {
@@ -108,7 +108,7 @@ class ChangeDegreeService extends ApiClient {
         });
     }
 
-    public async uploadAttachment(payload: UploadAttachmentPayload): Promise<any> {
+    public async uploadAttachment(payload: any): Promise<any> {
         return this.request<any>({
             method: 'POST',
             url: '/ChangeDegree/uploadAttachment',

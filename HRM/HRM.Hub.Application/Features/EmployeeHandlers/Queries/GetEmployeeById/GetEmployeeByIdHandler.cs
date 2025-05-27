@@ -48,8 +48,7 @@ public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, Resp
             FullName = z.FullName,
             TypeOfJobId = z.JobInformation.TypeOfJobId,
             IsPinned = z.IsPinned,
-            WifeName = z.WifeName,
-            ChildrenCount = z.ChildrenCount
+
         }).FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
         if (employee == null)

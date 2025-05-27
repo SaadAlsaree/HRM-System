@@ -19,8 +19,8 @@ const JobDegreeTable = ({ columns, data }: Props) => {
    //Handel Update status
    const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
       try {
-         const response = await jobDegreeService.patchJobDegree({ id, statusId: value });
-
+         const response = await jobDegreeService.patchJobDegree({ id: Number(id), statusId: value });
+         console.log(id, value);
          toast(
             <pre className=' w-[340px] rounded-md'>
                <h1 className='text-xl'>{response?.message}</h1>

@@ -18,5 +18,4 @@ export const columnsAffiliatesFromOrg: { label: string; value: string; className
     { label: 'المرفقات', value: 'attachments', className: 'font-bold' },
     { label: 'الملاحظات', value: 'note', className: 'font-bold' },
     { label: 'الحالة', value: 'status', className: 'font-bold' },
-    { label: 'الإجراءات', value: 'actions', className: 'font-bold' },
 ];

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiClient from '@/services/axios.service';
 import { Status, TableNames } from '@/types/enums';
-import { IPagination, UploadAttachmentPayload } from '@/types';
+import { IPagination } from '@/types';
 
 
 export interface ValuationPayload {
@@ -20,8 +20,8 @@ export interface ValuationPayload {
 }
 
 interface patchValuationPayload {
-    id: string,
-    statusId: number,
+    id: string | number | null,
+    statusId: number | string | null,
     tableName?: TableNames
 }
 
@@ -74,7 +74,7 @@ class ValuationsService extends ApiClient {
         });
     }
 
-    public async uploadAttachment(payload: UploadAttachmentPayload): Promise<any> {
+    public async uploadAttachment(payload: any): Promise<any> {
         return this.request<any>({
             method: 'POST',
             url: '/Valuation/UploadAttachment',

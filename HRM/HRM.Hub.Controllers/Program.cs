@@ -1,5 +1,6 @@
 using HRM.Hub.Application;
 using HRM.Hub.Persistence;
+using Microsoft.AspNetCore.DataProtection;
 using Serilog;
 using System.Threading.RateLimiting;
 
@@ -13,7 +14,11 @@ try
     {
         EnvironmentName = GetStage == "PROD" ? Environments.Production : Environments.Development
     });
+    //builder.
     builder.WebHost.UseKestrel().UseIISIntegration();
+   // builder.Services.AddDataProtection()
+     //   .PersistKeysToFileSystem(new DirectoryInfo(@"/root/.aspnet/DataProtection-Keys"))
+       // .SetApplicationName("HRM");
     builder.Services.AddPersistenceServices(builder.Configuration);
     builder.Services.AddApplicationServices();
     builder.Services.ConfigureServices(builder.Configuration);

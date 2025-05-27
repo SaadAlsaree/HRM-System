@@ -40,6 +40,7 @@ const EditDueDatePage = async ({ searchParams }: Props) => {
    const editDueDate = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 
+   console.log(editDueDate);
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>
          <div className='w-full'>

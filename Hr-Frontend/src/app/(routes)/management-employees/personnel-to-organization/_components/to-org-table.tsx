@@ -8,6 +8,7 @@ import SelectStatus from '@/app/_components/select-status';
 import { IAffiliatesToOrg } from '../page';
 import AffiliatesToOrgForm from './to-org-form';
 import { assignmentServices } from '@/services/system-settings/assignments.service';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 type Props = {
     columns: { label: string; value: string; className?: string }[];
@@ -29,6 +30,7 @@ const AffiliatesToOrgTable = ({ affiliatesToOrgData, columns }: Props) => {
     };
 
     return (
+        <ScrollArea className="w-[1400px]">
         <Table>
             <TableHeader>
                 <TableRow>
@@ -70,15 +72,20 @@ const AffiliatesToOrgTable = ({ affiliatesToOrgData, columns }: Props) => {
                         </TableCell>
                         <TableCell>{item.note}</TableCell>
                         <TableCell>
-                            <div className='flex items-center gap-2'>
                                 <SelectStatus id={item.id} status={item.status.toString()} onChange={handleStatusChange} />
-                                <AffiliatesToOrgForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
-                            </div>
+                                
+                          
+                        </TableCell>
+                        <TableCell>
+                        <AffiliatesToOrgForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
+
                         </TableCell>
                     </TableRow>
                 ))}
             </TableBody>
         </Table>
+        <ScrollBar orientation="horizontal" />
+        </ScrollArea>
     );
 };
 

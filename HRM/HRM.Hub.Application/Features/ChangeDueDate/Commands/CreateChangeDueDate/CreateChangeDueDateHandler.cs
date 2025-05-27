@@ -3,14 +3,25 @@ namespace HRM.Hub.Application.Features.ChangeDueDate.Commands.CreateChangeDueDat
 public class CreateChangeDueDateHandler : CreateHandler<ChangeDueDates, CreateChangeDueDateCommand>,
     IRequestHandler<CreateChangeDueDateCommand, Response<bool>>
 {
+    private readonly IBaseRepository<Leaves> _repositoryLeave;
     private readonly IBaseRepository<Promotion> _repositoryPromotion;
-    public CreateChangeDueDateHandler(IBaseRepository<ChangeDueDates> repository, IBaseRepository<Promotion> repositoryPromotion) : base(repository)
+    public CreateChangeDueDateHandler(IBaseRepository<ChangeDueDates> repository, IBaseRepository<Promotion> repositoryPromotion, IBaseRepository<Leaves> repositoryLeave) : base(repository)
     {
         _repositoryPromotion = repositoryPromotion;
+        _repositoryLeave = repositoryLeave;
     }
 
     public async Task<Response<bool>> Handle(CreateChangeDueDateCommand request, CancellationToken cancellationToken)
     {
+        var findLeave = await _repositoryLeave.Find(z => z.Id == request.EmployeeId, cancellationToken: cancellationToken);
+        if (findLeave != null)
+        {
+            if (findLeave.SalaryStatusId == SalaryStatus.WithoutSalary && findLeave.CountOfDays > 120)
+            {
+                return ErrorsMessage.NotFoundData.ToErrorMessage(false);
+            }
+        }
+
         var findPromotion = await _repositoryPromotion.Find(z => z.Id == request.EmployeeId, cancellationToken: cancellationToken);
         if (findPromotion == null)
             return ErrorsMessage.NotFoundData.ToErrorMessage(false);

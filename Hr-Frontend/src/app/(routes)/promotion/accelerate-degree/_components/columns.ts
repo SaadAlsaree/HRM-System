@@ -19,5 +19,4 @@ export const columnsAccelerateAchievement: { label: string; value: string; class
     { label: 'المرفقات', value: 'attachments', className: 'font-bold' },
     { label: 'الملاحظات', value: 'note', className: 'font-bold' },
     { label: 'الحالة', value: 'statusName', className: 'font-bold' },
-    { label: 'الإجراءات', value: 'actions', className: 'font-bold' },
 ];

@@ -14,23 +14,27 @@ interface Props {
 }
 
 export interface IEditJobTitle {
-   id: string;
-   employeeId: string;
+   newJobTitleId: number;
+   newJobTitleName: string;
+   newJobDescriptionId: number;
+   newJobDescriptionName: string;
+
+   oldJobTitleId: number | null;
+   oldJobTitleName: string | null;
+   oldJobDescriptionId: number | null;
+   oldJobDescriptionName: string | null;
+
+   orderNo: string;
+   orderDate: string; // Format: YYYY-MM-DD
+   note: string;
+
+   id: string; // UUID
+   employeeId: string; // UUID
    fullName: string;
    jobCode: string;
-   lotNumber: string;
-   oldJobTitleName: string;
-   newJobTitleName: string;
-   oldJobDescriptionName: string;
-   newJobDescriptionName: string;
-   newJobTitleId: number;
-   newJobDescriptionId: number;
-   orderNo: string;
-   orderDate: string;
+   lotNumber: string | null;
    statusName: string;
    status: number;
-   note: string;
-   attachments?: string[];
 }
 
 const EditJobTitlePage = async ({ searchParams }: Props) => {
@@ -40,8 +44,6 @@ const EditJobTitlePage = async ({ searchParams }: Props) => {
    const data = await changeJobTitlesService.getChangeJobTitles({ Page, PageSize });
    const editJobTitleData = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
-
-
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

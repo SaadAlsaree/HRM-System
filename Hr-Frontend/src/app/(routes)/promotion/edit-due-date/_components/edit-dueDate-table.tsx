@@ -12,6 +12,7 @@ import { changeDueDateService } from '@/services/change-due-date.service';
 import { Button } from '@/components/ui/button';
 import EditDueDateAttachment from './edit-dueDate-attachment';
 import EditDueDateForm from './edit-dueDate-form';
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 type Props = {
    columns: { label: string; value: string; className?: string }[];
@@ -21,9 +22,9 @@ type Props = {
 const EditDueDateTable = ({ editDueDateData, columns }: Props) => {
    const router = useRouter();
 
-const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
+   const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
       try {
-         const response = await changeDueDateService.patchChangeDueDate ({ id: String(id), statusId: Number(value) });
+         const response = await changeDueDateService.patchChangeDueDate({ id: String(id), statusId: Number(value) });
          toast.success(response?.message || 'تم تحديث الحالة بنجاح.');
          router.refresh();
       } catch (error) {
@@ -33,56 +34,59 @@ const handleStatusChange = async (value: string | number | null, id: string | nu
    };
 
    return (
-      <Table>
-         <TableHeader>
-            <TableRow>
-               {columns.map((column) => (
-                  <TableHead align='right' key={column.value} className={column.className}>
-                     {column.label}
+      <ScrollArea className='w-[1380px] whitespace-nowrap '>
+         <Table>
+            <TableHeader>
+               <TableRow>
+                  {columns.map((column) => (
+                     <TableHead align='right' key={column.value} className={column.className}>
+                        {column.label}
+                     </TableHead>
+                  ))}
+                  <TableHead className='w-[100px] text-center'>
+                     <AlignJustify className='justify-center' />
                   </TableHead>
-               ))}
-               <TableHead className='w-[100px] text-center'>
-                  <AlignJustify className='justify-center' />
-               </TableHead>
-            </TableRow>
-         </TableHeader>
-         <TableBody>
-            {editDueDateData.map((item) => (
-               <TableRow key={item.id}>
-                  <TableCell>{item.jobCode}</TableCell>
-                  <TableCell>{item.fullName}</TableCell>
-                  <TableCell>{item.lotNumber}</TableCell>
-                  <TableCell>{item.currentDegreeDueDate}</TableCell>
-                  <TableCell>{item.newDegreeDueDate}</TableCell>
-                  <TableCell>{item.currentCategoryDueDate}</TableCell>
-                  <TableCell>{item.newCategoryDueDate}</TableCell>
-                  <TableCell>{item.orderNo}</TableCell>
-                  <TableCell>{item.orderDate}</TableCell>
-                  <TableCell>
-                    <EditDueDateAttachment employeeId={item.employeeId} PrimaryTableId={item.id} />
-                  </TableCell>
-                  <TableCell>
-                     <Popover>
-                        <PopoverTrigger asChild>
-                           <Button variant='ghost' size='icon'>
-                              <NotepadText className='justify-center' />
-                           </Button>
-                        </PopoverTrigger>
-                        <PopoverContent>
-                           <pre>{item?.note}</pre>
-                        </PopoverContent>
-                     </Popover>
-                  </TableCell>
-                  <TableCell>
-                        <SelectStatus id={item.id} status={item.status.toString()} onChange={handleStatusChange} />
-                  </TableCell>
-                  <TableCell>
-                  <EditDueDateForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
-                  </TableCell>
                </TableRow>
-            ))}
-         </TableBody>
-      </Table>
+            </TableHeader>
+            <TableBody>
+               {editDueDateData.map((item) => (
+                  <TableRow key={item.id}>
+                     <TableCell>{item.jobCode}</TableCell>
+                     <TableCell>{item.fullName}</TableCell>
+                     <TableCell>{item.lotNumber}</TableCell>
+                     <TableCell>{item.currentDegreeDueDate}</TableCell>
+                     <TableCell>{item.newDegreeDueDate}</TableCell>
+                     <TableCell>{item.currentCategoryDueDate}</TableCell>
+                     <TableCell>{item.newCategoryDueDate}</TableCell>
+                     <TableCell>{item.orderNo}</TableCell>
+                     <TableCell>{item.orderDate}</TableCell>
+                     <TableCell>
+                        <EditDueDateAttachment employeeId={item.employeeId} PrimaryTableId={item.id} />
+                     </TableCell>
+                     <TableCell>
+                        <Popover>
+                           <PopoverTrigger asChild>
+                              <Button variant='ghost' size='icon'>
+                                 <NotepadText className='justify-center' />
+                              </Button>
+                           </PopoverTrigger>
+                           <PopoverContent>
+                              <pre>{item?.note}</pre>
+                           </PopoverContent>
+                        </Popover>
+                     </TableCell>
+                     <TableCell>
+                        <SelectStatus id={item.id} status={item.status.toString()} onChange={handleStatusChange} />
+                     </TableCell>
+                     <TableCell>
+                        <EditDueDateForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
+                     </TableCell>
+                  </TableRow>
+               ))}
+            </TableBody>
+         </Table>
+         <ScrollBar orientation='horizontal' />
+      </ScrollArea>
    );
 };
 

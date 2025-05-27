@@ -7,7 +7,7 @@ public class AcademicAchievement : BaseEntity<int>
 
     public virtual ICollection<EducationInformation> EducationInformation { get; set; } = new List<EducationInformation>();
 
-    public virtual JobDegree JobDegree { get; set; } = new JobDegree();
+    public virtual JobDegree JobDegree { get; set; } = default!;
     public virtual ICollection<StudyLeave> StudyLeave { get; set; } = new List<StudyLeave>();
     public virtual ICollection<CorrectingAcademicAchievements> CorrectingAcademicAchievements { get; set; } = new List<CorrectingAcademicAchievements>();
 }

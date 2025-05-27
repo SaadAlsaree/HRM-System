@@ -972,6 +972,9 @@ namespace HRM.Hub.Persistence.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("AcademicAchievementId")
+                        .HasColumnType("integer");
+
                     b.Property<DateOnly?>("BookDate")
                         .HasColumnType("date");
 
@@ -1045,6 +1048,8 @@ namespace HRM.Hub.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AcademicAchievementId");
 
                     b.HasIndex("DegreeFromId");
 
@@ -1860,9 +1865,6 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<string>("BirthPlace")
                         .HasColumnType("text");
 
-                    b.Property<int>("ChildrenCount")
-                        .HasColumnType("integer");
-
                     b.Property<int?>("CountryId")
                         .HasColumnType("integer");
 
@@ -1954,9 +1956,6 @@ namespace HRM.Hub.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("ThirdName")
-                        .HasColumnType("text");
-
-                    b.Property<string>("WifeName")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -2919,9 +2918,6 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<int>("PositionId")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("SectionId")
-                        .HasColumnType("integer");
-
                     b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
@@ -2929,9 +2925,6 @@ namespace HRM.Hub.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<int?>("SubDirectorateId")
-                        .HasColumnType("integer");
-
-                    b.Property<int?>("UnitId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -2948,13 +2941,9 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.HasIndex("PositionId");
 
-                    b.HasIndex("SectionId");
-
                     b.HasIndex("StopJobDegreeId");
 
                     b.HasIndex("SubDirectorateId");
-
-                    b.HasIndex("UnitId");
 
                     b.ToTable("ManagementInformation");
                 });
@@ -5222,6 +5211,10 @@ namespace HRM.Hub.Persistence.Migrations
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.CorrectingAcademicAchievements", b =>
                 {
+                    b.HasOne("HRM.Hub.Domain.Entities.AcademicAchievement", "AcademicAchievement")
+                        .WithMany("CorrectingAcademicAchievements")
+                        .HasForeignKey("AcademicAchievementId");
+
                     b.HasOne("HRM.Hub.Domain.Entities.JobDegree", "DegreeFrom")
                         .WithMany("CorrectingAcademicAchievementDegreeFrom")
                         .HasForeignKey("DegreeFromId")
@@ -5272,6 +5265,8 @@ namespace HRM.Hub.Persistence.Migrations
                         .HasForeignKey("JobTitleToId")
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
+
+                    b.Navigation("AcademicAchievement");
 
                     b.Navigation("DegreeFrom");
 
@@ -5691,11 +5686,6 @@ namespace HRM.Hub.Persistence.Migrations
                         .OnDelete(DeleteBehavior.ClientNoAction)
                         .IsRequired();
 
-                    b.HasOne("HRM.Hub.Domain.Entities.Sections", "Section")
-                        .WithMany("ManagementInformation")
-                        .HasForeignKey("SectionId")
-                        .OnDelete(DeleteBehavior.ClientNoAction);
-
                     b.HasOne("HRM.Hub.Domain.Entities.JobDegree", "StopJobDegree")
                         .WithMany("ManagementInformationStopJobDegree")
                         .HasForeignKey("StopJobDegreeId")
@@ -5704,11 +5694,6 @@ namespace HRM.Hub.Persistence.Migrations
                     b.HasOne("HRM.Hub.Domain.Entities.SubDirectorates", "SubDirectorate")
                         .WithMany("ManagementInformation")
                         .HasForeignKey("SubDirectorateId")
-                        .OnDelete(DeleteBehavior.ClientNoAction);
-
-                    b.HasOne("HRM.Hub.Domain.Entities.Units", "Unit")
-                        .WithMany("ManagementInformation")
-                        .HasForeignKey("UnitId")
                         .OnDelete(DeleteBehavior.ClientNoAction);
 
                     b.Navigation("Department");
@@ -5725,13 +5710,9 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Navigation("Position");
 
-                    b.Navigation("Section");
-
                     b.Navigation("StopJobDegree");
 
                     b.Navigation("SubDirectorate");
-
-                    b.Navigation("Unit");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.MarriageInformation", b =>
@@ -6176,6 +6157,8 @@ namespace HRM.Hub.Persistence.Migrations
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.AcademicAchievement", b =>
                 {
+                    b.Navigation("CorrectingAcademicAchievements");
+
                     b.Navigation("EducationInformation");
 
                     b.Navigation("StudyLeave");
@@ -6447,8 +6430,6 @@ namespace HRM.Hub.Persistence.Migrations
                 {
                     b.Navigation("EmployeePositions");
 
-                    b.Navigation("ManagementInformation");
-
                     b.Navigation("MovementsFromSection");
 
                     b.Navigation("MovementsToSection");
@@ -6543,8 +6524,6 @@ namespace HRM.Hub.Persistence.Migrations
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Units", b =>
                 {
                     b.Navigation("EmployeePositions");
-
-                    b.Navigation("ManagementInformation");
 
                     b.Navigation("MovementsFromUnite");
 

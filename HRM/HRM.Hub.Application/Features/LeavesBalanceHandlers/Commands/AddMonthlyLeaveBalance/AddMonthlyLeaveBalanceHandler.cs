@@ -6,12 +6,14 @@ public class AddMonthlyLeaveBalanceHandler : IRequestHandler<AddMonthlyLeaveBala
 {
     private readonly IBaseRepository<LeavesBalance> _leavesBalanceRepository;
     private readonly ILogger<AddMonthlyLeaveBalanceHandler> _logger;
+    private readonly IBaseRepository<Leaves> _repositoryLeave;
 
-    public AddMonthlyLeaveBalanceHandler(IBaseRepository<LeavesBalance> leavesBalanceRepository, ILogger<AddMonthlyLeaveBalanceHandler> logger)
+    public AddMonthlyLeaveBalanceHandler(IBaseRepository<LeavesBalance> leavesBalanceRepository, ILogger<AddMonthlyLeaveBalanceHandler> logger, IBaseRepository<Leaves> repositoryLeave)
     {
         _leavesBalanceRepository = leavesBalanceRepository ??
                 throw new ArgumentNullException(nameof(leavesBalanceRepository));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        _repositoryLeave = repositoryLeave;
     }
 
     public async Task<bool> Handle(AddMonthlyLeaveBalanceCommand request, CancellationToken cancellationToken)
@@ -36,6 +38,15 @@ public class AddMonthlyLeaveBalanceHandler : IRequestHandler<AddMonthlyLeaveBala
                         Balance = newBalance,
                         Note = newNote
                     };
+
+                    var findLeave = await _repositoryLeave.Find(z => z.Id == balance.Employee.Id, cancellationToken: cancellationToken);
+                    if (findLeave != null)
+                    {
+                        if (findLeave.SalaryStatusId == SalaryStatus.WithoutSalary && findLeave.CountOfDays > 120)
+                        {
+                            _logger.LogWarning($"Leave balance for employee {balance.Employee.Id} exceeds 120 days without salary.");
+                        }
+                    }
 
                     // Use the explicit update method with the balance ID
                     var updated = await _leavesBalanceRepository.UpdateEntity(

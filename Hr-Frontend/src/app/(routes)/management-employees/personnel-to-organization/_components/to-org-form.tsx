@@ -124,6 +124,7 @@ const AffiliatesToOrgForm = ({ data, icon, title, variant }: Props) => {
                        ...values,
                        employeeId: selectedUser?.employeeId ?? data.employeeId ?? '',
                        typeOfAssignmentId: parseInt(values.typeOfAssignmentId),
+                       assignmentSite: 2,
                        
                     };
                     await assignmentService.updateAssignment(data.id, payload);
@@ -143,6 +144,7 @@ const AffiliatesToOrgForm = ({ data, icon, title, variant }: Props) => {
                        ...values,
                        employeeId: selectedUser?.employeeId ?? '',
                        typeOfAssignmentId: parseInt(values.typeOfAssignmentId),
+                       assignmentSite:2
                     };
                     if (selectedUser === null) {
                        toast.error('يجب اختيار موظف');

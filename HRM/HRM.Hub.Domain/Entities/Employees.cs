@@ -24,8 +24,6 @@ public class Employees : BaseEntity<Guid>
     public string MotherThirdName { get; set; }
     public string MotherSurName { get; set; }
     public string MotherFullName { get; set; }
-    public string WifeName { get; set; }
-    public int ChildrenCount { get; set; }
     public GenderEnum Gender { get; set; }
     public string BirthPlace { get; set; }
     public DateOnly? BirthDate { get; set; }
@@ -74,7 +72,7 @@ public class Employees : BaseEntity<Guid>
 
     public virtual ICollection<Movements> Movements { get; set; } = new List<Movements>();
 
-    public virtual Promotion Promotion { get; set; } = new Promotion();
+    public virtual Promotion Promotion { get; set; } = default!;
 
     public virtual ICollection<ServiceCalculation> ServiceCalculation { get; set; } = new List<ServiceCalculation>();
     public virtual ICollection<EmployeePosition> EmployeePositions { get; set; } = new List<EmployeePosition>();
@@ -87,7 +85,7 @@ public class Employees : BaseEntity<Guid>
 
     public virtual ICollection<ServiceCalculation> ServiceCalculations { get; set; } = new List<ServiceCalculation>();
     public virtual ICollection<ThanksAndSeniority> ThanksAndSeniority { get; set; } = new List<ThanksAndSeniority>();
-    public virtual LeavesBalance LeavesBalances { get; set; } = new LeavesBalance();
+    public virtual LeavesBalance LeavesBalances { get; set; } = default!;
     public virtual LeavesMedicalBalance LeavesMedicalBalances { get; set; } = new LeavesMedicalBalance();
     public virtual ICollection<Interruption> Interruptions { get; set; } = new List<Interruption>();
     public virtual ICollection<HandPull> HandPulls { get; set; } = new List<HandPull>();

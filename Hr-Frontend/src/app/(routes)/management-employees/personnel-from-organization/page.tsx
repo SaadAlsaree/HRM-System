@@ -14,42 +14,47 @@ interface Props {
 }
 
 export interface IAffiliatesFromOrg {
-   id: string;
-   employeeId: string;
-   fullName: string;
-   jobCode: string;
-   typeOfAssignmentId: string;
-   orderNo: string;
-   orderDate: string;
-   assignmentSite: number;
-   assignedFromOrganization: string;
-   assignedToOrganization: string;
-   durationOfAssignment: number;
-   releaseOrderDate: string;
-   releaseOrderNo: string;
-   assignmentOrderDate: string;
-   assignmentOrderNo: string;
-   releaseDate: string;
-   hireDate: string;
-   hireOrderNo: string;
-   hireOrderDate: string;
-   endOrderNo: string;
-   endOrderDate: string;
-   endReleaseOrderDate: string;
-   endReleaseOrderNo: string;
-   endHireNo: string;
-   endHireDate: string;
-   note: string;
-   lastUpdateBy: string;
-   attachments: string[];
-   status: string;
+   id?: string;
+  employeeId?: string;
+  fullName?: string;
+  jobCode?: string;
+  lotNumber?: string;
+  statusName?: string;
+  status?: number;
+  typeOfAssignmentId?: number;
+  typeOfAssignmentName?: string;
+  orderNo?: string;
+  orderDate?: string; // ISO format date: e.g., "2025-05-19"
+  directorateName?: string;
+  subDirectorateName?: string;
+  assignmentSite?: number;
+  assignedFromOrganization?: string;
+  assignedToOrganization?: string;
+  durationOfAssignment?: number;
+  releaseOrderDate?: string;
+  releaseOrderNo?: string;
+  assignmentOrderDate?: string;
+  assignmentOrderNo?: string;
+  releaseDate?: string;
+  hireDateName?: string;
+  hireOrderNo?: string;
+  hireOrderDate?: string;
+  hireDate?: string;
+  endOrderNo?: string;
+  endOrderDate?: string;
+  endReleaseOrderDate?: string;
+  endReleaseOrderNo?: string;
+  endHireNo?: string;
+  endHireDate?: string;
+
+  note?: string;
 }
 
 const AffiliatesFromOrg = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await assignmentService.getAssignment({ Page, PageSize });
+   const data = await assignmentService.getAssignment({ Page, PageSize ,AssignmentSite: 1});
    const affiliatesFromOrgData = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 

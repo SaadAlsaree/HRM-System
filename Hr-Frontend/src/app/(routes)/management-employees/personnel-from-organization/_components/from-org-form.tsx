@@ -25,7 +25,7 @@ const formSchema = z.object({
     fullName: z.string().min(1, 'اسم الموظف مطلوب'),
     orderNo: z.string().min(1, 'رقم الأمر الإداري مطلوب'),
     orderDate: z.string().min(1, 'تاريخ الأمر الإداري مطلوب'),
-    typeOfAssignmentId: z.string().min(1, 'نوع الامر مطلوبة'),
+    typeOfAssignmentId: z.coerce.number().min(1, 'نوع الامر مطلوبة'),
     assignedFromOrganization: z.string().min(1, 'الجهة المنتسب منها مطلوبة'),
     assignedToOrganization: z.string().min(1, 'الجهة المنتسب اليها مطلوبة'),
     durationOfAssignment: z.number().min(1, 'مدة التنسيب مطلوبة'),
@@ -88,7 +88,7 @@ const AffiliatesFromOrgForm = ({ data, icon, title, variant }: Props) => {
             orderNo: data?.orderNo ?? '',
             orderDate: data?.orderDate ?? '',
             assignedToOrganization: data?.assignedToOrganization ?? '',
-            typeOfAssignmentId: data?.typeOfAssignmentId ?? '',
+            typeOfAssignmentId: data?.typeOfAssignmentId ?? 0,
             assignedFromOrganization: data?.assignedFromOrganization ?? '',
             durationOfAssignment: data?.durationOfAssignment ?? 0,
             releaseOrderNo: data?.releaseOrderNo ?? '',
@@ -123,10 +123,10 @@ const AffiliatesFromOrgForm = ({ data, icon, title, variant }: Props) => {
                     const payload = {
                        ...values,
                        employeeId: selectedUser?.employeeId ?? data.employeeId ?? '',
-                       typeOfAssignmentId: parseInt(values.typeOfAssignmentId),
+                       assignmentSite:1
                        
                     };
-                    await assignmentService.updateAssignment(data.id, payload);
+                    await assignmentService.updateAssignment(data?.id ?? '', payload);
                     console.log('payload', payload);
                     toast(
                        <pre className=' w-[340px] rounded-md'>
@@ -142,7 +142,7 @@ const AffiliatesFromOrgForm = ({ data, icon, title, variant }: Props) => {
                     const payload = {
                        ...values,
                        employeeId: selectedUser?.employeeId ?? '',
-                       typeOfAssignmentId: parseInt(values.typeOfAssignmentId),
+                       assignmentSite:1
                     };
                     if (selectedUser === null) {
                        toast.error('يجب اختيار موظف');

@@ -39,8 +39,6 @@ public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<b
             FullName =
                 $"{request.FirstName} {request.SecondName} {request.ThirdName} {request.FourthName} {request.SurName}"
                     .Trim(),
-            WifeName = request.WifeName,
-            ChildrenCount = request.ChildrenCount,
             Gender = request.GenderId,
             StatusWorkingId = request.StatusWorkingId,
             StatisticalIndex = request.StatisticalIndex,

@@ -12,6 +12,7 @@ IRequestHandler<GetChangeJobTitlesQuery, Response<PagedResult<GetChangeJobTitles
         EmployeeId = x.EmployeeId,
         JobCode = x.Employee.JobCode,
         FullName = x.Employee.FullName,
+        LotNumber = x.Employee.LotNumber,
         NewJobDescriptionId = x.NewJobDescriptionId,
         NewJobDescriptionName = x.NewJobDescription.Name,
         NewJobTitleId = x.NewJobTitleId,

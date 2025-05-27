@@ -33,9 +33,9 @@ interface CorrectingAcademicAchievementParams extends IPagination {
 }
 
 interface patchCorrectingAcademicAchievementPayload {
-    id: string;
-    statusId: number;
-    tableName: Status;
+    id: string | number | null;
+    statusId: number | string | null;
+    tableName?: Status;
 }
 
 

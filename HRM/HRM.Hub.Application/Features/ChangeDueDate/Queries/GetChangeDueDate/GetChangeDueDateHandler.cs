@@ -13,6 +13,7 @@ IRequestHandler<GetChangeDueDateQuery, Response<PagedResult<GetChangeDueDateView
         EmployeeId = x.EmployeeId,
         JobCode = x.Employee.JobCode,
         FullName = x.Employee.FullName,
+        LotNumber = x.Employee.LotNumber,
         CurrentCategoryDueDate = x.CurrentDegreeDueDate,
         CurrentDegreeDueDate = x.CurrentDegreeDueDate,
         NewCategoryDueDate = x.NewDegreeDueDate,

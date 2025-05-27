@@ -49,7 +49,7 @@ const AffiliatesToOrg = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await assignmentService.getAssignment({ Page, PageSize });
+   const data = await assignmentService.getAssignment({ Page, PageSize,AssignmentSite: 2 });
    const affiliatesToOrgData = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 
