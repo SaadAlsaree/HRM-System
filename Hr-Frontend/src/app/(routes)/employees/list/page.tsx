@@ -68,28 +68,46 @@ export interface EmployeeList {
 
 interface Props {
    searchParams: {
-      page: string;
-      PageSize: string;
+      page?: string;
+      PageSize?: string;
+      search?: string;
    };
 }
 
 const EmployeeListPage = async ({ searchParams }: Props) => {
-   const Page = parseInt(searchParams.page) || 1;
-   const PageSize = parseInt(searchParams.PageSize) || 12;
+   const Page = parseInt(searchParams.page ?? '', 10) || 1;
+   const PageSize = parseInt(searchParams.PageSize ?? '', 10) || 12;
+   const search = (searchParams.search || '').trim();
 
    const employees = await employeeService.getEmployees({ Page, PageSize });
    const employeeList: EmployeeList[] = employees?.data?.items ?? [];
+
+   const filteredEmployees = search
+      ? employeeList.filter((employee) => {
+           const searchable = [employee.fullName, employee.jobCode, employee.lotNumber, employee.statisticalIndex]
+              .filter(Boolean)
+              .map((value) => String(value).toLowerCase());
+
+           return searchable.some((value) => value.includes(search.toLowerCase()));
+        })
+      : employeeList;
 
    const totalCount = employees?.data?.totalCount ?? 0;
 
    return (
       <div className='flex flex-col w-full border rounded-md bg-white dark:bg-gray-900'>
-         <EmployeeListToolbar />
+         <EmployeeListToolbar search={search} pageSize={PageSize} />
          <Separator />
          <div className='grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-            {employeeList.map((employee) => (
+            {filteredEmployees.map((employee) => (
                <EmployeeCard key={employee.id} employee={employee} />
             ))}
+
+            {filteredEmployees.length === 0 && (
+               <div className='col-span-full py-10 text-center text-muted-foreground'>
+                  لا توجد نتائج مطابقة لمدخلات البحث.
+               </div>
+            )}
          </div>
 
          <Separator />

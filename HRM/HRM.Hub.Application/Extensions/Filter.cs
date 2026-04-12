@@ -24,9 +24,16 @@ public static class FilterExtensions
                     if (guidValue != default)
                     {
                         var entityProperty = typeof(TEntity).GetProperty(property.Name);
-                        if (entityProperty != null && entityProperty.PropertyType == typeof(Guid))
+                        if (entityProperty != null)
                         {
-                            query = query.Where(GenerateEqualityExpression<TEntity, Guid>(property.Name, guidValue));
+                            if (entityProperty.PropertyType == typeof(Guid))
+                            {
+                                query = query.Where(GenerateEqualityExpression<TEntity, Guid>(property.Name, guidValue));
+                            }
+                            else if (entityProperty.PropertyType == typeof(Guid?))
+                            {
+                                query = query.Where(GenerateEqualityExpression<TEntity, Guid?>(property.Name, guidValue));
+                            }
                         }
                     }
                 }
@@ -163,7 +170,26 @@ public static class FilterExtensions
     {
         var parameter = Expression.Parameter(typeof(TEntity), "x");
         var property = Expression.Property(parameter, Name);
-        var constant = Expression.Constant(value);
+        Expression constant;
+
+        if (value == null)
+        {
+            constant = Expression.Constant(null, property.Type);
+        }
+        else
+        {
+            var targetType = Nullable.GetUnderlyingType(property.Type) ?? property.Type;
+            var runtimeType = value.GetType();
+            var normalizedValue = runtimeType == targetType ? value : Convert.ChangeType(value, targetType);
+
+            constant = Expression.Constant(normalizedValue, targetType);
+
+            if (property.Type != targetType)
+            {
+                constant = Expression.Convert(constant, property.Type);
+            }
+        }
+
         var equality = Expression.Equal(property, constant);
         return Expression.Lambda<Func<TEntity, bool>>(equality, parameter);
     }

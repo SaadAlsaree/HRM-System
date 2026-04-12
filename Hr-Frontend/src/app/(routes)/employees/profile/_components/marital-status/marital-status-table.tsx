@@ -23,7 +23,7 @@ import MaritalStatusToolbar from './marital-status-toolbar';
 import MaritalStatusAttachment from './marital-status-attachment';
 import { columnsMaritalStatus } from './columns';
 import MaritalStatusForm from './marital-status-form';
-import { IMarriageInformation } from './index';
+import { IMarriageInformation } from './marital-status-form';
 
 type Props = {
    employeeId: string;
