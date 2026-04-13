@@ -4,7 +4,7 @@ import { cookies } from 'next/headers';
 
 export class Server {
     protected instance: AxiosInstance;
-    protected baseUrl: string = process.env.BASE_URL ?? "http://localhost:5000/hub/hrm/v1/api/";
+    protected baseUrl: string = process.env.NEXT_PUBLIC_API_BASE_URL ?? process.env.BASE_URL ?? "http://localhost:5000/hub/hrm/v1/api/";
 
     constructor() {
         this.instance = axios.create({

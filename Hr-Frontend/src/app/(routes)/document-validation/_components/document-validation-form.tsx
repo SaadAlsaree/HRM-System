@@ -5,8 +5,24 @@ import React, { useState, useEffect } from 'react';
 import { Input } from '@/components/ui/input';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { User, Briefcase, GraduationCap, FileText } from 'lucide-react';
+import { Label } from '@/components/ui/label';
 
-const EmployeeForm = ({ selectedResult }) => {
+const InputWithLabel = ({ label, ...props }: { label: string } & React.ComponentProps<typeof Input>) => (
+    <div className="grid gap-1.5">
+        <Label>{label}</Label>
+        <Input {...props} />
+    </div>
+);
+
+interface ISelectedResult {
+    id: number | string;
+    employeeName: string;
+    fileNumber: string;
+    jobNumber: string;
+    statisticalNumber: string;
+}
+
+const EmployeeForm = ({ selectedResult }: { selectedResult: ISelectedResult | null }) => {
     const [formData, setFormData] = useState({
         employeeName: '',
         fileNumber: '',
@@ -57,22 +73,22 @@ const EmployeeForm = ({ selectedResult }) => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input
+                    <InputWithLabel
                         label="اسم الموظف"
                         value={formData.employeeName}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="رقم الاضبارة"
                         value={formData.fileNumber}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="الرقم الوظيفي"
                         value={formData.jobNumber}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="الرقم الاحصائي"
                         value={formData.statisticalNumber}
                         readOnly
@@ -89,62 +105,62 @@ const EmployeeForm = ({ selectedResult }) => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input
+                    <InputWithLabel
                         label="حالة الموظف"
                         value={formData.employeeStatus}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="الدرجة الحالية"
                         value={formData.currentGrade}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="العنوان الوظيفي"
                         value={formData.jobTitle}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="تاريخ تسكين الدرجة"
                         value={formData.gradeDate}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="الفئة الحالية"
                         value={formData.currentCategory}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="تاريخ تسكين الفئة"
                         value={formData.categoryDate}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="رقم الأمر الإداري بالتعيين"
                         value={formData.appointmentOrderNumber}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="تاريخ الأمر الإداري بالتعيين"
                         value={formData.appointmentOrderDate}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="رقم الأمر الإداري بالمباشرة"
                         value={formData.directOrderNumber}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="تاريخ الأمر الإداري بالمباشرة"
                         value={formData.directOrderDate}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="الدائرة"
                         value={formData.directorate}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="المديرية"
                         value={formData.subDirectorate}
                         readOnly
@@ -161,32 +177,32 @@ const EmployeeForm = ({ selectedResult }) => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input
+                    <InputWithLabel
                         label="التحصيل الدراسي عند التعيين"
                         value={formData.academicAchievementBeforeAppointment}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="التخصص الدراسي عند التعيين"
                         value={formData.academicFieldBeforeAppointment}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="تاريخ التخرج قبل التعيين"
                         value={formData.graduationYearBeforeAppointment}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="التحصيل الدراسي بعد التعيين"
                         value={formData.academicAchievementAfterAppointment}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="التخصص الدراسي بعد التعيين"
                         value={formData.academicFieldAfterAppointment}
                         readOnly
                     />
-                    <Input
+                    <InputWithLabel
                         label="تاريخ التخرج بعد التعيين"
                         value={formData.graduationYearAfterAppointment}
                         readOnly
@@ -203,7 +219,7 @@ const EmployeeForm = ({ selectedResult }) => {
                     </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    <Input
+                    <InputWithLabel
                         label="الملاحظات"
                         value={formData.notes}
                         readOnly

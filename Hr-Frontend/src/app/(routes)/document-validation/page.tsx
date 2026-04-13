@@ -5,10 +5,18 @@ import React, { useState } from 'react';
 import EmployeeForm from "./_components/document-validation-form";
 import DocumentToolbar from "./_components/document-validation-toolbar";
 
-export default function Home() {
-    const [selectedResult, setSelectedResult] = useState(null);
+interface ISearchResult {
+    id: number | string;
+    employeeName: string;
+    fileNumber: string;
+    jobNumber: string;
+    statisticalNumber: string;
+}
 
-    const handleSelectResult = (result) => {
+export default function Home() {
+    const [selectedResult, setSelectedResult] = useState<ISearchResult | null>(null);
+
+    const handleSelectResult = (result: ISearchResult) => {
         setSelectedResult(result);
     };
 

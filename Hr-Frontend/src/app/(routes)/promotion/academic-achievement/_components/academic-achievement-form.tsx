@@ -141,7 +141,7 @@ const AcademicAchievementForm = ({ data, icon, title, variant, academicCertifica
         defaultValues: {
             employeeId: data?.employeeId ?? '',
             jobDescriptionToId: data?.jobDescriptionToId,
-            degreeToId: data?.jobDegreeToId,
+            degreeToId: data?.degreeToId,
             dueDateDegree: data?.dueDateDegree ?? '',
             dueDateCategory: data?.dueDateCategory ?? '',
             jobTitleToId: data?.jobTitleToId,
@@ -151,7 +151,7 @@ const AcademicAchievementForm = ({ data, icon, title, variant, academicCertifica
             note: data?.note ?? '',
             academicAchievementId: data?.academicAchievementId ?? 0,
             isCertificateCalculation: data?.isCertificateCalculation ?? true,
-            createBy: data?.createBy ?? '',
+            createBy: '',
 
            
         },

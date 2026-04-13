@@ -8,14 +8,23 @@ import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Search, Send } from 'lucide-react';
 
-const DocumentToolbar = ({ onSelectResult }) => {
+interface ISearchResult {
+    id: number | string;
+    employeeName: string;
+    fileNumber: string;
+    jobNumber: string;
+    statisticalNumber: string;
+}
+
+const DocumentToolbar = ({ onSelectResult }: { onSelectResult: (result: ISearchResult) => void }) => {
     const [searchType, setSearchType] = useState('name');
     const [searchTerm, setSearchTerm] = useState('');
-    const [searchResults, setSearchResults] = useState<any[]>([]);
+    const [searchResults, setSearchResults] = useState<ISearchResult[]>([]);
 
     const handleSearch = () => {
         // Simulate search logic (replace with actual API call)
-        const results = [
+        console.log('Searching by:', searchType);
+        const results: ISearchResult[] = [
             { id: 1, employeeName: 'علي أحمد', fileNumber: '12345', jobNumber: '67890', statisticalNumber: '98765' },
             { id: 2, employeeName: 'محمد خالد', fileNumber: '54321', jobNumber: '09876', statisticalNumber: '12345' },
         ];

@@ -64,10 +64,10 @@ const RetirementForm = ({ title, data, icon, variant }: Props) => {
       setSubmitting(true);
       try {
          if (data) {
-            const payload = {
+            console.log('payload update', {
                ...values,
                employeeId: selectedUser?.employeeId ?? data.employeeId ?? ''
-            };
+            });
             // await employeeCourseService.putEmployeeCourseById(data.id as string, payload);
 
             toast(

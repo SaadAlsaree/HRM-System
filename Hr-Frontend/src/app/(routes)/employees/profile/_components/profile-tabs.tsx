@@ -11,7 +11,6 @@ import HomeAddressPage from './home-address';
 import ContactInformationPage from './contact-information';
 import GradesTable from './grades/grades-table';
 import CategoriesTable from './categories/categories-table';
-import AcademicAchievementTable from './academic-achievement/academic-achievement-table';
 import AdministrativePenaltiesTable from './administrative-penalties/administrative-penalties-table';
 import TrainingCoursesTable from './training-courses/training-courses-table';
 import LeavesBalancesTable from './leaves-balances/leaves-balances-table';

@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/spinner';
+import { Checkbox } from '@/components/ui/checkbox';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { employeeService } from '@/services/Employee/employee.service';
@@ -227,7 +228,7 @@ const DocumentVerificationForm = ({ data, icon, title, variant }: Props) => {
                                     <FormItem>
                                         <FormLabel>هل تم الإجابة؟</FormLabel>
                                         <FormControl>
-                                            <Input placeholder='هل تم الإجابة؟' type='checkbox' {...field} />
+                                            <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
