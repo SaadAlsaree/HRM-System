@@ -32,7 +32,7 @@ const ContactInformationTable = ({ columns, data }: Props) => {
          console.log('error', error);
       }
    };
-   console.log(data);
+
    // if (data.length < 0) {
    //    return (
    //       <div className='flex flex-col'>

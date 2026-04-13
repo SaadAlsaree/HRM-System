@@ -19,7 +19,7 @@ public static class FilterExtensions
                     query = query.Where(GenerateEqualityExpression<TEntity, object>(property.Name, enumValue));
                 }
     
-                if (property.PropertyType == typeof(Guid) && value is Guid guidValue)
+                if ((property.PropertyType == typeof(Guid) || property.PropertyType == typeof(Guid?)) && value is Guid guidValue)
                 {
                     if (guidValue != default)
                     {
