@@ -1,0 +1,68 @@
+'use client';
+import React from 'react';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import SelectStatus from '@/app/_components/select-status';
+import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
+import { AlignJustify, Settings2 } from 'lucide-react';
+import { IRelationship } from '../page';
+import RelationshipForm from './relationship-form';
+import { levelOfRelationshipService } from '@/services/system-settings/level-of-relationship.service';
+
+type Props = {
+   columns: { label: string; value: string; className?: string }[];
+   data?: IRelationship[];
+};
+
+const RelationshipTable = ({ columns, data }: Props) => {
+   const router = useRouter();
+   //Handel Update status
+   const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
+      try {
+         const response = await levelOfRelationshipService.patchLevelOfRelationship({ id, statusId: value });
+
+         toast(
+            <pre className=' w-[340px] rounded-md'>
+               <h1 className='text-xl'>{response?.message}</h1>
+            </pre>
+         );
+         router.refresh();
+      } catch (error) {
+         console.log('error', error);
+      }
+   };
+
+   return (
+      <Table>
+         <TableHeader>
+            <TableRow>
+               {columns.map((column) => (
+                  <TableHead align='right' key={column.value} className={column.className}>
+                     {column.label}
+                  </TableHead>
+               ))}
+               <TableHead className='w-[100px] text-center'>
+                  <AlignJustify className='justify-center' />
+               </TableHead>
+            </TableRow>
+         </TableHeader>
+         <TableBody>
+            {data?.map((item) => (
+               <TableRow key={item.id}>
+                  <TableCell>{item.id}</TableCell>
+                  <TableCell>{item.name}</TableCell>
+
+                  <TableCell>{<SelectStatus id={item?.id} status={item?.status?.toString()} onChange={handleStatusChange} />}</TableCell>
+                  <TableCell>
+                     <div className='flex items-center gap-2'>
+                        <RelationshipForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
+                     </div>
+                  </TableCell>
+               </TableRow>
+            ))}
+         </TableBody>
+      </Table>
+   );
+};
+
+export default RelationshipTable;

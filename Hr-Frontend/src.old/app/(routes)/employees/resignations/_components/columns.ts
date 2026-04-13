@@ -1,0 +1,16 @@
+export const columnsResignation: { label: string; value: string; className?: string }[] = [
+    { label: '#', value: 'id', className: 'font-bold' },
+    { label: 'اسم الموظف', value: 'fullName', className: 'font-bold' },
+    { label: 'رقم الاضبارة', value: 'lotNumber', className: 'font-bold' },
+    { label: 'الرقم الوظيفي', value: 'jobCode', className: 'hidden md:table-cell font-bold' },
+    { label: 'رقم الطلب', value: 'requestNo', className: 'hidden md:table-cell font-bold' },
+    { label: 'تاريخ الطلب', value: 'requestDate', className: 'hidden md:table-cell font-bold' },
+    { label: 'رقم الاستقالة', value: 'resignationOrderNo', className: 'hidden md:table-cell font-bold' },
+    { label: 'تاريخ الاستقالة', value: 'resignationOrderDate', className: 'hidden md:table-cell font-bold' },
+    { label: 'رقم كتاب الانفكاك', value: 'separationOrderNo', className: 'hidden md:table-cell font-bold' },
+    { label: 'تاريخ كتاب الانفكاك', value: 'separationOrderDate', className: 'hidden md:table-cell font-bold' },
+    { label: 'سبب الاستقالة', value: 'reason', className: 'hidden md:table-cell font-bold' },
+    { label: 'الحالة', value: 'statusName', className: 'hidden md:table-cell font-bold' },
+    { label: 'المرفقات', value: 'attachment', className: 'hidden md:table-cell font-bold' },
+    { label: 'الملاحظات', value: 'note', className: 'hidden md:table-cell font-bold' },
+];

@@ -86,7 +86,7 @@ const GradesTable = ({ employeeId }: Props) => {
                      <TableCell className='h-10 text-center'>جاري التحميل...</TableCell>
                   </TableRow>
                )}
-               {promotions.length === 0 && !isLoading && (
+               {promotions?.length === 0 && !isLoading && (
                   <TableRow>
                      <TableCell className='h-10 text-center'>لا يوجد بيانات</TableCell>
                   </TableRow>

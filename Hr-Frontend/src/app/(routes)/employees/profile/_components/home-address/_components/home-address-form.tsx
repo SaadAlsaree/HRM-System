@@ -71,17 +71,17 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
    }, []);
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const governorateOptions = governorate.map((item: any) => {
+   const governorateOptions = governorate?.map((item: any) => {
       return { value: item.id, label: item.name };
    });
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const provinceOptions = provinces.map((item: any) => {
+   const provinceOptions = provinces?.map((item: any) => {
       return { value: item.id, label: item.name };
    });
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const territoryOptions = territories.map((item: any) => {
+   const territoryOptions = territories?.map((item: any) => {
       return { value: item.id, label: item.name };
    });
 

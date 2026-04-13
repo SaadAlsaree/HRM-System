@@ -1,0 +1,18 @@
+export const columnsAffiliatesFromOrg: { label: string; value: string; className?: string }[] = [
+    { label: 'الرقم الوظيفي', value: 'jobCode', className: 'font-bold' },
+    { label: 'اسم الموظف', value: 'fullName', className: 'font-bold' },
+    { label: "الدائرة", value: 'directorateName', className: 'font-bold' },
+    { label: " المديرية", value: 'subDirectorateName', className: 'font-bold' },
+    { label: "القسم", value: 'departmentName', className: 'font-bold' },
+    { label: "الشعبة", value: 'sectionName', className: 'font-bold' },
+    { label: "الوحدة", value: 'unitName', className: 'font-bold' },
+    { label: "المنصب", value: 'positionName', className: 'font-bold' },
+    { label: "رقم الامر الاداري	", value: 'administrativeOrderNo', className: 'font-bold' },
+    { label: " تاريخ الامر الاداري", value: 'administrativeOrderDate', className: 'font-bold' },
+    { label: "رقم كتاب التكليف", value: 'assignedOrderNo', className: 'font-bold' },
+    { label: "تاريخ التكليف	", value: 'assignedOrderDate', className: 'font-bold' },
+    { label: 'الحالة', value: 'status', className: 'font-bold' },
+    { label: 'المرفقات', value: 'attachments', className: 'font-bold' },
+    { label: 'الملاحظات', value: 'note', className: 'font-bold' },
+    { label: 'الإجراءات', value: 'actions', className: 'font-bold' },
+];

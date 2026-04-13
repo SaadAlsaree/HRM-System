@@ -1,0 +1,15 @@
+export const columnsPenalties: { label: string; value: string; className?: string }[] = [
+    { label: '#', value: 'id', className: 'font-bold' },
+    { label: 'اسم الموظف', value: 'fullName', className: 'font-bold' },
+    { label: 'عنوان الكتاب', value: 'titleOfBook', className: 'font-bold' },
+    { label: 'نوع العقوبة', value: 'typeOfDisciplinaryName', className: 'hidden md:table-cell font-bold' },
+    { label: 'عدد ايام التاخير', value: 'countOfDayDelay', className: 'hidden md:table-cell font-bold' },
+    { label: 'رقم الكتاب', value: 'bookNo', className: 'hidden md:table-cell font-bold' },
+    { label: 'تاريخ الكتاب', value: 'bookDate', className: 'hidden md:table-cell font-bold' },
+    { label: 'المادة القانونية', value: 'disciplinaryLaw', className: 'hidden md:table-cell font-bold' },
+    { label: 'الحالة', value: 'statusName', className: 'hidden md:table-cell font-bold' },
+    { label: 'حالة العقوبة', value: 'stopPromotion', className: 'hidden md:table-cell font-bold' },
+    { label: 'سبب العقوبة', value: 'reason', className: 'hidden md:table-cell font-bold' },
+    { label: 'المرفقات', value: 'attachment', className: 'hidden md:table-cell font-bold' },
+    { label: 'الملاحظات', value: 'note', className: 'hidden md:table-cell font-bold' },
+];
