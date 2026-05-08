@@ -19,7 +19,9 @@ public class GetManagementInfoToEmployeeProfileHandler : IRequestHandler<
     {
         var resp = await _repositoryManagementInformation
             .Query(x =>
-                x.Id == request.EmployeeId && x.IsInHiring || x.IsCurrent || x.Employee.Promotion.StopPromotion)
+                x.Id == request.EmployeeId &&
+                (x.IsInHiring || x.IsCurrent ||
+                 (x.Employee != null && x.Employee.Promotion != null && x.Employee.Promotion.StopPromotion)))
             .Include(x => x.JobTitle)
             .Include(x => x.JobDescription)
             .Include(x => x.StopJobDegree)
@@ -30,6 +32,11 @@ public class GetManagementInfoToEmployeeProfileHandler : IRequestHandler<
             .Include(x => x.Position)
 
             .Include(x => x.Employee)
+            .ThenInclude(x => x.Promotion)
+            .ThenInclude(x => x.JobDegree)
+            .Include(x => x.Employee)
+            .ThenInclude(x => x.Promotion)
+            .ThenInclude(x => x.JobCategory)
 
             .ToListAsync(cancellationToken: cancellationToken);
 
@@ -39,44 +46,51 @@ public class GetManagementInfoToEmployeeProfileHandler : IRequestHandler<
             result = new GetManagementInfoToEmployeeProfileViewModel();
             return ErrorsMessage.NotFoundData.ToErrorMessage(result);
         }
+
+        var currentManagementInfo = resp.FirstOrDefault(x => x.IsCurrent);
+        var inHiringManagementInfo = resp.FirstOrDefault(x => x.IsInHiring);
+        var stopPromotionManagementInfo = resp.FirstOrDefault(x => x.Employee?.Promotion?.StopPromotion == true);
+        var mainManagementInfo = currentManagementInfo ?? inHiringManagementInfo ?? resp.First();
+
         result = new GetManagementInfoToEmployeeProfileViewModel
         {
-            DegreeNameIsCurrent = resp.FirstOrDefault(x => x.IsCurrent)?.Employee.Promotion.JobDegree.Name,
+            DegreeNameIsCurrent = currentManagementInfo?.Employee?.Promotion?.JobDegree?.Name,
 
-            CategoryNameIsCurrent = resp.FirstOrDefault(x => x.IsCurrent)?.Employee.Promotion.JobCategory.Name,
+            CategoryNameIsCurrent = currentManagementInfo?.Employee?.Promotion?.JobCategory?.Name,
 
-            DegreeNameIsInHiring = resp.FirstOrDefault(x => x.IsInHiring)?.Employee.Promotion.JobDegree.Name,
+            DegreeNameIsInHiring = inHiringManagementInfo?.Employee?.Promotion?.JobDegree?.Name,
 
-            CategoryNameIsInHiring = resp.FirstOrDefault(x => x.IsInHiring)?.Employee.Promotion.JobCategory.Name,
+            CategoryNameIsInHiring = inHiringManagementInfo?.Employee?.Promotion?.JobCategory?.Name,
 
-            StopJobDegreeName = resp.FirstOrDefault(x => x.Employee.Promotion.StopPromotion)?.StopJobDegree.Name,
+            StopJobDegreeName = stopPromotionManagementInfo?.StopJobDegree?.Name,
 
-            JobTitleName = resp.FirstOrDefault(x => x.IsCurrent)?.JobTitle.Name,
+            JobTitleName = currentManagementInfo?.JobTitle?.Name,
 
-            JobDescriptionName = resp.FirstOrDefault(x => x.IsCurrent)?.JobDescription.Name,
+            JobDescriptionName = currentManagementInfo?.JobDescription?.Name,
 
-            StopPromotion = resp.FirstOrDefault(x => x.IsCurrent).Employee.Promotion.StopPromotion,
+            StopPromotion = currentManagementInfo?.Employee?.Promotion?.StopPromotion ??
+                            stopPromotionManagementInfo?.Employee?.Promotion?.StopPromotion ?? false,
 
-            DirectorateName = resp.FirstOrDefault(x => x.IsCurrent)?.Directorate.Name,
+            DirectorateName = currentManagementInfo?.Directorate?.Name,
 
-            SubDirectorateName = resp.FirstOrDefault(x => x.IsCurrent)?.SubDirectorate.Name,
+            SubDirectorateName = currentManagementInfo?.SubDirectorate?.Name,
 
-            DepartmentName = resp.FirstOrDefault(x => x.IsCurrent)?.Department.Name,
+            DepartmentName = currentManagementInfo?.Department?.Name,
 
-            PositionName = resp.FirstOrDefault(x => x.IsCurrent)?.Position.Name,
+            PositionName = currentManagementInfo?.Position?.Name,
 
 
-            Id = resp.FirstOrDefault()!.Id,
+            Id = mainManagementInfo.Id,
 
-            EmployeeId = resp.FirstOrDefault()!.Id,
+            EmployeeId = mainManagementInfo.Id,
 
-            FullName = resp.FirstOrDefault()!.Employee.FullName,
+            FullName = mainManagementInfo.Employee?.FullName,
 
-            LotNumber = resp.FirstOrDefault()!.Employee.LotNumber,
+            LotNumber = mainManagementInfo.Employee?.LotNumber,
 
-            JobCode = resp.FirstOrDefault()!.Employee.JobCode,
+            JobCode = mainManagementInfo.Employee?.JobCode,
 
-            Status = resp.FirstOrDefault()!.StatusId,
+            Status = mainManagementInfo.StatusId,
 
         };
 

@@ -29,15 +29,15 @@ interface patchThanksSeniorityPayload {
 }
 
 interface ThanksSeniorityParams extends IPagination {
-    employeeId?: string;
-    status?: number;
+    EmployeeId?: string;
+    Status?: number;
 }
 
 class ThanksSeniorityService extends ApiClient {
     public async getThanksSeniorities(params: ThanksSeniorityParams): Promise<any> {
         return this.request<any>({
             method: 'GET',
-            url: '/ThanksSeniority',
+            url: '/ThanksAndSeniority',
             params,
         });
     }

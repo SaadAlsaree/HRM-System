@@ -20,21 +20,25 @@ interface AbsenceDetails {
 }
 
 type Props = {
-   employeeId: string;
+   employeeId?: string;
 };
 const AbsencesProfile = ({ employeeId }: Props) => {
    const [data, setData] = useState<AbsenceDetails[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
-   const [totalPages, setTotalPages] = useState(0);
 
    useEffect(() => {
       const fetchAbsences = async () => {
+         if (!employeeId) {
+            setData([]);
+            return;
+         }
+
          setLoading(true);
+         setError(null);
          try {
             const response = await absencesService.getAbsences({ EmployeeId: employeeId, Page: 1, PageSize: 100 });
             setData(response?.data?.items || []);
-            setTotalPages(response?.data?.totalCount);
          } catch (error) {
             console.error('Error fetching promotions:', error);
             setError('Failed to fetch promotions');
@@ -44,13 +48,6 @@ const AbsencesProfile = ({ employeeId }: Props) => {
       };
       fetchAbsences();
    }, [employeeId]);
-
-   if (totalPages === 0)
-      return (
-         <div>
-            <div>لايوجد بيانات !</div>
-         </div>
-      );
 
    if (loading)
       return (
@@ -71,15 +68,18 @@ const AbsencesProfile = ({ employeeId }: Props) => {
          <TableHeader>
             <TableRow>
                <TableHead align='right'>تاريخ الغياب</TableHead>
-               <TableHead align='right'>عدد الايام</TableHead>
+            <TableHead align='right'>عدد الايام</TableHead>
 
-               {/* <TableHead className='w-[100px] text-center'>
-                      <AlignJustify className='justify-center' />
-                   </TableHead> */}
             </TableRow>
          </TableHeader>
          <TableBody>
-            {data.length === 0 && <h1 className='text-center text-muted-foreground'>لايوجد بيانات !</h1>}
+            {data.length === 0 && (
+               <TableRow>
+                  <TableCell colSpan={2} className='text-center text-muted-foreground'>
+                     لايوجد بيانات !
+                  </TableCell>
+               </TableRow>
+            )}
 
             {data?.map((item) => (
                <TableRow key={item.id}>

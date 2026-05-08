@@ -26,6 +26,8 @@ public class GetAdministrativeOrderToEmployeeProfileHandler : IRequestHandler<
         if(resp.Count == 0)
             return ErrorsMessage.NotFoundData.ToErrorMessage<GetAdministrativeOrderToEmployeeProfileViewModel>(null);
 
+        var mainAdministrativeOrder = resp.First();
+
         var result = new GetAdministrativeOrderToEmployeeProfileViewModel()
         {
             MinisterialOrderAppointingOrderNo =
@@ -62,12 +64,12 @@ public class GetAdministrativeOrderToEmployeeProfileHandler : IRequestHandler<
                         x.AdministrativeOrderType == AdministrativeOrderEnum.AdministrativeOrderToConfirmAge)
                     ?.OrderDate,
 
-            Id = resp.FirstOrDefault()!.Id,
-            EmployeeId = resp.FirstOrDefault()!.EmployeeId,
-            FullName = resp.FirstOrDefault()?.Employee.FullName,
-            LotNumber = resp.FirstOrDefault()?.Employee.LotNumber,
-            JobCode = resp.FirstOrDefault()?.Employee.JobCode,
-            Status = resp.FirstOrDefault()!.StatusId,
+            Id = mainAdministrativeOrder.Id,
+            EmployeeId = mainAdministrativeOrder.EmployeeId,
+            FullName = mainAdministrativeOrder.Employee?.FullName,
+            LotNumber = mainAdministrativeOrder.Employee?.LotNumber,
+            JobCode = mainAdministrativeOrder.Employee?.JobCode,
+            Status = mainAdministrativeOrder.StatusId,
         };
 
         return SuccessMessage.Get.ToSuccessMessage(result);

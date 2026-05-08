@@ -13,6 +13,28 @@ type Props = {
    ManagementInfo: IEmployeeManagementInfo;
    EmployeeInfo: IEmployeeInfo;
 };
+
+const formatValue = (value?: string | number | null) => {
+   if (value === null || value === undefined || String(value).trim() === '') {
+      return '---';
+   }
+
+   return String(value);
+};
+
+const formatDate = (value?: string | null) => {
+   if (!value) {
+      return '---';
+   }
+
+   const date = new Date(value);
+   if (Number.isNaN(date.getTime())) {
+      return value;
+   }
+
+   return new Intl.DateTimeFormat('ar-IQ').format(date);
+};
+
 const ServiceLinePage = ({ EducationInfo, EmployeeInfo, ManagementInfo, data }: Props) => {
    return (
       <div className='flex flex-col items-center gap-2 border rounded-lg p-2 bg-white dark:bg-gray-900'>
@@ -25,71 +47,71 @@ const ServiceLinePage = ({ EducationInfo, EmployeeInfo, ManagementInfo, data }: 
             <div className='xl:col-span-4'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>الرقم الوظيفي</h1>
-                  <Input value={EmployeeInfo?.jobCode} disabled />
+                  <Input value={formatValue(EmployeeInfo?.jobCode)} disabled />
                </div>
             </div>
             <div className='xl:col-span-4'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>الاسم الرباعي واللقب</h1>
-                  <Input value={EmployeeInfo?.fullName} disabled />
+                  <Input value={formatValue(EmployeeInfo?.fullName)} disabled />
                </div>
             </div>
             <div className='xl:col-span-4'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>حالة الموظف</h1>
-                  <Input value={EmployeeInfo?.statusName && '---'} disabled />
+                  <Input value={formatValue(EmployeeInfo?.statusName ?? EmployeeInfo?.status)} disabled />
                </div>
             </div>
             {/* 2 */}
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>مسقط الرأس</h1>
-                  <Input value={EmployeeInfo?.birthPlace && '---'} disabled />
+                  <Input value={formatValue(EmployeeInfo?.birthPlace)} disabled />
                </div>
             </div>
 
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>تاريخ المباشرة</h1>
-                  <Input value={data?.administrativeOrderToCommenceOrderDate && '---'} disabled />
+                  <Input value={formatDate(data?.administrativeOrderToCommenceOrderDate)} disabled />
                </div>
             </div>
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>التولد</h1>
-                  <Input value={EmployeeInfo?.birthDate && '---'} disabled />
+                  <Input value={formatDate(EmployeeInfo?.birthDate)} disabled />
                </div>
             </div>
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>التحصيل الدراسي الحالي</h1>
-                  <Input value={EducationInfo?.academicAchievementNameIsCurrent && '---'} disabled />
+                  <Input value={formatValue(EducationInfo?.academicAchievementNameIsCurrent)} disabled />
                </div>
             </div>
             {/* 3 */}
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>الدرجة الوظيفية</h1>
-                  <Input value={ManagementInfo?.degreeNameIsCurrent && '---'} disabled />
+                  <Input value={formatValue(ManagementInfo?.degreeNameIsCurrent)} disabled />
                </div>
             </div>
 
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>العنوان الوظيفي</h1>
-                  <Input value={ManagementInfo?.jobTitleName && '---'} disabled />
+                  <Input value={formatValue(ManagementInfo?.jobTitleName)} disabled />
                </div>
             </div>
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>الوصف الوظيفي</h1>
-                  <Input value={ManagementInfo?.jobDescriptionName && '---'} disabled />
+                  <Input value={formatValue(ManagementInfo?.jobDescriptionName)} disabled />
                </div>
             </div>
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>المنصب</h1>
-                  <Input value={ManagementInfo?.positionName && '---'} disabled />
+                  <Input value={formatValue(ManagementInfo?.positionName)} disabled />
                </div>
             </div>
 
@@ -98,26 +120,26 @@ const ServiceLinePage = ({ EducationInfo, EmployeeInfo, ManagementInfo, data }: 
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>رقم الامر الاداري بالتعيين</h1>
-                  <Input value={data?.administrativeOrderForAppointmentOrderNo && '---'} disabled />
+                  <Input value={formatValue(data?.administrativeOrderForAppointmentOrderNo)} disabled />
                </div>
             </div>
 
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>تاريخ الامر الاداري بالتعيين</h1>
-                  <Input value={data?.administrativeOrderForAppointmentOrderDate && '---'} disabled />
+                  <Input value={formatDate(data?.administrativeOrderForAppointmentOrderDate)} disabled />
                </div>
             </div>
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>رقم الامر الاداري بالمباشرة</h1>
-                  <Input value={data?.administrativeOrderToCommenceOrderNo && '---'} disabled />
+                  <Input value={formatValue(data?.administrativeOrderToCommenceOrderNo)} disabled />
                </div>
             </div>
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>تاريخ الامر الاداري بالمباشرة</h1>
-                  <Input value={data?.administrativeOrderToCommenceOrderDate && '---'} disabled />
+                  <Input value={formatDate(data?.administrativeOrderToCommenceOrderDate)} disabled />
                </div>
             </div>
          </div>

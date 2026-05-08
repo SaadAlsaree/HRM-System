@@ -27,15 +27,22 @@ export interface IDisciplinaryDetails {
 
 interface Props {
    searchParams: {
-      page: string;
-      PageSize: string;
+      page?: string;
+      PageSize?: string;
+      employeeId?: string;
+      EmployeeId?: string;
    };
 }
 const PenaltiesPage = async ({ searchParams }: Props) => {
-   const Page = parseInt(searchParams.page) || 1;
-   const PageSize = parseInt(searchParams.PageSize) || 10;
+   const Page = parseInt(searchParams.page ?? '', 10) || 1;
+   const PageSize = parseInt(searchParams.PageSize ?? '', 10) || 10;
+   const employeeId = (searchParams.employeeId || searchParams.EmployeeId || '').trim();
 
-   const data = await employeeDisciplinary.getEmployeeDisciplinary({ Page, PageSize });
+   const data = await employeeDisciplinary.getEmployeeDisciplinary({
+      Page,
+      PageSize,
+      EmployeeId: employeeId || undefined
+   });
    const disciplinaryDetails: IDisciplinaryDetails[] = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 

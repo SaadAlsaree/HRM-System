@@ -22,6 +22,7 @@ type Props = {
 
 const TravelLeaveTable = ({ travelLeaveData, columns, countryData }: Props) => {
    const router = useRouter();
+   const travelLeaves = Array.isArray(travelLeaveData) ? travelLeaveData : [];
 
    const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
       try {
@@ -50,7 +51,7 @@ const TravelLeaveTable = ({ travelLeaveData, columns, countryData }: Props) => {
                </TableRow>
             </TableHeader>
             <TableBody>
-               {travelLeaveData.map((item) => (
+               {travelLeaves.map((item) => (
                   <TableRow key={item.id}>
                      <TableCell>{item?.jobCode}</TableCell>
                      <TableCell>{item?.fullName}</TableCell>

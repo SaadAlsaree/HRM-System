@@ -39,7 +39,7 @@ public class
         var employeeInformation = new GetEmployeeInformationViewModel()
         {
             Id = result.Id,
-            StatisticalIndex = result.LotNumber,
+            StatisticalIndex = result.StatisticalIndex,
             JobCode = result.JobCode,
             LotNumber = result.LotNumber,
             FullName = result.FullName,
@@ -51,9 +51,9 @@ public class
             Nationalism = result.Nationalism,
             Religion = result.Religion,
             StatusWorkingId = result.StatusWorkingId,
-            CountryName = result.CountryId != null ? result.Country.Name : default,
+            CountryName = result.Country?.Name,
             Notes = result.Notes,
-            TypeOfJobName = result.JobInformation?.TypeOfJob.Name,
+            TypeOfJobName = result.JobInformation?.TypeOfJob?.Name,
             MedicalTest = result.JobInformation?.MedicalTest,
             IsReEmployed = result.JobInformation?.IsReEmployed,
             IsBehaviorCode = result.JobInformation?.IsBehaviorCode,

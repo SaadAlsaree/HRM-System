@@ -71,6 +71,8 @@ interface Props {
       page?: string;
       PageSize?: string;
       search?: string;
+      employeeId?: string;
+      EmployeeId?: string;
    };
 }
 
@@ -78,19 +80,15 @@ const EmployeeListPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page ?? '', 10) || 1;
    const PageSize = parseInt(searchParams.PageSize ?? '', 10) || 12;
    const search = (searchParams.search || '').trim();
+   const employeeId = (searchParams.employeeId || searchParams.EmployeeId || '').trim();
 
-   const employees = await employeeService.getEmployees({ Page, PageSize });
+   const employees = await employeeService.getEmployees({
+      Page,
+      PageSize,
+      Search: search || undefined,
+      EmployeeId: employeeId || undefined
+   });
    const employeeList: EmployeeList[] = employees?.data?.items ?? [];
-
-   const filteredEmployees = search
-      ? employeeList.filter((employee) => {
-           const searchable = [employee.fullName, employee.jobCode, employee.lotNumber, employee.statisticalIndex]
-              .filter(Boolean)
-              .map((value) => String(value).toLowerCase());
-
-           return searchable.some((value) => value.includes(search.toLowerCase()));
-        })
-      : employeeList;
 
    const totalCount = employees?.data?.totalCount ?? 0;
 
@@ -99,11 +97,11 @@ const EmployeeListPage = async ({ searchParams }: Props) => {
          <EmployeeListToolbar search={search} pageSize={PageSize} />
          <Separator />
          <div className='grid grid-cols-1 gap-4 p-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4'>
-            {filteredEmployees.map((employee) => (
+            {employeeList.map((employee) => (
                <EmployeeCard key={employee.id} employee={employee} />
             ))}
 
-            {filteredEmployees.length === 0 && (
+            {employeeList.length === 0 && (
                <div className='col-span-full py-10 text-center text-muted-foreground'>
                   لا توجد نتائج مطابقة لمدخلات البحث.
                </div>

@@ -1,27 +1,42 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import PenaltiesForm from './penalties-form';
 import EmployeeSearch, { IEmployeeSearch } from '@/app/_components/employee-search';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { Button } from '@/components/ui/button';
+import { X } from 'lucide-react';
 
 const PenaltiesToolbar = () => {
-   const [selectedUser, setSelectedUser] = useState<IEmployeeSearch | null>(null);
+   const [searchKey, setSearchKey] = useState(0);
    const router = useRouter();
+   const pathname = usePathname();
    const searchParams = useSearchParams();
 
-   // Function to handle the selected user
-   const handleUserSelect = (user: IEmployeeSearch | null) => {
-      setSelectedUser(user);
+   const navigateWithParams = (params: URLSearchParams) => {
+      const query = params.toString();
+      router.push(query ? `${pathname}?${query}` : pathname);
    };
 
-   // Update the URL search parameters whenever the selected user changes
-   useEffect(() => {
-      if (selectedUser?.employeeId) {
-         const params = new URLSearchParams(searchParams);
-         params.set('employeeId', selectedUser.employeeId);
-         router.push(`?${params.toString()}`);
-      }
-   }, [selectedUser, searchParams, router]);
+   const clearFilter = () => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.delete('employeeId');
+      params.delete('EmployeeId');
+      params.set('page', '1');
+      setSearchKey((prev) => prev + 1);
+      navigateWithParams(params);
+   };
+
+   const handleUserSelect = (user: IEmployeeSearch | null) => {
+      if (!user?.employeeId) return;
+
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('employeeId', user.employeeId);
+      params.delete('EmployeeId');
+      params.set('page', '1');
+      navigateWithParams(params);
+   };
+
+   const hasEmployeeFilter = Boolean(searchParams.get('employeeId') || searchParams.get('EmployeeId'));
 
    return (
       <div className='flex flex-col w-full'>
@@ -33,8 +48,14 @@ const PenaltiesToolbar = () => {
             </div>
          </div>
 
-         <div className='flex items-center justify-between w-full p-2'>
-            <EmployeeSearch onSelectUser={handleUserSelect} />
+         <div className='flex items-center justify-between w-full p-2 gap-2'>
+            <EmployeeSearch key={searchKey} onSelectUser={handleUserSelect} />
+            {hasEmployeeFilter && (
+               <Button type='button' variant='outline' onClick={clearFilter}>
+                  <X className='h-4 w-4 ml-1' />
+                  مسح الفلتر
+               </Button>
+            )}
          </div>
       </div>
    );

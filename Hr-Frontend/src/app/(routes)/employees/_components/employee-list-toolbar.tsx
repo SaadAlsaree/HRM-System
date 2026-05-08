@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import Link from 'next/link';
 import React from 'react';
+import EmployeeListSearch from './employee-list-search';
 
 interface EmployeeListToolbarProps {
    search?: string;
@@ -21,24 +21,7 @@ const EmployeeListToolbar = ({ search = '', pageSize }: EmployeeListToolbarProps
                </div>
             </div>
 
-            <form action='/employees/list' method='GET' className='flex flex-wrap items-center gap-2'>
-               <Input
-                  name='search'
-                  defaultValue={search}
-                  placeholder='بحث بالاسم الكامل، الرقم الوظيفي، رقم الاضبارة أو الرقم الاحصائي'
-                  className='w-full md:w-[420px]'
-               />
-               <input type='hidden' name='PageSize' value={pageSize} />
-               <input type='hidden' name='page' value='1' />
-               <Button type='submit' variant='outline' className='btn-sm'>
-                  بحث
-               </Button>
-               <Link href={`/employees/list?page=1&PageSize=${pageSize}`}>
-                  <Button type='button' variant='ghost' className='btn-sm'>
-                     مسح
-                  </Button>
-               </Link>
-            </form>
+            <EmployeeListSearch search={search} pageSize={pageSize} />
          </div>
       </div>
    );

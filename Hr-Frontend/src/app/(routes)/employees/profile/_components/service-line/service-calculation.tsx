@@ -22,21 +22,25 @@ interface IServiceCalculation {
 }
 
 type Props = {
-   employeeId: string;
+   employeeId?: string;
 };
 const ServiceCalculationProfile = ({ employeeId }: Props) => {
    const [data, setData] = useState<IServiceCalculation[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
-   const [totalPages, setTotalPages] = useState(0);
 
    useEffect(() => {
       const fetchServiceCalculation = async () => {
+         if (!employeeId) {
+            setData([]);
+            return;
+         }
+
          setLoading(true);
+         setError(null);
          try {
             const response = await serviceCalculationService.getServiceCalculations({ employeeId, Page: 1, PageSize: 100 });
             setData(response?.data?.items || []);
-            setTotalPages(response?.data?.totalCount);
          } catch (error) {
             console.error('Error fetching promotions:', error);
             setError('Failed to fetch promotions');
@@ -46,13 +50,6 @@ const ServiceCalculationProfile = ({ employeeId }: Props) => {
       };
       fetchServiceCalculation();
    }, [employeeId]);
-
-   if (totalPages === 0)
-      return (
-         <div>
-            <div>لايوجد بيانات !</div>
-         </div>
-      );
 
    if (loading)
       return (
@@ -73,14 +70,16 @@ const ServiceCalculationProfile = ({ employeeId }: Props) => {
             <TableRow>
                <TableHead align='right'>نوع الخدمة</TableHead>
                <TableHead align='right'>المدة المضافة (شهر)</TableHead>
-
-               {/* <TableHead className='w-[100px] text-center'>
-          <AlignJustify className='justify-center' />
-       </TableHead> */}
             </TableRow>
          </TableHeader>
          <TableBody>
-            {data.length === 0 && <h1 className='text-center text-muted-foreground'>لايوجد بيانات !</h1>}
+            {data.length === 0 && (
+               <TableRow>
+                  <TableCell colSpan={2} className='text-center text-muted-foreground'>
+                     لايوجد بيانات !
+                  </TableCell>
+               </TableRow>
+            )}
             {data?.map((item) => (
                <TableRow key={item.id}>
                   <TableCell>{item?.typeOfServiceName}</TableCell>

@@ -95,6 +95,7 @@ export interface EmployeeParams extends IPagination {
     EmployeeId?: string;
     TypeOfJobId?: number;
     Status?: Status;
+    Search?: string;
 }
 
 export interface updateEmployeeWorkingStatus {
@@ -192,5 +193,4 @@ class EmployeeService extends ApiClient {
 }
 
 export const employeeService: EmployeeService = new EmployeeService();
-
 

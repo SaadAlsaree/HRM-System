@@ -10,11 +10,25 @@ public class FindEmployeeHandler : IRequestHandler<FindEmployeeQuery, Response<I
 
     public async Task<Response<IEnumerable<FindEmployeeViewModel>>> Handle(FindEmployeeQuery request, CancellationToken cancellationToken)
     {
-        var find = await _repositoryEmployee.GetAsync<FindEmployeeViewModel>(filter: x =>
-                    (request.SearchBy != SearchBy.FullName || x.FullName.Contains(request.Search.Trim())) &&
-                    (request.SearchBy != SearchBy.JobCode || x.JobCode.Contains(request.Search.Trim())) &&
-                    (request.SearchBy != SearchBy.LotNumber || x.LotNumber.Contains(request.Search.Trim())) &&
-                    (request.SearchBy != SearchBy.MotherFullName || x.MotherFullName.Contains(request.Search.Trim())), selector: x => new FindEmployeeViewModel()
+        var search = request.Search?.Trim();
+
+        if (string.IsNullOrWhiteSpace(search))
+            return SuccessMessage.Get.ToSuccessMessage(Enumerable.Empty<FindEmployeeViewModel>());
+
+        System.Linq.Expressions.Expression<Func<Employees, bool>> filter = request.SearchBy switch
+        {
+            SearchBy.FullName => x => x.FullName != null && x.FullName.Contains(search),
+            SearchBy.JobCode => x => x.JobCode != null && x.JobCode.Contains(search),
+            SearchBy.LotNumber => x => x.LotNumber != null && x.LotNumber.Contains(search),
+            SearchBy.MotherFullName => x => x.MotherFullName != null && x.MotherFullName.Contains(search),
+            _ => x =>
+                (x.FullName != null && x.FullName.Contains(search)) ||
+                (x.JobCode != null && x.JobCode.Contains(search)) ||
+                (x.LotNumber != null && x.LotNumber.Contains(search)) ||
+                (x.MotherFullName != null && x.MotherFullName.Contains(search))
+        };
+
+        var find = await _repositoryEmployee.GetAsync<FindEmployeeViewModel>(filter: filter, selector: x => new FindEmployeeViewModel()
                     {
                         MotherFullName = x.MotherFullName,
                         EmployeeId = x.Id,
@@ -46,8 +60,6 @@ public class FindEmployeeHandler : IRequestHandler<FindEmployeeQuery, Response<I
 
                     }, orderBy: order => order.OrderBy(z => z.FullName), take: 5, cancellationToken: cancellationToken);
 
-        if (!find.Item1.Any())
-            return ErrorsMessage.NotFoundData.ToErrorMessage(find.Item1);
         return SuccessMessage.Get.ToSuccessMessage(find.Item1);
     }
 }

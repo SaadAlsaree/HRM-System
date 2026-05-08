@@ -58,7 +58,7 @@ const TravelLeavePage = async ({ searchParams }: Props) => {
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
    const data = await leavesService.getLeaves({ Page, PageSize, TypeOfLeaveId: 6, status: 1 });
-   const travelLeaveData = data?.data ?? [];
+   const travelLeaveData = data?.data?.items ?? [];
    const totalCount = data?.totalCount ?? 0;
 
    const country = await countryService.getCountries();

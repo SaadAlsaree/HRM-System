@@ -25,21 +25,25 @@ interface IThanksAndSeniority {
 }
 
 type Props = {
-   employeeId: string;
+   employeeId?: string;
 };
 const ThanksAndSeniorityProfile = ({ employeeId }: Props) => {
    const [data, setData] = useState<IThanksAndSeniority[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
-   const [totalPages, setTotalPages] = useState(0);
 
    useEffect(() => {
       const fetchThanksAndSeniority = async () => {
+         if (!employeeId) {
+            setData([]);
+            return;
+         }
+
          setLoading(true);
+         setError(null);
          try {
-            const response = await thanksSeniorityService.getThanksSeniorities({ employeeId, Page: 1, PageSize: 100 });
+            const response = await thanksSeniorityService.getThanksSeniorities({ EmployeeId: employeeId, Page: 1, PageSize: 100 });
             setData(response?.data?.items || []);
-            setTotalPages(response?.data?.totalCount);
          } catch (error) {
             console.error('Error fetching promotions:', error);
             setError('Failed to fetch promotions');
@@ -49,13 +53,6 @@ const ThanksAndSeniorityProfile = ({ employeeId }: Props) => {
       };
       fetchThanksAndSeniority();
    }, [employeeId]);
-
-   if (totalPages === 0)
-      return (
-         <div>
-            <div>لايوجد بيانات !</div>
-         </div>
-      );
 
    if (loading)
       return (
@@ -75,17 +72,19 @@ const ThanksAndSeniorityProfile = ({ employeeId }: Props) => {
       <Table>
          <TableHeader>
             <TableRow>
-               <TableHead align='right'>رقم الكتاب</TableHead>
-               <TableHead align='right'>تاريخ الكتاب</TableHead>
-               <TableHead align='right'>الجهة المانحة</TableHead>
-
-               {/* <TableHead className='w-[100px] text-center'>
-              <AlignJustify className='justify-center' />
-           </TableHead> */}
+            <TableHead align='right'>رقم الكتاب</TableHead>
+            <TableHead align='right'>تاريخ الكتاب</TableHead>
+            <TableHead align='right'>الجهة المانحة</TableHead>
             </TableRow>
          </TableHeader>
          <TableBody>
-            {data.length === 0 && <h1 className='text-center text-muted-foreground'>لايوجد بيانات !</h1>}
+            {data.length === 0 && (
+               <TableRow>
+                  <TableCell colSpan={3} className='text-center text-muted-foreground'>
+                     لايوجد بيانات !
+                  </TableCell>
+               </TableRow>
+            )}
 
             {data?.map((item) => (
                <TableRow key={item.id}>

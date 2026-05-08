@@ -22,7 +22,7 @@ public class GetEducationInfoToEmployeeProfileHandler : IRequestHandler<
     {
         var resp = await _repositoryEducationInformation
             .Query(x =>
-                x.EmployeeId == request.EmployeeId && x.IsInHiring || x.IsCurrent)
+                x.EmployeeId == request.EmployeeId && (x.IsInHiring || x.IsCurrent))
             .Include(x => x.AcademicField)
             .Include(x => x.AcademicAchievement)
             .Include(x => x.Employee)
@@ -32,29 +32,33 @@ public class GetEducationInfoToEmployeeProfileHandler : IRequestHandler<
         if (resp.Count == 0)
             return ErrorsMessage.NotFoundData.ToErrorMessage<GetEducationInfoToEmployeeProfileViewModel>(null);
 
+        var currentEducationInfo = resp.FirstOrDefault(x => x.IsCurrent);
+        var inHiringEducationInfo = resp.FirstOrDefault(x => x.IsInHiring);
+        var mainEducationInfo = currentEducationInfo ?? inHiringEducationInfo ?? resp.First();
+
         var result = new GetEducationInfoToEmployeeProfileViewModel()
         {
-            AcademicFieldIdIsCurrent = resp.FirstOrDefault(x => x.IsCurrent)?.AcademicFieldId,
-            AcademicFieldNameIsCurrent = resp.FirstOrDefault(x => x.IsCurrent)?.AcademicField.Name,
+            AcademicFieldIdIsCurrent = currentEducationInfo?.AcademicFieldId,
+            AcademicFieldNameIsCurrent = currentEducationInfo?.AcademicField?.Name,
             
-            AcademicAchievementIdIsCurrent = resp.FirstOrDefault(x => x.IsCurrent)?.AcademicAchievementId,
-            AcademicAchievementNameIsCurrent = resp.FirstOrDefault(x => x.IsCurrent)?.AcademicAchievement.Name,
+            AcademicAchievementIdIsCurrent = currentEducationInfo?.AcademicAchievementId,
+            AcademicAchievementNameIsCurrent = currentEducationInfo?.AcademicAchievement?.Name,
             
-            AcademicFieldIdIsInHiring = resp.FirstOrDefault(x => x.IsInHiring)?.AcademicFieldId,
-            AcademicFieldNameIsInHiring = resp.FirstOrDefault(x => x.IsInHiring)?.AcademicField.Name,
+            AcademicFieldIdIsInHiring = inHiringEducationInfo?.AcademicFieldId,
+            AcademicFieldNameIsInHiring = inHiringEducationInfo?.AcademicField?.Name,
             
-            AcademicAchievementIdIsInHiring = resp.FirstOrDefault(x => x.IsInHiring)?.AcademicAchievementId,
-            AcademicAchievementNameIsInHiring = resp.FirstOrDefault(x => x.IsInHiring)?.AcademicAchievement.Name,
+            AcademicAchievementIdIsInHiring = inHiringEducationInfo?.AcademicAchievementId,
+            AcademicAchievementNameIsInHiring = inHiringEducationInfo?.AcademicAchievement?.Name,
             
-            IsDocumentVerify = resp.FirstOrDefault(x => x.IsCurrent)?.IsDocumentVerify,
+            IsDocumentVerify = currentEducationInfo?.IsDocumentVerify,
 
 
-            Id = resp.FirstOrDefault()!.Id,
-            EmployeeId = resp.FirstOrDefault()!.EmployeeId,
-            FullName = resp.FirstOrDefault()!.Employee.FullName,
-            LotNumber = resp.FirstOrDefault()!.Employee.LotNumber,
-            JobCode = resp.FirstOrDefault()!.Employee.JobCode,
-            Status = resp.FirstOrDefault()!.StatusId,
+            Id = mainEducationInfo.Id,
+            EmployeeId = mainEducationInfo.EmployeeId,
+            FullName = mainEducationInfo.Employee?.FullName,
+            LotNumber = mainEducationInfo.Employee?.LotNumber,
+            JobCode = mainEducationInfo.Employee?.JobCode,
+            Status = mainEducationInfo.StatusId,
 
         };
 

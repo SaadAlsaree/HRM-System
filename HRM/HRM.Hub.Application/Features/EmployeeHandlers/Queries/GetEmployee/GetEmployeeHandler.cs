@@ -60,10 +60,24 @@ public class GetEmployeeHandler : IRequestHandler<GetEmployeeQuery, Response<Pag
 
     public async Task<Response<PagedResult<GetEmployeeViewModel>>> Handle(GetEmployeeQuery request, CancellationToken cancellationToken)
     {
+        var page = request.Page <= 0 ? 1 : request.Page;
+        var pageSize = request.PageSize <= 0 ? 10 : request.PageSize;
+        var search = request.Search?.Trim();
         var query = _repositoryEmployee.GetQueryable();
 
         query = query.Where(z => (request.EmployeeId == default || z.Id == request.EmployeeId) && (request.TypeOfJobId == 0 || z.JobInformation.TypeOfJobId == request.TypeOfJobId)
                                    && (request.Status == Status.None || z.StatusId == request.Status));
+
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(z =>
+                (z.FullName != null && z.FullName.Contains(search)) ||
+                (z.JobCode != null && z.JobCode.Contains(search)) ||
+                (z.LotNumber != null && z.LotNumber.Contains(search)) ||
+                (z.StatisticalIndex != null && z.StatisticalIndex.Contains(search)));
+        }
+
+        var totalCount = await query.CountAsync(cancellationToken);
 
         var result = await query.Include(z => z.ManagementInformation).ThenInclude(z => z.JobTitle).Select(z => new GetEmployeeViewModel()
         {
@@ -82,7 +96,7 @@ public class GetEmployeeHandler : IRequestHandler<GetEmployeeQuery, Response<Pag
             EmployeeId = z.Id,
             IsPinned = z.IsPinned
 
-        }).Skip((request.Page - 1) * 10).Take(request.PageSize).ToListAsync(cancellationToken: cancellationToken);
+        }).Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(cancellationToken: cancellationToken);
         var getAttachment = await _repositoryAttachment.GetQueryable().Where(x => x.TableName == TableNames.Avatar.ToString() && x.IsDeleted == false
                                          && result.Select(z => z.Id).ToList().Contains(x.PrimaryTableId.Value)).ToListAsync(cancellationToken: cancellationToken);
         foreach (var employee in result)
@@ -114,7 +128,7 @@ public class GetEmployeeHandler : IRequestHandler<GetEmployeeQuery, Response<Pag
         return SuccessMessage.Get.ToSuccessMessage(new PagedResult<GetEmployeeViewModel>()
         {
             Items = result,
-            TotalCount = query.Count()
+            TotalCount = totalCount
         });
     }
 }
