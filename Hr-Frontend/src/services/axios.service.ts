@@ -8,7 +8,7 @@ class ApiClient {
     private axiosInstance: AxiosInstance;
 
     constructor(context?: GetServerSidePropsContext) {
-        let baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000/hub/hrm/v1/api/'; // Default if env var is not set
+        let baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || 'http://10.42.10.28:5000/hub/hrm/v1/api/'; // Default if env var is not set
         const headers: AxiosRequestConfig['headers'] = {};
 
         if (context) {
@@ -18,7 +18,7 @@ class ApiClient {
                 headers.Authorization = `Bearer ${cookies['auth-token']}`;
             }
             // For server side requests, use the internal URL to your backend
-            baseURL = process.env.API_INTERNAL_URL || 'http://localhost:5000/hub/hrm/v1/api/'; // Important for Docker/internal networks
+            baseURL = process.env.API_INTERNAL_URL || 'http://10.42.10.28:5000/hub/hrm/v1/api/'; // Important for Docker/internal networks
         } else if (typeof window !== 'undefined') {
             // Client-side: Get cookies from the browser
             const cookies = parseCookies();
