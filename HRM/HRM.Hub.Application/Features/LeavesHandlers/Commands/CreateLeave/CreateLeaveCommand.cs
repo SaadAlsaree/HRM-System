@@ -4,7 +4,7 @@ public sealed record CreateLeaveCommand : IRequest<Response<bool>>
     public Guid EmployeeId { get; set; }
     public int? NormalLeaveTypeId { get; set; }
     public int? SicknessTypeId { get; set; }
-    public LeaveTypes TypeOfLeaveId { get; set; }
+    public int TypeOfLeaveId { get; set; }
     public int? LongLeaveTypeId { get; set; }
     public string OrderNo { get; set; }
     public DateOnly? OrderDate { get; set; }

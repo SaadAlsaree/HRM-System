@@ -481,6 +481,19 @@ const CurrentPositionForm = ({ data, icon, title, variant }: Props) => {
                             />
                             <FormField
                                 control={form.control}
+                                name='startDate'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>تاريخ المباشرة</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='تاريخ المباشرة' type='date' {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
                                 name='orderNo'
                                 render={({ field }) => (
                                     <FormItem>

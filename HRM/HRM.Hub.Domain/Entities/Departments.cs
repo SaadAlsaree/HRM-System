@@ -25,4 +25,5 @@ public class Departments : BaseEntity<int>
     public virtual ICollection<EmployeePosition> EmployeePositions { get; set; } = new List<EmployeePosition>();
 
     public virtual ICollection<Units> Units { get; set; } = new List<Units>();
+    public virtual ICollection<DepartmentOwner> DepartmentOwners { get; set; } = new List<DepartmentOwner>();
 }

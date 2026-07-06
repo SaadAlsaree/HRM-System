@@ -27,4 +27,16 @@ public enum ErrorsMessage
 
     [Display(Name = "يرجى التحقق من المدخلات , لا توجد بيانات")]
     NotExistOnUpdate = 10009,
+
+    [Display(Name = "الرقم الوظيفي مستخدم سابقاً")]
+    JobCodeExist = 10010,
+
+    [Display(Name = "الرقم الاحصائي مستخدم سابقاً")]
+    StatisticalIndexExist = 10011,
+
+    [Display(Name = "رقم الاضبارة مستخدم سابقاً")]
+    LotNumberExist = 10012,
+
+    [Display(Name = "الموظف غير موجود")]
+    EmployeeNotFound = 10013,
 }

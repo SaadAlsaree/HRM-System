@@ -7,15 +7,36 @@ import { IPagination } from '@/types';
 export interface ChangeDueDatePayload {
     id?: string;
     employeeId?: string;
-    currentDegreeDueDate?: string;
-    newDegreeDueDate?: string;
-    currentCategoryDueDate?: string;
-    newCategoryDueDate?: string;
     orderNo?: string;
     orderDate?: string;
     note?: string;
     createBy?: string;
     lastUpdateBy?: string;
+}
+
+export interface ChangeDueDateCalculationDetails {
+    runId: string;
+    employeeId: string;
+    trigger: string;
+    promotionBaseDate?: string | null;
+    promotionBaseMonths?: number | null;
+    promotionDueDate?: string | null;
+    allowanceBaseDate?: string | null;
+    allowanceBaseMonths?: number | null;
+    allowanceDueDate?: string | null;
+    summary: string;
+    calculatedAt: string;
+    steps: Array<{
+        calculationKind: string;
+        stepCode: string;
+        sourceEntityName: string;
+        sourceEntityId: string;
+        reason: string;
+        beforeDate?: string | null;
+        afterDate?: string | null;
+        deltaMonths: number;
+        deltaDays: number;
+    }>;
 }
 
 interface ChangeDueDateParams extends IPagination {
@@ -60,6 +81,13 @@ class ChangeDueDateService extends ApiClient {
             method: 'PUT',
             url: `/ChangeDueDate/${id}`,
             data: payload
+        });
+    }
+
+    public async getLatestCalculationDetails(employeeId: string): Promise<any> {
+        return this.request<any>({
+            method: 'GET',
+            url: `/ChangeDueDate/LatestCalculation/${employeeId}`
         });
     }
 

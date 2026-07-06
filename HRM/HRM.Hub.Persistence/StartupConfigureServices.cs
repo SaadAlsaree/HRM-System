@@ -12,18 +12,18 @@ public static class StartupConfigureServices
             options.IdleTimeout = TimeSpan.FromHours(24);
             options.Cookie.IsEssential = true;
         });
-        IOC.CurrentProvider = services.BuildServiceProvider();
-
+        
         services.AddSignalR();
         services.AddHttpClient();
         services.AddMemoryCache();
+        var corsOrigins = configuration.GetSection("Cors:AllowedOrigins").Get<string[]>()
+                          ?? new[] { "http://localhost:3000" };
         services.AddCors(options =>
         {
-            options.AddPolicy("CorsPolicy",
-                builder => builder
-                .SetIsOriginAllowed((host) => true)
-                .AllowAnyMethod()
+            options.AddPolicy("CorsPolicy", policy => policy
+                .WithOrigins(corsOrigins)
                 .AllowAnyHeader()
+                .AllowAnyMethod()
                 .AllowCredentials());
         });
         services.AddSwaggerGen(c =>
@@ -76,9 +76,6 @@ public static class StartupConfigureServices
 
         services.AddScoped<LogActionArguments>();
 
-        //Hangfire
-        services.AddHangfire(option => option.UsePostgreSqlStorage(configuration.GetConnectionString("HumanResourcesDb")));
-        services.AddHangfireServer();
         services.AddCommandsScheduler(configuration.GetConnectionString("HumanResourcesDb"));
 
         services.AddControllersWithViews(options =>
@@ -91,6 +88,7 @@ public static class StartupConfigureServices
             .AddNewtonsoftJson(option =>
             {
                 option.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                option.SerializerSettings.ContractResolver = new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
             });
         //Http Global Exception Filter
         //services.AddControllers(options =>

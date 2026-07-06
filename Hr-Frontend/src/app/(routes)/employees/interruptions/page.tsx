@@ -1,4 +1,4 @@
-import { interruptionService } from '@/services/system-settings/interruption.service';
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import InterruptionsTable from './_components/interruptions-table';
 import InterruptionsToolbar from './_components/interruptions-toolbar';
@@ -34,7 +34,13 @@ const InterruptionsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await interruptionService.getInterruption({ Page, PageSize });
+   const data = await fetchServer<{ data?: { items?: IInterruptions[]; totalCount?: number } }>(
+      '/Interruption',
+      'GET',
+      {
+         params: { Page, PageSize }
+      }
+   );
    const interruptionList: IInterruptions[] = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 

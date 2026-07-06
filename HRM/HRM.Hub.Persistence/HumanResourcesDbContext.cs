@@ -84,6 +84,9 @@ public partial class HumanResourcesDbContext : DbContext
     public virtual DbSet<LeavesBalance> LeavesBalance { get; set; }
 
     public virtual DbSet<LeavesMedicalBalance> LeavesMedicalBalance { get; set; }
+    public virtual DbSet<LeaveTransitionLog> LeaveTransitionLogs { get; set; }
+    public virtual DbSet<LeaveExtension> LeaveExtensions { get; set; }
+    public virtual DbSet<LeaveApproval> LeaveApprovals { get; set; }
 
     public virtual DbSet<LevelOfRelationship> LevelOfRelationship { get; set; }
 
@@ -102,6 +105,13 @@ public partial class HumanResourcesDbContext : DbContext
     public virtual DbSet<PreciseAcademicField> PreciseAcademicField { get; set; }
 
     public virtual DbSet<Promotion> Promotion { get; set; }
+    public virtual DbSet<PromotionAllowanceRule> PromotionAllowanceRule { get; set; }
+    public virtual DbSet<PromotionAllowanceCalculationRun> PromotionAllowanceCalculationRuns { get; set; }
+    public virtual DbSet<PromotionAllowanceCalculationDetail> PromotionAllowanceCalculationDetails { get; set; }
+    public virtual DbSet<AnnualAllowanceRule> AnnualAllowanceRule { get; set; }
+    public virtual DbSet<AnnualAllowanceRecord> AnnualAllowanceRecord { get; set; }
+    public virtual DbSet<AnnualAllowanceCalculationRun> AnnualAllowanceCalculationRuns { get; set; }
+    public virtual DbSet<AnnualAllowanceCalculationDetail> AnnualAllowanceCalculationDetails { get; set; }
 
     public virtual DbSet<PromotionGroup> PromotionGroup { get; set; }
 
@@ -136,6 +146,9 @@ public partial class HumanResourcesDbContext : DbContext
     public virtual DbSet<ThanksAndSeniorityCalculation> ThanksAndSeniorityCalculation { get; set; }
 
     public virtual DbSet<TypeOfAssignment> TypeOfAssignment { get; set; }
+    public virtual DbSet<Affiliation> Affiliations { get; set; }
+    public virtual DbSet<DepartmentOwner> DepartmentOwners { get; set; }
+    public virtual DbSet<ContractType> ContractType { get; set; }
 
     public virtual DbSet<TypeOfBook> TypeOfBook { get; set; }
 
@@ -233,6 +246,20 @@ public partial class HumanResourcesDbContext : DbContext
             .HasForeignKey(cd => cd.EmployeeId)
             .OnDelete(DeleteBehavior.ClientNoAction);
 
+        #endregion
+
+        #region Affiliation
+        modelBuilder.Entity<Affiliation>()
+            .HasOne(cd => cd.Employee)
+            .WithMany(e => e.Affiliations)
+            .HasForeignKey(cd => cd.EmployeeId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<Affiliation>()
+            .HasOne(cd => cd.TypeOfAssignment)
+            .WithMany(e => e.Affiliations)
+            .HasForeignKey(cd => cd.TypeOfAssignmentId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
         #endregion
 
         #region Change Degree
@@ -708,6 +735,52 @@ public partial class HumanResourcesDbContext : DbContext
             .HasForeignKey(l => l.CountryId)
             .OnDelete(DeleteBehavior.ClientNoAction);
 
+        modelBuilder.Entity<Leaves>()
+            .HasOne<TypeOfLeave>(l => l.TypeOfLeave)
+            .WithMany(tol => tol.Leaves)
+            .HasForeignKey(l => l.TypeOfLeaveId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<Leaves>()
+            .HasIndex(l => l.TypeOfLeaveId)
+            .HasDatabaseName("IX_Leaves_TypeOfLeaveId");
+
+        #endregion
+
+        #region Leave Transition Log
+        modelBuilder.Entity<LeaveTransitionLog>()
+            .HasOne<Leaves>(ltl => ltl.Leave)
+            .WithMany(l => l.LeaveTransitionLogs)
+            .HasForeignKey(ltl => ltl.LeaveId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<LeaveTransitionLog>()
+            .HasIndex(ltl => ltl.LeaveId)
+            .HasDatabaseName("IX_LeaveTransitionLog_LeaveId");
+        #endregion
+
+        #region Leave Extension
+        modelBuilder.Entity<LeaveExtension>()
+            .HasOne<Leaves>(le => le.Leave)
+            .WithMany(l => l.LeaveExtensions)
+            .HasForeignKey(le => le.LeaveId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<LeaveExtension>()
+            .HasIndex(le => le.LeaveId)
+            .HasDatabaseName("IX_LeaveExtension_LeaveId");
+        #endregion
+
+        #region Leave Approval
+        modelBuilder.Entity<LeaveApproval>()
+            .HasOne<Leaves>(la => la.Leave)
+            .WithMany(l => l.LeaveApprovals)
+            .HasForeignKey(la => la.LeaveId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<LeaveApproval>()
+            .HasIndex(la => la.LeaveId)
+            .HasDatabaseName("IX_LeaveApproval_LeaveId");
         #endregion
 
         #region Log Leaves Balance
@@ -876,6 +949,102 @@ public partial class HumanResourcesDbContext : DbContext
             .HasForeignKey(p => p.JobCategoryId)
             .OnDelete(DeleteBehavior.ClientNoAction);
 
+        modelBuilder.Entity<PromotionAllowanceRule>()
+            .HasOne(x => x.JobDegree)
+            .WithMany(x => x.PromotionAllowanceRules)
+            .HasForeignKey(x => x.JobDegreeId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<PromotionAllowanceRule>()
+            .HasOne(x => x.JobCategory)
+            .WithMany(x => x.PromotionAllowanceRules)
+            .HasForeignKey(x => x.JobCategoryId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<PromotionAllowanceRule>()
+            .HasOne(x => x.AcademicAchievement)
+            .WithMany(x => x.PromotionAllowanceRules)
+            .HasForeignKey(x => x.AcademicAchievementId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<PromotionAllowanceRule>()
+            .HasOne(x => x.ApplicableLaw)
+            .WithMany(x => x.PromotionAllowanceRules)
+            .HasForeignKey(x => x.ApplicableLawId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<PromotionAllowanceCalculationRun>()
+            .HasOne(x => x.Employee)
+            .WithMany(x => x.PromotionAllowanceCalculationRuns)
+            .HasForeignKey(x => x.EmployeeId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<PromotionAllowanceCalculationDetail>()
+            .HasOne(x => x.Run)
+            .WithMany(x => x.Details)
+            .HasForeignKey(x => x.RunId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<PromotionAllowanceCalculationDetail>()
+            .HasOne(x => x.Employee)
+            .WithMany(x => x.PromotionAllowanceCalculationDetails)
+            .HasForeignKey(x => x.EmployeeId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<AnnualAllowanceRule>()
+            .HasOne(x => x.JobDegree)
+            .WithMany(x => x.AnnualAllowanceRules)
+            .HasForeignKey(x => x.JobDegreeId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<AnnualAllowanceRule>()
+            .HasOne(x => x.JobCategory)
+            .WithMany(x => x.AnnualAllowanceRules)
+            .HasForeignKey(x => x.JobCategoryId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<AnnualAllowanceRule>()
+            .HasOne(x => x.AcademicAchievement)
+            .WithMany(x => x.AnnualAllowanceRules)
+            .HasForeignKey(x => x.AcademicAchievementId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<AnnualAllowanceRule>()
+            .HasOne(x => x.ApplicableLaw)
+            .WithMany(x => x.AnnualAllowanceRules)
+            .HasForeignKey(x => x.ApplicableLawId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<AnnualAllowanceCalculationRun>()
+            .HasOne(x => x.Employee)
+            .WithMany(x => x.AnnualAllowanceCalculationRuns)
+            .HasForeignKey(x => x.EmployeeId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<AnnualAllowanceCalculationDetail>()
+            .HasOne(x => x.Run)
+            .WithMany(x => x.Details)
+            .HasForeignKey(x => x.RunId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<AnnualAllowanceCalculationDetail>()
+            .HasOne(x => x.Employee)
+            .WithMany(x => x.AnnualAllowanceCalculationDetails)
+            .HasForeignKey(x => x.EmployeeId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<AnnualAllowanceRecord>()
+            .HasOne(x => x.Employee)
+            .WithMany(x => x.AnnualAllowanceRecords)
+            .HasForeignKey(x => x.EmployeeId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<AnnualAllowanceRecord>()
+            .HasOne(x => x.CalculationRun)
+            .WithMany(x => x.AnnualAllowanceRecords)
+            .HasForeignKey(x => x.CalculationRunId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
         #endregion
 
         #region Sections
@@ -1030,6 +1199,20 @@ public partial class HumanResourcesDbContext : DbContext
             .OnDelete(DeleteBehavior.ClientNoAction);
         #endregion
 
+        #region Department Owner
+        modelBuilder.Entity<DepartmentOwner>()
+            .HasOne(cd => cd.Employee)
+            .WithMany(e => e.DepartmentOwners)
+            .HasForeignKey(cd => cd.EmployeeId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<DepartmentOwner>()
+            .HasOne(cd => cd.Department)
+            .WithMany(e => e.DepartmentOwners)
+            .HasForeignKey(cd => cd.DepartmentId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+        #endregion
+
         #region Thanks And Seniority
         modelBuilder.Entity<ThanksAndSeniority>()
             .HasOne<Employees>(tas => tas.Employee)
@@ -1048,6 +1231,9 @@ public partial class HumanResourcesDbContext : DbContext
             .WithMany(tos => tos.ThanksAndSeniority)
             .HasForeignKey(tas => tas.TypeOfSeniorityId)
             .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<ThanksAndSeniority>()
+            .HasIndex(x => x.ConsumedCalculationRunId);
         #endregion
 
         #region Valuation
@@ -1082,6 +1268,61 @@ public partial class HumanResourcesDbContext : DbContext
             .HasOne<SubDirectorates>(u => u.SubDirectorate)
             .WithMany(e => e.Units)
             .HasForeignKey(u => u.SubDirectorateId)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        #endregion
+
+        #region Soft Delete Query Filters (Employee + direct aggregates)
+
+        modelBuilder.Entity<Employees>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<AddressInformation>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<AdministrativeOrder>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ContactInformation>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<EducationInformation>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<EmployeeDocuments>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<EmployeeService>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<JobInformation>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ManagementInformation>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<MarriageInformation>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<Promotion>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<LeavesBalance>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<LeavesMedicalBalance>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<ServiceCalculation>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<Interruption>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<Resignation>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<Retirement>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<Movements>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<EmployeePosition>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<EmployeeCourse>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<Affiliation>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<DepartmentOwner>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<PromotionAllowanceRule>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<PromotionAllowanceCalculationRun>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<PromotionAllowanceCalculationDetail>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<AnnualAllowanceRule>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<AnnualAllowanceCalculationRun>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<AnnualAllowanceCalculationDetail>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<AnnualAllowanceRecord>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<LeaveTransitionLog>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<LeaveExtension>().HasQueryFilter(e => !e.IsDeleted);
+        modelBuilder.Entity<LeaveApproval>().HasQueryFilter(e => !e.IsDeleted);
+
+        #endregion
+
+        #region Geography Hierarchy (Governorate -> Province -> Territory)
+
+        modelBuilder.Entity<Province>()
+            .HasOne(p => p.Governorate)
+            .WithMany(g => g.Provinces)
+            .HasForeignKey(p => p.GovernorateId)
+            .IsRequired(false)
+            .OnDelete(DeleteBehavior.ClientNoAction);
+
+        modelBuilder.Entity<Territory>()
+            .HasOne(t => t.Province)
+            .WithMany(p => p.Territories)
+            .HasForeignKey(t => t.ProvinceId)
+            .IsRequired(false)
             .OnDelete(DeleteBehavior.ClientNoAction);
 
         #endregion

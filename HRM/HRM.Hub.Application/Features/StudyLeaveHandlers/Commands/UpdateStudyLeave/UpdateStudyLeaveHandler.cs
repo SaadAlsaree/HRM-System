@@ -1,15 +1,20 @@
-﻿namespace HRM.Hub.Application.Features.StudyLeaveHandlers.Commands.UpdateStudyLeave;
+namespace HRM.Hub.Application.Features.StudyLeaveHandlers.Commands.UpdateStudyLeave;
 
 public class UpdateStudyLeaveHandler : IRequestHandler<UpdateStudyLeaveCommand, Response<bool>>
 {
     private readonly IBaseRepository<StudyLeave> _repositoryStudyLeave;
-    public UpdateStudyLeaveHandler(IBaseRepository<StudyLeave> repositoryStudyLeave)
+    private readonly IPromotionAllowanceCalculationService _calculationService;
+
+    public UpdateStudyLeaveHandler(
+        IBaseRepository<StudyLeave> repositoryStudyLeave,
+        IPromotionAllowanceCalculationService calculationService)
     {
         _repositoryStudyLeave = repositoryStudyLeave ?? throw new ArgumentNullException(nameof(repositoryStudyLeave));
+        _calculationService = calculationService;
     }
+
     public async Task<Response<bool>> Handle(UpdateStudyLeaveCommand request, CancellationToken cancellationToken)
     {
-
         var studyLeave = await _repositoryStudyLeave.Find(z => z.Id == request.StudyLeaveId, cancellationToken: cancellationToken);
 
         if (studyLeave == null)
@@ -35,7 +40,11 @@ public class UpdateStudyLeaveHandler : IRequestHandler<UpdateStudyLeaveCommand, 
         studyLeave.StudyResultId = request.StudyResultId;
         studyLeave.StudyPeriodTime = request.StudyPeriodTime;
 
-        return SuccessMessage.Update.ToSuccessMessage(_repositoryStudyLeave.Update(studyLeave));
+        var updated = _repositoryStudyLeave.Update(studyLeave);
+        if (!updated)
+            return ErrorsMessage.FailOnUpdate.ToErrorMessage(false);
 
+        _ = await _calculationService.CalculateAsync(studyLeave.EmployeeId, "study-leave-updated", cancellationToken);
+        return SuccessMessage.Update.ToSuccessMessage(true);
     }
 }

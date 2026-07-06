@@ -18,8 +18,6 @@ namespace HRM.Hub.Controllers.Controllers.APIs;
 [Produces("application/json")]
 [Route("hub/hrm/v1/api/[controller]")]
 [Tags("JobInformations")]
-//[Authorize(AuthenticationSchemes = "Bearer", Policy = "")]
-[Permission]
 public sealed class JobInformationsController : Base<JobInformationsController>
 {
     private readonly IMediator _mediator;

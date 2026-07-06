@@ -7,6 +7,7 @@ public class GetAssignmentsViewModel:BaseViewModel<Guid>
     public string OrderNo { get; set; }
 
     public DateOnly? OrderDate { get; set; }
+    public string IssuingAuthority { get; set; }
     public string DirectorateName { get; set; }
     public string SubDirectorateName { get; set; }
     public AssignmentTypes AssignmentSite { get; set; }

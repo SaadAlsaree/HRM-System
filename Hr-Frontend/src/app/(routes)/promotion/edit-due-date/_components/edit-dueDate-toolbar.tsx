@@ -23,11 +23,11 @@ const EditDueDateToolbar = () => {
     return (
         <div className='flex flex-col w-full'>
         <div className='flex items-center justify-between w-full p-2'>
-           <div className='text-xl text-muted-foreground'>تعديل تاريخ الاستحقاق.</div>
+            <div className='text-xl text-muted-foreground'>إعادة حساب تاريخ الاستحقاق.</div>
 
-           <div>
-              <EditDueDateForm title='أضافة' />
-           </div>
+            <div>
+               <EditDueDateForm title='طلب إعادة حساب' />
+            </div>
         </div>
 
         <div className='flex items-center justify-between w-full p-2'>

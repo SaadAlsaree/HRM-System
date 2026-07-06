@@ -85,6 +85,11 @@ public class Employees : BaseEntity<Guid>
 
     public virtual ICollection<ServiceCalculation> ServiceCalculations { get; set; } = new List<ServiceCalculation>();
     public virtual ICollection<ThanksAndSeniority> ThanksAndSeniority { get; set; } = new List<ThanksAndSeniority>();
+    public virtual ICollection<PromotionAllowanceCalculationRun> PromotionAllowanceCalculationRuns { get; set; } = new List<PromotionAllowanceCalculationRun>();
+    public virtual ICollection<PromotionAllowanceCalculationDetail> PromotionAllowanceCalculationDetails { get; set; } = new List<PromotionAllowanceCalculationDetail>();
+    public virtual ICollection<AnnualAllowanceCalculationRun> AnnualAllowanceCalculationRuns { get; set; } = new List<AnnualAllowanceCalculationRun>();
+    public virtual ICollection<AnnualAllowanceCalculationDetail> AnnualAllowanceCalculationDetails { get; set; } = new List<AnnualAllowanceCalculationDetail>();
+    public virtual ICollection<AnnualAllowanceRecord> AnnualAllowanceRecords { get; set; } = new List<AnnualAllowanceRecord>();
     public virtual LeavesBalance LeavesBalances { get; set; } = default!;
     public virtual LeavesMedicalBalance LeavesMedicalBalances { get; set; } = new LeavesMedicalBalance();
     public virtual ICollection<Interruption> Interruptions { get; set; } = new List<Interruption>();
@@ -96,5 +101,6 @@ public class Employees : BaseEntity<Guid>
     public virtual ICollection<CorrectingAcademicAchievements> CorrectingAcademicAchievements { get; set; } = new List<CorrectingAcademicAchievements>();
     public virtual ICollection<LogPromotionWithholding> LogPromotionWithholdings { get; set; } = new List<LogPromotionWithholding>();
     public virtual ICollection<MartyrsAndWounded> MartyrsAndWoundeds { get; set; } = new List<MartyrsAndWounded>();
-
+    public virtual ICollection<Affiliation> Affiliations { get; set; } = new List<Affiliation>();
+    public virtual ICollection<DepartmentOwner> DepartmentOwners { get; set; } = new List<DepartmentOwner>();
 }

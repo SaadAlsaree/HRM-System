@@ -6,11 +6,15 @@ namespace HRM.Hub.Application.Features.PromotionHandlers.Commands.CreatePromotio
         IRequestHandler<CreatePromotionCommend, Response<bool>>
     {
         private readonly IBaseRepository<Promotion> _repositoryPromotion;
+        private readonly IPromotionAllowanceCalculationService _calculationService;
 
-        public CreatePromotionHandler(IBaseRepository<Promotion> repositoryPromotion)
+        public CreatePromotionHandler(
+            IBaseRepository<Promotion> repositoryPromotion,
+            IPromotionAllowanceCalculationService calculationService)
             : base(repositoryPromotion)
         {
             _repositoryPromotion = repositoryPromotion;
+            _calculationService = calculationService;
         }
 
         protected override Expression<Func<Promotion, bool>> ExistencePredicate(
@@ -22,10 +26,11 @@ namespace HRM.Hub.Application.Features.PromotionHandlers.Commands.CreatePromotio
         {
             return new Promotion
             {
-                Id = request.Id,
+                Id = request.EmployeeId,
                 SentPromotionGroupId = request.SentPromotionGroupId,
-                DueDateDegree = request.DueDateDegree,
-                DueDateCategory = request.DueDateCategory,
+                JobDegreeId = request.DegreeToId ?? request.DegreeFromId ?? 0,
+                JobCategoryId = request.JobCategoryToId ?? request.JobCategoryFromId ?? 0,
+                ServiceRecycle = request.ServiceRecycle,
                 Note = request.Note,
             };
         }
@@ -33,7 +38,12 @@ namespace HRM.Hub.Application.Features.PromotionHandlers.Commands.CreatePromotio
         public async Task<Response<bool>> Handle(CreatePromotionCommend request,
             CancellationToken cancellationToken)
         {
-            return await HandleBase(request, cancellationToken);
+            var response = await HandleBase(request, cancellationToken);
+            if (!response.Succeeded)
+                return response;
+
+            _ = await _calculationService.CalculateAsync(request.EmployeeId, "promotion-created", cancellationToken);
+            return response;
         }
     }
 }

@@ -1,4 +1,4 @@
-import { handPullService } from '@/services/system-settings/hand-pull.service';
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import { columnsHandPull } from './_components/columns';
 import PullHandToolbar from './_components/pull-hand-toolbar';
@@ -35,7 +35,13 @@ const PullAndLiftHandPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await handPullService.getHandPull({ Page, PageSize });
+   const data = await fetchServer<{ data?: { items?: IHandPull[]; totalCount?: number } }>(
+      '/HandPull',
+      'GET',
+      {
+         params: { Page, PageSize }
+      }
+   );
    const handPullList: IHandPull[] = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
    return (

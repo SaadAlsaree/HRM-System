@@ -20,8 +20,6 @@ namespace HRM.Hub.Controllers.Controllers.APIs;
 [Produces("application/json")]
 [Route("hub/hrm/v1/api/[controller]")]
 [Tags("Absences")]
-//[Authorize(AuthenticationSchemes = "Bearer", Policy = "")]
-[Permission]
 public sealed class AbsencesController : Base<AbsencesController>
 {
     private readonly IMediator _mediator;

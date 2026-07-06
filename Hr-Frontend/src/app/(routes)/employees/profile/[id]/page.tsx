@@ -1,4 +1,4 @@
-import { employeeProfileService } from '@/services/Employee/employee-profile.service';
+import { fetchServer } from '@/lib/fetchServer';
 import ProfileHeader from '../_components/profile-header';
 import ProfileTabs from '../_components/profile-tabs';
 
@@ -133,20 +133,37 @@ export default async function EmployeeProfile({ params, searchParams }: Props) {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 12;
 
-   const AdministrativeOrder = await employeeProfileService.getAdministrativeOrder(params.id);
-   const EmployeeAdministrativeOrder: IEmployeeAdministrativeOrder = AdministrativeOrder.data as IEmployeeAdministrativeOrder;
+   const [administrativeOrder, educationInfo, managementInfo, employeeInfo, lotEmployee] = await Promise.all([
+      fetchServer<{ data?: IEmployeeAdministrativeOrder }>(
+         `/EmployeeProfileBaseInfo/GetAdministrativeOrder/${params.id}`
+      ),
+      fetchServer<{ data?: IEmployeeEducationInfo }>(
+         `/EmployeeProfileBaseInfo/GetEducationInfo/${params.id}`
+      ),
+      fetchServer<{ data?: IEmployeeManagementInfo }>(
+         `/EmployeeProfileBaseInfo/GetManagementInfo/${params.id}`
+      ),
+      fetchServer<{ data?: IEmployeeInfo }>(
+         `/EmployeeProfileBaseInfo/GetEmployeeInfo/${params.id}`
+      ),
+      fetchServer<{ data?: ILotEmployee }>(
+         '/EmployeeProfileBaseInfo/GetLotEmployee/GetLotEmployee',
+         'GET',
+         {
+            params: {
+               EmployeeId: params.id,
+               Page,
+               PageSize
+            }
+         }
+      )
+   ]);
 
-   const EducationInfo = await employeeProfileService.getEducationInfo(params.id);
-   const EmployeeEducationInfo: IEmployeeEducationInfo = EducationInfo.data as IEmployeeEducationInfo;
-
-   const ManagementInfo = await employeeProfileService.getManagementInfo(params.id);
-   const EmployeeManagementInfo: IEmployeeManagementInfo = ManagementInfo.data as IEmployeeManagementInfo;
-
-   const EmployeeInfo = await employeeProfileService.getEmployeeInfo(params.id);
-   const EmployeeInfoData: IEmployeeInfo = EmployeeInfo.data as IEmployeeInfo;
-
-   const LotEmployee = await employeeProfileService.getLotEmployee({ EmployeeId: params.id, Page, PageSize });
-   const LotEmployeeData: ILotEmployee = LotEmployee.data as ILotEmployee;
+   const EmployeeAdministrativeOrder = administrativeOrder?.data as IEmployeeAdministrativeOrder;
+   const EmployeeEducationInfo = educationInfo?.data as IEmployeeEducationInfo;
+   const EmployeeManagementInfo = managementInfo?.data as IEmployeeManagementInfo;
+   const EmployeeInfoData = employeeInfo?.data as IEmployeeInfo;
+   const LotEmployeeData = lotEmployee?.data as ILotEmployee;
 
    return (
       <div className='container  p-4'>

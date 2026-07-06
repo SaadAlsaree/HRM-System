@@ -32,7 +32,7 @@ IRequestHandler<GetChangeDegreeQuery, Response<PagedResult<GetChangeDegreeViewMo
         JobTitleFromName = x.JobTitleFrom.Name,
         JobTitleToName = x.JobTitleTo.Name,
         OldDegreeDueDate = x.OldDegreeDueDate,
-        NewCategoryDueDate = x.NewDegreeDueDate,
+        NewCategoryDueDate = x.NewCategoryDueDate,
         NewDegreeDueDate = x.NewDegreeDueDate,
         OrderDate = x.OrderDate,
         OrderNo = x.OrderNo,

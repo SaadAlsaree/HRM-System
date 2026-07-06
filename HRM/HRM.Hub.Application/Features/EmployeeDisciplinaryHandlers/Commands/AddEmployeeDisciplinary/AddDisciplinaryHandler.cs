@@ -1,15 +1,23 @@
 namespace HRM.Hub.Application.Features.EmployeeDisciplinaryHandlers.Commands.AddEmployeeDisciplinary;
+
 public class AddEmployeeDisciplinaryHandler : CreateHandler<EmployeeDisciplinary, AddDisciplinaryCommand>, IRequestHandler<AddDisciplinaryCommand, Response<bool>>
 {
-
     private readonly IBaseRepository<Promotion> _repositoryPromotion;
-    public AddEmployeeDisciplinaryHandler(IBaseRepository<EmployeeDisciplinary> repositoryDisciplinary, IBaseRepository<Promotion> repositoryPromotion)
+    private readonly IPromotionAllowanceCalculationService _calculationService;
+
+    public AddEmployeeDisciplinaryHandler(
+        IBaseRepository<EmployeeDisciplinary> repositoryDisciplinary,
+        IBaseRepository<Promotion> repositoryPromotion,
+        IPromotionAllowanceCalculationService calculationService)
         : base(repositoryDisciplinary)
     {
         _repositoryPromotion = repositoryPromotion;
+        _calculationService = calculationService;
     }
+
     protected override Expression<Func<EmployeeDisciplinary, bool>> ExistencePredicate(AddDisciplinaryCommand request)
         => z => false;
+
     protected override EmployeeDisciplinary MapToEntity(AddDisciplinaryCommand request)
     {
         return new EmployeeDisciplinary
@@ -25,7 +33,6 @@ public class AddEmployeeDisciplinaryHandler : CreateHandler<EmployeeDisciplinary
             Note = request.Note,
             Reason = request.Reason,
             DisciplinaryLaw = request.DisciplinaryLaw
-
         };
     }
 
@@ -35,22 +42,11 @@ public class AddEmployeeDisciplinaryHandler : CreateHandler<EmployeeDisciplinary
         if (findPromotion == null)
             return ErrorsMessage.NotFoundData.ToErrorMessage(false);
 
-        // Add penalty days to promotion due dates if CountOfDayDelay has a value
-        if (request.CountOfDayDelay.HasValue && request.CountOfDayDelay.Value > 0)
-        {
-            // Add penalty days to category due date if it exists
-            if (findPromotion.DueDateCategory.HasValue)
-            {
-                findPromotion.DueDateCategory = findPromotion.DueDateCategory.Value.AddDays(request.CountOfDayDelay.Value);
-            }
+        var response = await HandleBase(request, cancellationToken);
+        if (!response.Succeeded)
+            return response;
 
-
-            findPromotion.Note = $"تم تأخير تاريخ الترقية بسبب العقوبة لمدة {request.CountOfDayDelay.Value} يوم";
-        }
-
-        if (!_repositoryPromotion.Update(findPromotion))
-            return ErrorsMessage.FailOnUpdate.ToErrorMessage(false);
-
-        return await HandleBase(request, cancellationToken);
+        _ = await _calculationService.CalculateAsync(request.EmployeeId, "disciplinary-created", cancellationToken);
+        return response;
     }
 }

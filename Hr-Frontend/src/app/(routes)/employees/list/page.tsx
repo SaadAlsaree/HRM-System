@@ -1,4 +1,4 @@
-import { employeeService } from '@/services/Employee/employee.service';
+import { fetchServer } from '@/lib/fetchServer';
 import EmployeeCard from '../_components/employee-card';
 import EmployeeListToolbar from '../_components/employee-list-toolbar';
 import { Separator } from '@/components/ui/separator';
@@ -82,12 +82,18 @@ const EmployeeListPage = async ({ searchParams }: Props) => {
    const search = (searchParams.search || '').trim();
    const employeeId = (searchParams.employeeId || searchParams.EmployeeId || '').trim();
 
-   const employees = await employeeService.getEmployees({
-      Page,
-      PageSize,
-      Search: search || undefined,
-      EmployeeId: employeeId || undefined
-   });
+   const employees = await fetchServer<{ data?: { items?: EmployeeList[]; totalCount?: number } }>(
+      '/Employee',
+      'GET',
+      {
+         params: {
+            Page,
+            PageSize,
+            Search: search || undefined,
+            EmployeeId: employeeId || undefined
+         }
+      }
+   );
    const employeeList: EmployeeList[] = employees?.data?.items ?? [];
 
    const totalCount = employees?.data?.totalCount ?? 0;

@@ -19,5 +19,11 @@ public enum WorkingStatusEnum
     [Display(Name = "تقاعد")]
     Retired,
     [Display(Name = "عزل")]
-    Dismissed
+    Dismissed,
+
+    [Display(Name = "خدمة مقطوعة")]
+    Interrupted,
+
+    [Display(Name = "خدمة منسوخة")]
+    Copied
 }

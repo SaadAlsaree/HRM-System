@@ -1,4 +1,4 @@
-import { resignationService } from '@/services/resignation.service';
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import ResignationsToolbar from './_components/resignations-toolbar';
 import ResignationsTable from './_components/resignations-table';
@@ -35,7 +35,13 @@ const ResignationsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await resignationService.getResignations({ Page, PageSize });
+   const data = await fetchServer<{ data?: { items?: IResignation[]; totalCount?: number } }>(
+      '/Resignation',
+      'GET',
+      {
+         params: { Page, PageSize }
+      }
+   );
    const resignationList: IResignation[] = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 

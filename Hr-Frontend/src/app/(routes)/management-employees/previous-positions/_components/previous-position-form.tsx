@@ -493,12 +493,24 @@ const PreviousPositionForm = ({ data, icon, title, variant }: Props) => {
                                    <FormMessage />
                                </FormItem>
                            )}
-                       />
-                       
-                      
-                       <FormField
-                           control={form.control}
-                           name='note'
+                        />
+                        <FormField
+                            control={form.control}
+                            name='startDate'
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>تاريخ المباشرة</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder='تاريخ المباشرة' type='date' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        
+                        <FormField
+                            control={form.control}
+                            name='note'
                            render={({ field }) => (
                                <FormItem className='col-span-3'>
                                    <FormLabel>ملاحظات</FormLabel>

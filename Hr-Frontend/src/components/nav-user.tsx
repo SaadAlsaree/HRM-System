@@ -14,17 +14,24 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar';
 import Link from 'next/link';
+import { useSession } from 'next-auth/react';
+import { useCurrentUser } from '@/hooks/use-current-user';
+import { keycloakSignOut } from '@/lib/keycloak-logout';
 
-export function NavUser({
-   user
-}: {
-   user: {
-      name: string;
-      email: string;
-      avatar: string;
-   };
-}) {
+function initials(name?: string) {
+   if (!name) return '';
+   const parts = name.trim().split(/\s+/);
+   return (parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '');
+}
+
+export function NavUser() {
    const { isMobile } = useSidebar();
+   const { data: session } = useSession();
+   const { data: currentUser } = useCurrentUser();
+
+   const name = currentUser?.userName || session?.user?.name || '';
+   const email = currentUser?.email || session?.user?.email || '';
+   const avatar = session?.user?.image || '';
 
    return (
       <SidebarMenu>
@@ -37,13 +44,13 @@ export function NavUser({
                   >
                      <ChevronsUpDown className='mr-auto size-4' />
                      <div className='grid flex-1 text-right text-sm leading-tight'>
-                        <span className='truncate font-semibold'>{user.name}</span>
-                        <span className='truncate text-xs'>{user.email}</span>
+                        <span className='truncate font-semibold'>{name}</span>
+                        <span className='truncate text-xs'>{email}</span>
                      </div>
 
                      <Avatar className='h-8 w-8 rounded-lg'>
-                        <AvatarImage src={user.avatar} alt={user.name} />
-                        <AvatarFallback className='rounded-lg'>CN</AvatarFallback>
+                        <AvatarImage src={avatar} alt={name} />
+                        <AvatarFallback className='rounded-lg'>{initials(name) || '؟'}</AvatarFallback>
                      </Avatar>
                   </SidebarMenuButton>
                </DropdownMenuTrigger>
@@ -56,12 +63,12 @@ export function NavUser({
                   <DropdownMenuLabel className='p-0 font-normal'>
                      <div className='flex items-center gap-2 px-1 py-1.5 text-left text-sm'>
                         <Avatar className='h-8 w-8 rounded-lg'>
-                           <AvatarImage src={user.avatar} alt={user.name} />
-                           <AvatarFallback className='rounded-lg'>S.A</AvatarFallback>
+                           <AvatarImage src={avatar} alt={name} />
+                           <AvatarFallback className='rounded-lg'>{initials(name) || '؟'}</AvatarFallback>
                         </Avatar>
                         <div className='grid flex-1 text-right text-sm leading-tight'>
-                           <span className='truncate font-semibold'>{user.name}</span>
-                           <span className='truncate text-xs'>{user.email}</span>
+                           <span className='truncate font-semibold'>{name}</span>
+                           <span className='truncate text-xs'>{email}</span>
                         </div>
                      </div>
                   </DropdownMenuLabel>
@@ -80,7 +87,7 @@ export function NavUser({
                      </DropdownMenuItem>
                   </DropdownMenuGroup>
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => void keycloakSignOut()}>
                      <LogOut />
                      تسجيل الخروج
                   </DropdownMenuItem>

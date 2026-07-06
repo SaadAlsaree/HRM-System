@@ -7,7 +7,7 @@ public class Governorate : BaseEntity<int>
 {
     public string Name { get; set; }
 
-    
+    public virtual ICollection<Province> Provinces { get; set; } = new List<Province>();
 
     public virtual ICollection<AddressInformation> AddressInformation { get; set; } = new List<AddressInformation>();
 }

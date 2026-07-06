@@ -14,6 +14,8 @@ using HRM.Hub.Application.Features.ChangeDueDate.Queries.GetByIdChangeDueDate;
 using HRM.Hub.Application.Features.ChangeDueDate.Queries.GetChangeDueDate;
 using HRM.Hub.Application.Features.Attachment.Commands.CreateAttachment;
 using HRM.Hub.Application.Features.Attachment.Queries.GetAttachment;
+using HRM.Hub.Application.Contracts;
+using HRM.Hub.Application.Features.PromotionAllowanceCalculation.Models;
 
 namespace HRM.Hub.Controllers.Controllers.APIs;
 [ApiController]
@@ -23,9 +25,15 @@ namespace HRM.Hub.Controllers.Controllers.APIs;
 public class ChangeDueDateController : Base<ChangeDueDateController>
 {
     private readonly IMediator _mediator;
-    public ChangeDueDateController(IMediator mediator, ILogger<ChangeDueDateController> logger) : base(logger)
+    private readonly IPromotionAllowanceCalculationService _calculationService;
+
+    public ChangeDueDateController(
+        IMediator mediator,
+        IPromotionAllowanceCalculationService calculationService,
+        ILogger<ChangeDueDateController> logger) : base(logger)
     {
         _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        _calculationService = calculationService ?? throw new ArgumentNullException(nameof(calculationService));
     }
     [ServiceFilter(typeof(LogActionArguments))]
     [HttpGet]
@@ -47,6 +55,19 @@ public class ChangeDueDateController : Base<ChangeDueDateController>
         {
             Id = id
         }));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpGet("[action]/{employeeId:Guid}")]
+    [ProducesResponseType(typeof(Response<PromotionAllowanceCalculationDetailsViewModel>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Response<PromotionAllowanceCalculationDetailsViewModel>>> LatestCalculation(Guid employeeId)
+    {
+        var details = await _calculationService.GetLatestDetailsAsync(employeeId, HttpContext.RequestAborted);
+        if (details == null)
+            return BadRequest(ErrorsMessage.NotFoundData.ToErrorMessage<PromotionAllowanceCalculationDetailsViewModel>(null));
+
+        return Ok(SuccessMessage.Get.ToSuccessMessage(details));
     }
 
     [ServiceFilter(typeof(LogActionArguments))]

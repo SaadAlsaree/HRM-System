@@ -24,7 +24,10 @@
                 LastUpdateAt = DateTime.Now,
                 LastUpdateBy = request.CreateBy,
                 Note = request.Note,
-                TeamId = request.TeamId
+                TeamId = request.TeamId,
+                IsRead = false,
+                NotificationDate = request.NotificationDate ?? DateTime.Now,
+                Type = request.Type
             };
         }
     }

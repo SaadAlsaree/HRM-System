@@ -18,7 +18,7 @@ interface patchProvincePayload {
 class ProvinceService extends ApiClient {
 
 
-    public async getProvinces(params?: IPagination): Promise<any> {
+    public async getProvinces(params?: IPagination & { GovernorateId?: number }): Promise<any> {
         return this.request<any>({
             method: 'GET',
             url: '/Province',

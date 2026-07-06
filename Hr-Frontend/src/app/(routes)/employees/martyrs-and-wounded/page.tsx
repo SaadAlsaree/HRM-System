@@ -1,4 +1,4 @@
-import { martyrsWoundedService } from '@/services/martyrs-wounded.service';
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import MartyrsWoundedToolbar from './_components/martyrs-wounded-toolbar';
 import MartyrsWoundedTable from './_components/martyrs-wounded-table';
@@ -53,7 +53,13 @@ const MartyrsAndWoundedPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await martyrsWoundedService.getMartyrsWounded({ Page, PageSize });
+   const data = await fetchServer<{ data?: { items?: IMartyrsAndWounded[]; totalCount?: number } }>(
+      '/MartyrsAndWounded',
+      'GET',
+      {
+         params: { Page, PageSize }
+      }
+   );
    const martyrsWoundedList: IMartyrsAndWounded[] = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 

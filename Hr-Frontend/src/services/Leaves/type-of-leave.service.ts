@@ -11,6 +11,26 @@ interface patchTypeOfLeavePayload {
     tableName?: TableNames
 }
 
+export interface TypeOfLeavePayload {
+    name: string;
+    description?: string;
+    maxDurationDays?: number | null;
+    requiresAdministrativeOrder?: boolean;
+    requiresApprovals?: boolean;
+    affectsService?: boolean;
+    affectsPromotion?: boolean;
+    affectsBonus?: boolean;
+    affectsSalary?: boolean;
+    affectsRetirement?: boolean;
+    allowsExtension?: boolean;
+    allowsTermination?: boolean;
+    allowsCarryover?: boolean;
+    countsTowardsAnnualBalance?: boolean;
+    isBalanceBased?: boolean;
+    maxCarryoverDays?: number | null;
+    defaultSalaryStatusId?: number;
+}
+
 
 class TypeOfLeaveService extends ApiClient {
 
@@ -22,7 +42,7 @@ class TypeOfLeaveService extends ApiClient {
         });
     }
 
-    public async createTypeOfLeave(payload: { name: string }): Promise<any> {
+    public async createTypeOfLeave(payload: TypeOfLeavePayload): Promise<any> {
         return this.request<any>({
             method: 'POST',
             url: '/TypeOfLeave',
@@ -45,8 +65,7 @@ class TypeOfLeaveService extends ApiClient {
         });
     }
 
-    // updateTypeOfLeave
-    public async updateTypeOfLeave(TypeOfLeaveId: number, payload: { name: string }): Promise<any> {
+    public async updateTypeOfLeave(TypeOfLeaveId: number, payload: TypeOfLeavePayload): Promise<any> {
         return this.request<any>({
             method: 'PUT',
             url: `/TypeOfLeave/${TypeOfLeaveId}`,
@@ -54,7 +73,6 @@ class TypeOfLeaveService extends ApiClient {
         });
     }
 
-    // deleteTypeOfLeave
     public async deleteTypeOfLeave(id: number): Promise<any> {
         return this.request<any>({
             method: 'DELETE',
@@ -62,7 +80,6 @@ class TypeOfLeaveService extends ApiClient {
         });
     }
 
-    //Get /TypeOfLeave/GetList with params {Id?:number, NameTerm?: string }
     public async getTypeOfLeaveList(params: { Id?: number, NameTerm?: string }): Promise<any> {
         return this.request<any>({
             method: 'GET',

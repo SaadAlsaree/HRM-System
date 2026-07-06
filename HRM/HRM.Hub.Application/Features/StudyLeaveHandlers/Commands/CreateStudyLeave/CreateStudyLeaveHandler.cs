@@ -1,12 +1,18 @@
-﻿namespace HRM.Hub.Application.Features.StudyLeaveHandlers.Commands.CreateStudyLeave;
+namespace HRM.Hub.Application.Features.StudyLeaveHandlers.Commands.CreateStudyLeave;
 
 public class CreateStudyLeaveHandler : IRequestHandler<CreateStudyLeaveCommand, Response<bool>>
 {
     private readonly IBaseRepository<StudyLeave> _repositoryStudyLeave;
-    public CreateStudyLeaveHandler(IBaseRepository<StudyLeave> repositoryStudyLeave)
+    private readonly IPromotionAllowanceCalculationService _calculationService;
+
+    public CreateStudyLeaveHandler(
+        IBaseRepository<StudyLeave> repositoryStudyLeave,
+        IPromotionAllowanceCalculationService calculationService)
     {
         _repositoryStudyLeave = repositoryStudyLeave ?? throw new ArgumentNullException(nameof(repositoryStudyLeave));
+        _calculationService = calculationService;
     }
+
     public async Task<Response<bool>> Handle(CreateStudyLeaveCommand request, CancellationToken cancellationToken)
     {
         var checkExist = await _repositoryStudyLeave.Find(x => x.EmployeeId == request.EmployeeId && x.StatusId != Status.InActive && x.StudyFileId == request.StudyFileId, cancellationToken: cancellationToken);
@@ -39,6 +45,7 @@ public class CreateStudyLeaveHandler : IRequestHandler<CreateStudyLeaveCommand, 
         };
 
         await _repositoryStudyLeave.Create(studyLeave, cancellationToken);
+        _ = await _calculationService.CalculateAsync(request.EmployeeId, "study-leave-created", cancellationToken);
 
         return SuccessMessage.Create.ToSuccessMessage(true);
     }

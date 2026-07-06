@@ -1,6 +1,6 @@
 using HRM.Hub.Application.Helper;
 
-namespace HRM.Hub.Application.Features.UtilityServices.AcademicCertificateTypeUtility.Commands.UpdateAcademicCertificateType;
+namespace HRM.Hub.Application.Features.Assignments.Commands.UpdateAssignments;
 
 public class UpdateAssignmentsCommend : IRequest<Response<bool>>
 {
@@ -14,6 +14,8 @@ public class UpdateAssignmentsCommend : IRequest<Response<bool>>
     public string OrderNo { get; set; }
 
     public DateOnly? OrderDate { get; set; }
+
+    public string IssuingAuthority { get; set; }
 
     public AssignmentTypes AssignmentSite { get; set; }
 

@@ -22,8 +22,6 @@ namespace HRM.Hub.Controllers.Controllers.APIs
     [Produces("application/json")]
     [Route("hub/hrm/v1/api/[controller]")]
     [Tags("ThanksAndSeniority")]
-    //[Authorize(AuthenticationSchemes = "Bearer", Policy = "")]
-    [Permission]
     public class ThanksAndSeniorityController : Base<ThanksAndSeniorityController>
     {
 

@@ -10,4 +10,5 @@ public class TypeOfAssignment : BaseEntity<int>
     
 
     public virtual ICollection<Assignments> Assignments { get; set; } = new List<Assignments>();
+    public virtual ICollection<Affiliation> Affiliations { get; set; } = new List<Affiliation>();
 }

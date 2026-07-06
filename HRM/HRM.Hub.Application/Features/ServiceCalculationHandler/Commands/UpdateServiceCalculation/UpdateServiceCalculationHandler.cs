@@ -4,9 +4,14 @@ namespace HRM.Hub.Application.Features.ServiceCalculationHandler.Commands.Update
         UpdateHandler<ServiceCalculation, UpdateServiceCalculationCommend>,
         IRequestHandler<UpdateServiceCalculationCommend, Response<bool>>
     {
-        public UpdateServiceCalculationHandler(IBaseRepository<ServiceCalculation> repositoryServiceCalculation)
+        private readonly IPromotionAllowanceCalculationService _calculationService;
+
+        public UpdateServiceCalculationHandler(
+            IBaseRepository<ServiceCalculation> repositoryServiceCalculation,
+            IPromotionAllowanceCalculationService calculationService)
             : base(repositoryServiceCalculation)
         {
+            _calculationService = calculationService;
         }
 
         public override Expression<Func<ServiceCalculation, bool>>
@@ -16,7 +21,12 @@ namespace HRM.Hub.Application.Features.ServiceCalculationHandler.Commands.Update
         public async Task<Response<bool>> Handle(UpdateServiceCalculationCommend request,
             CancellationToken cancellationToken)
         {
-            return await HandleBase(request, cancellationToken);
+            var response = await HandleBase(request, cancellationToken);
+            if (!response.Succeeded)
+                return response;
+
+            _ = await _calculationService.CalculateAsync(request.EmployeeId, "service-calculation-updated", cancellationToken);
+            return response;
         }
     }
 }

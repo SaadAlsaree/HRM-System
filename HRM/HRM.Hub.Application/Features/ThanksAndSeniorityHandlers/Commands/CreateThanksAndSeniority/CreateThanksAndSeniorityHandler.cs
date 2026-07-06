@@ -1,22 +1,25 @@
-﻿namespace HRM.Hub.Application.Features.ThanksAndSeniorityHandlers.Commands.CreateThanksAndSeniority;
+namespace HRM.Hub.Application.Features.ThanksAndSeniorityHandlers.Commands.CreateThanksAndSeniority;
 
 public class CreateThanksAndSeniorityHandler : CreateRangeHandler<ThanksAndSeniority, CreateThanksAndSeniorityCommand>, IRequestHandler<CreateThanksAndSeniorityCommand, Response<bool>>
 {
     private readonly IBaseRepository<Employees> _repositoryEmployees;
+    private readonly IPromotionAllowanceCalculationService _calculationService;
     private List<ThanksAndSeniority> _command;
-    public CreateThanksAndSeniorityHandler(IBaseRepository<ThanksAndSeniority> repository
-        , IBaseRepository<Employees> repositoryEmployees) : base(repository)
+
+    public CreateThanksAndSeniorityHandler(
+        IBaseRepository<ThanksAndSeniority> repository,
+        IBaseRepository<Employees> repositoryEmployees,
+        IPromotionAllowanceCalculationService calculationService) : base(repository)
     {
         _command = new List<ThanksAndSeniority>();
         _repositoryEmployees = repositoryEmployees ?? throw new ArgumentNullException(nameof(repositoryEmployees));
+        _calculationService = calculationService;
     }
 
     protected override Expression<Func<ThanksAndSeniority, bool>> ExistencePredicate(CreateThanksAndSeniorityCommand request) => null;
 
-
     protected override IEnumerable<ThanksAndSeniority> MapToEntity(CreateThanksAndSeniorityCommand request)
     {
-
         return _command;
     }
 
@@ -30,16 +33,20 @@ public class CreateThanksAndSeniorityHandler : CreateRangeHandler<ThanksAndSenio
         {
             if (request.DirectorateId == 0 && request.SubDirectorateId != 0)
             {
-                employeeIds = await _repositoryEmployees.Query(z=>z.ManagementInformation.SubDirectorateId ==  request.SubDirectorateId)
-                    .Select(z=>z.Id).ToListAsync(cancellationToken: cancellationToken);
+                employeeIds = await _repositoryEmployees.Query(z => z.ManagementInformation.SubDirectorateId == request.SubDirectorateId)
+                    .Select(z => z.Id).ToListAsync(cancellationToken: cancellationToken);
             }
             else if (request.SubDirectorateId == 0 && request.DirectorateId != 0)
             {
                 employeeIds = await _repositoryEmployees.Query(z => z.ManagementInformation.DirectorateId == request.DirectorateId)
-                    .Select(z => z.Id).ToListAsync();
-            }else
+                    .Select(z => z.Id).ToListAsync(cancellationToken: cancellationToken);
+            }
+            else
+            {
                 return ErrorsMessage.NotExistOnCreate.ToErrorMessage(false);
+            }
         }
+
         foreach (var employeeId in employeeIds)
         {
             _command.Add(new ThanksAndSeniority
@@ -58,6 +65,12 @@ public class CreateThanksAndSeniorityHandler : CreateRangeHandler<ThanksAndSenio
                 TypeOfBookId = request.TypeOfBook
             });
         }
-        return await HandleBase(request, cancellationToken);
+
+        var response = await HandleBase(request, cancellationToken);
+        if (!response.Succeeded)
+            return response;
+
+        _ = await _calculationService.CalculateBatchAsync(employeeIds, "thanks-seniority-created", cancellationToken);
+        return response;
     }
 }

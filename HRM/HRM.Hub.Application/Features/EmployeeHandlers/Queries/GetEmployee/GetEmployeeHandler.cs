@@ -84,7 +84,7 @@ public class GetEmployeeHandler : IRequestHandler<GetEmployeeQuery, Response<Pag
             Id = z.Id,
             FullName = z.FullName,
             JobCode = z.JobCode,
-            JobTitle = z.ManagementInformation.JobTitle.Name,
+            JobTitle = (z.ManagementInformation != null && z.ManagementInformation.JobTitle != null ? z.ManagementInformation.JobTitle.Name : null),
             LotNumber = z.LotNumber,
             StatisticalIndex = z.StatisticalIndex,
             PathOfProfile = $"/Employee/Proifile?employeeId={z.Id}",

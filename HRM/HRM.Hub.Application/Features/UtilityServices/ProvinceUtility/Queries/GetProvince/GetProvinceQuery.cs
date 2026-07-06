@@ -7,4 +7,5 @@ public class GetProvinceQuery : IRequest<Response<PagedResult<GetProvinceViewMod
 {
     public int Page { get; set; }
     public byte PageSize { get; set; }
+    public int? GovernorateId { get; set; }
 }

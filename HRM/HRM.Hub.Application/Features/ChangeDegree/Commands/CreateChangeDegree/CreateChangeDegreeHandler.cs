@@ -5,10 +5,17 @@ IRequestHandler<CreateChangeDegreeCommand, Response<bool>>
 {
     private readonly IBaseRepository<Promotion> _repositoryPromotion;
     private readonly IBaseRepository<Leaves> _repositoryLeave;
-    public CreateChangeDegreeHandler(IBaseRepository<ChangeDegrees> repository, IBaseRepository<Promotion> repositoryPromotion, IBaseRepository<Leaves> repositoryLeave) : base(repository)
+    private readonly IPromotionAllowanceCalculationService _calculationService;
+
+    public CreateChangeDegreeHandler(
+        IBaseRepository<ChangeDegrees> repository,
+        IBaseRepository<Promotion> repositoryPromotion,
+        IBaseRepository<Leaves> repositoryLeave,
+        IPromotionAllowanceCalculationService calculationService) : base(repository)
     {
         _repositoryPromotion = repositoryPromotion;
         _repositoryLeave = repositoryLeave;
+        _calculationService = calculationService;
     }
 
     public async Task<Response<bool>> Handle(CreateChangeDegreeCommand request, CancellationToken cancellationToken)
@@ -27,15 +34,20 @@ IRequestHandler<CreateChangeDegreeCommand, Response<bool>>
         if (findPromotion == null)
             return ErrorsMessage.NotFoundData.ToErrorMessage(false);
 
-        findPromotion.DueDateCategory = request.NewCategoryDueDate;
-        findPromotion.DueDateDegree = request.NewDegreeDueDate;
+        findPromotion.JobCategoryId = request.JobCategoryToId;
+        findPromotion.JobDegreeId = request.JobDegreeToId;
         findPromotion.Note = "تغيير الدرجة";
         findPromotion.LastUpdateBy = request.CreateBy;
         findPromotion.LastUpdateAt = DateTime.Now;
         if (!_repositoryPromotion.Update(findPromotion))
             return ErrorsMessage.FailOnUpdate.ToErrorMessage(false);
 
-        return await base.HandleBase(request, cancellationToken);
+        var response = await base.HandleBase(request, cancellationToken);
+        if (!response.Succeeded)
+            return response;
+
+        _ = await _calculationService.CalculateAsync(request.EmployeeId, "change-degree-created", cancellationToken);
+        return response;
     }
 
     protected override Expression<Func<ChangeDegrees, bool>> ExistencePredicate(CreateChangeDegreeCommand request) => null;

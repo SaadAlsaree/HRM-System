@@ -7,6 +7,9 @@ import { ThemeProvider } from '@/providers/theme-provider';
 import { Toaster } from '@/components/ui/sonner';
 import QueryClientProvider from '@/providers/query-client-provider';
 import { NuqsAdapter } from 'nuqs/adapters/next/app';
+import SessionProviderWrapper from '@/components/providers/session-provider';
+import { StoreSync } from '@/components/providers/store-sync';
+import { auth } from '@/lib/auth';
 
 const geistSans = localFont({
    src: '../fonts/GeistVF.woff',
@@ -25,20 +28,25 @@ export const metadata: Metadata = {
    icons: '/logoINSS.png'
 };
 
-export default function RootLayout({
+export default async function RootLayout({
    children
 }: Readonly<{
    children: React.ReactNode;
 }>) {
+   const session = await auth();
+
    return (
       <html lang='en' dir='rtl'>
          <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-            <QueryClientProvider>
-               <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
-                  <NuqsAdapter>{children}</NuqsAdapter>
-                  <Toaster />
-               </ThemeProvider>
-            </QueryClientProvider>
+            <SessionProviderWrapper session={session}>
+               <QueryClientProvider>
+                  <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
+                     <NuqsAdapter>{children}</NuqsAdapter>
+                     <StoreSync />
+                     <Toaster />
+                  </ThemeProvider>
+               </QueryClientProvider>
+            </SessionProviderWrapper>
          </body>
       </html>
    );

@@ -1,5 +1,6 @@
 using System.Net;
 using HRM.Hub.Application.Features.Assignments.Commands.CreateAssignments;
+using HRM.Hub.Application.Features.Assignments.Commands.ExtendAssignment;
 using HRM.Hub.Application.Features.Assignments.Commands.UpdateEndAssignments;
 using HRM.Hub.Application.Features.Assignments.Queries.GetAssignments;
 using HRM.Hub.Application.Features.Assignments.Queries.GetAssignmentsById;
@@ -8,7 +9,7 @@ using HRM.Hub.Application.Features.Attachment.Commands.CreateAttachment;
 using HRM.Hub.Application.Features.Attachment.Queries.GetAttachment;
 using HRM.Hub.Application.Features.Services.Commands.ChangeStatus;
 using HRM.Hub.Application.Features.Services.Commands.DeleteRecord;
-using HRM.Hub.Application.Features.UtilityServices.AcademicCertificateTypeUtility.Commands.UpdateAcademicCertificateType;
+using HRM.Hub.Application.Features.Assignments.Commands.UpdateAssignments;
 using HRM.Hub.Domain.Common;
 using HRM.Hub.Domain.Common.Enums;
 using HRM.Hub.Persistence.Helpers;
@@ -98,6 +99,16 @@ public class AssignmentsController : Base<AssignmentsController>
             Id = id,
             TableName = TableNames.Assignments
         }));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPut("[action]/{AssignmentsId:Guid}")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> Extend(Guid AssignmentsId, [FromBody] ExtendAssignmentCommand command)
+    {
+        command.Id = AssignmentsId;
+        return await Okey(() => _mediator.Send(command));
     }
 
     [ServiceFilter(typeof(LogActionArguments))]

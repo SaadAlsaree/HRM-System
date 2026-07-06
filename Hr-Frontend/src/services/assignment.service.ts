@@ -4,7 +4,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import ApiClient from '@/services/axios.service';
 
-import { AssignmentTypes, Status } from '@/types/enums';
+import { Status } from '@/types/enums';
 import { IPagination } from '@/types';
 
 
@@ -13,6 +13,7 @@ export interface AssignmentPayload {
     typeOfAssignmentId: number;
     orderNo: string;
     orderDate: string;
+    issuingAuthority: string;
     durationOfAssignment: number;
     releaseOrderDate: string;
     releaseOrderNo: string;
@@ -40,6 +41,7 @@ export interface UpdateAssignmentPayload {
     typeOfAssignmentId: number;
     orderNo: string;
     orderDate: string;
+    issuingAuthority: string;
     assignmentSite?: number;
     assignedFromOrganization: string;
     assignedToOrganization: string;
@@ -81,7 +83,8 @@ interface patchAssignmentPayload {
 interface AssignmentParams extends IPagination {
     employeeId?: string;
     status?: Status;
-    AssignmentSite?: AssignmentTypes
+    searchTerm?: string;
+    AssignmentSite?: number
 }
 
 

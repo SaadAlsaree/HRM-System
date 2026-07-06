@@ -3,6 +3,7 @@ export const columnsAffiliatesFromOrg: { label: string; value: string; className
     { label: 'اسم الموظف', value: 'fullName', className: 'font-bold' },
     { label: 'رقم الأمر الإداري', value: 'orderNo', className: 'font-bold' },
     { label: 'تاريخ الأمر الإداري', value: 'orderDate', className: 'font-bold' },
+    { label: 'جهة الاصدار', value: 'issuingAuthority', className: 'font-bold' },
     { label: 'المنسب منها', value: 'affiliateFrom', className: 'font-bold' },
     { label: 'المنسب اليها', value: 'affiliateTo', className: 'font-bold' },
     { label: 'نوع الامر', value: 'orderType', className: 'font-bold' },

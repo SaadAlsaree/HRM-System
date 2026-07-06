@@ -2,6 +2,7 @@
 import React, { useEffect } from 'react';
 import HomeAddressView from './_components/home-address-view';
 import { addressInformationService } from '@/services/address-information.service';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 export interface IAddressInformation {
    id?: string;
@@ -33,6 +34,7 @@ const HomeAddressPage = ({ employeeId }: Props) => {
    const [addressInformation, setAddressInformation] = React.useState<IAddressInformation[] | null>(null);
    const [loading, setLoading] = React.useState<boolean>(true);
    const [error, setError] = React.useState<string | null>(null);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    const params = {
       employeeId,
@@ -41,20 +43,20 @@ const HomeAddressPage = ({ employeeId }: Props) => {
    };
 
    useEffect(() => {
+      setLoading(true);
       addressInformationService
          .getAddressInformation(params)
          .then((response) => {
             setAddressInformation(response?.data?.items);
-            // console.log(response.data.items);
          })
 
          .catch((error) => {
-            setError(error);
+            setError(error instanceof Error ? error.message : String(error));
          })
          .finally(() => {
             setLoading(false);
          });
-   }, [employeeId]);
+   }, [employeeId, refreshKey]);
 
    if (loading) {
       return <div>Loading...</div>;

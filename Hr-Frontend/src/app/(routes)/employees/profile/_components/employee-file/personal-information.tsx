@@ -57,8 +57,9 @@ const PersonalInformation = ({ data }: Props) => {
                <div className='space-y-2'>
                   {[
                      { label: 'اسم الأم', value: data?.motherFullName ?? '----' },
-                     { label: 'الرقم الوطني', value: data?.jobCode ?? '----' },
-                     { label: 'الرقم العائلي', value: data?.lotNumber ?? '----' },
+                     { label: 'الرقم الوظيفي', value: data?.jobCode ?? '----' },
+                     { label: 'الرقم الاحصائي', value: data?.statisticalIndex ?? '----' },
+                     { label: 'رقم الاضبارة', value: data?.lotNumber ?? '----' },
                      { label: 'تاريخ الولادة', value: data?.birthDate ?? '----' },
                      { label: 'محل الولادة', value: data?.birthPlace ?? '----' },
                      { label: 'الجنسية', value: data?.countryName ?? '----' },

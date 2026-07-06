@@ -80,5 +80,8 @@ public enum TableNames
     TeamNotifications,
     ChangeJobTitle,
     LongLeaveType,
-    TypeOfDisciplinary
+    TypeOfDisciplinary,
+    Affiliations,
+    DepartmentOwners,
+    ContractType
 }

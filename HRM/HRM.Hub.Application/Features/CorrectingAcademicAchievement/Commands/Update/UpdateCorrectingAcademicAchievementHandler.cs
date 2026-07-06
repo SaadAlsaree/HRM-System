@@ -3,9 +3,14 @@ public class UpdateCorrectingAcademicAchievementHandler : UpdateHandler<Correcti
     IRequestHandler<UpdateCorrectingAcademicAchievementCommand, Response<bool>>
 {
     private readonly IBaseRepository<Promotion> _repositoryPromotion;
-    public UpdateCorrectingAcademicAchievementHandler(IBaseRepository<Promotion> repositoryPromotion, IBaseRepository<CorrectingAcademicAchievements> repository) : base(repository)
+    private readonly IPromotionAllowanceCalculationService _calculationService;
+    public UpdateCorrectingAcademicAchievementHandler(
+        IBaseRepository<Promotion> repositoryPromotion,
+        IBaseRepository<CorrectingAcademicAchievements> repository,
+        IPromotionAllowanceCalculationService calculationService) : base(repository)
     {
         _repositoryPromotion = repositoryPromotion;
+        _calculationService = calculationService;
     }
 
     public override Expression<Func<CorrectingAcademicAchievements, bool>> EntityPredicate(UpdateCorrectingAcademicAchievementCommand request) =>
@@ -17,8 +22,6 @@ public class UpdateCorrectingAcademicAchievementHandler : UpdateHandler<Correcti
         if (findPromotion == null)
             return ErrorsMessage.NotFoundData.ToErrorMessage(false);
 
-        findPromotion.DueDateCategory = request.DueDateCategory;
-        findPromotion.DueDateDegree = request.DueDateDegree;
         findPromotion.JobCategoryId = request.JobCategoryToId;
         findPromotion.JobDegreeId = request.DegreeToId;
         findPromotion.Note = "تصويب صحة الصدور";
@@ -26,6 +29,11 @@ public class UpdateCorrectingAcademicAchievementHandler : UpdateHandler<Correcti
         if (!_repositoryPromotion.Update(findPromotion))
             return ErrorsMessage.FailOnUpdate.ToErrorMessage(false);
 
-        return await HandleBase(request, cancellationToken);
+        var result = await HandleBase(request, cancellationToken);
+        if (result?.Data != true)
+            return result;
+
+        _ = await _calculationService.CalculateAsync(request.EmployeeId, "correcting-academic-achievement-updated", cancellationToken);
+        return result;
     }
 }

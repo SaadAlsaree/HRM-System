@@ -8,10 +8,14 @@ public class Assignments: BaseEntity<Guid>
     public int? TypeOfAssignmentId { get; set; }
     public string OrderNo { get; set; }
     public DateOnly? OrderDate { get; set; }
+    public string IssuingAuthority { get; set; }
     public AssignmentTypes AssignmentSite { get; set; }
     public string AssignedFromOrganization { get; set; }
     public string AssignedToOrganization { get; set; }
     public int? DurationOfAssignment { get; set; }
+    public DateOnly? ExtensionDate { get; set; }
+    public string ExtensionReason { get; set; }
+    public Guid? ExtendedBy { get; set; }
     public DateOnly? ReleaseOrderDate { get; set; }
     public string ReleaseOrderNo { get; set; }
     public DateOnly? AssignmentOrderDate { get; set; }

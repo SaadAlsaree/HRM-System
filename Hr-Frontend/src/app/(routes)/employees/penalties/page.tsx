@@ -1,4 +1,4 @@
-import { employeeDisciplinary } from '@/services/Employee/employee-disciplinary.service';
+import { fetchServer } from '@/lib/fetchServer';
 import PenaltiesToolbar from './_components/penalties-toolbar';
 import { Separator } from '@/components/ui/separator';
 import PenaltiesTable from './_components/penalties-table';
@@ -38,11 +38,17 @@ const PenaltiesPage = async ({ searchParams }: Props) => {
    const PageSize = parseInt(searchParams.PageSize ?? '', 10) || 10;
    const employeeId = (searchParams.employeeId || searchParams.EmployeeId || '').trim();
 
-   const data = await employeeDisciplinary.getEmployeeDisciplinary({
-      Page,
-      PageSize,
-      EmployeeId: employeeId || undefined
-   });
+   const data = await fetchServer<{ data?: { items?: IDisciplinaryDetails[]; totalCount?: number } }>(
+      '/EmployeeDisciplinary',
+      'GET',
+      {
+         params: {
+            Page,
+            PageSize,
+            EmployeeId: employeeId || undefined
+         }
+      }
+   );
    const disciplinaryDetails: IDisciplinaryDetails[] = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 

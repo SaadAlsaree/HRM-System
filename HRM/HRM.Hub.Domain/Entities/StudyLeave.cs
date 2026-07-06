@@ -42,6 +42,9 @@ public class StudyLeave : BaseEntity<Guid>
     public int? StudyResultId { get; set; }
 
     public string Notes { get; set; }
+    public bool? AffectsPromotion { get; set; }
+    public bool? AffectsAllowance { get; set; }
+    public int? DelayMonthsOverride { get; set; }
 
     
 

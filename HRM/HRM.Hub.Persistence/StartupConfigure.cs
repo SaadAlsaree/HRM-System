@@ -1,4 +1,6 @@
-﻿namespace HRM.Hub.Persistence;
+﻿using HRM.Hub.Persistence.Infrastructure.Middleware;
+
+namespace HRM.Hub.Persistence;
 
 public static class StartupConfigure
 {
@@ -17,11 +19,9 @@ public static class StartupConfigure
         app.UseStaticFiles();
         //app.UseAntiXssMiddleware();
         app.UseRouting();
-        app.UseCors(x => x
-            .AllowAnyMethod()
-            .AllowAnyHeader()
-            .SetIsOriginAllowed(origin => true)
-            .AllowCredentials());
+        if (env.IsProduction())
+            app.UseProxyAuthentication();
+        app.UseCors("CorsPolicy");
         app.UseSession();
 
 
@@ -48,17 +48,16 @@ public static class StartupConfigure
                     "public,max-age=" + durationInSeconds;
             }
         });
-        //if (env.IsProduction())
-        //{
-        //    app.UseSwaggerAuthorized();
-        //}
-        app.UseSwagger();
-        app.UseSwaggerUI(c =>
+        if (env.IsDevelopment())
         {
-            c.SwaggerEndpoint("/swagger/hrm/swagger.json", "API HRM");
-            c.DocumentTitle = "API HRM";
-            c.DefaultModelsExpandDepth(0);
-        });
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/hrm/swagger.json", "API HRM");
+                c.DocumentTitle = "API HRM";
+                c.DefaultModelsExpandDepth(0);
+            });
+        }
         app.UseCookiePolicy();
         app.UseAuthentication();
         app.UseAuthorization();

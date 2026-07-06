@@ -128,3 +128,23 @@ export enum SearchBy {
     Value2 = 2,
     Value3 = 3,
 }
+
+export enum LeaveStatus {
+    Draft = 0,
+    PendingApproval = 1,
+    Approved = 2,
+    Rejected = 3,
+    Active = 4,
+    Expired = 5,
+    Cancelled = 6,
+}
+
+export const LeaveStatusLabels: Record<LeaveStatus, string> = {
+    [LeaveStatus.Draft]: 'مسودة',
+    [LeaveStatus.PendingApproval]: 'بانتظار الموافقة',
+    [LeaveStatus.Approved]: 'معتمدة',
+    [LeaveStatus.Rejected]: 'مرفوضة',
+    [LeaveStatus.Active]: 'نشطة',
+    [LeaveStatus.Expired]: 'منتهية',
+    [LeaveStatus.Cancelled]: 'ملغية',
+};

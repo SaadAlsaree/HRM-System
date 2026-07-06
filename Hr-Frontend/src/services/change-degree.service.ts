@@ -55,6 +55,7 @@ interface patchChangeDegreePayload {
 
 interface ChangeDegreeParams extends IPagination {
     employeeId?: string;
+    EmployeeId?: string;
     status?: Status;
 }
 
@@ -63,10 +64,15 @@ class ChangeDegreeService extends ApiClient {
 
 
     public async getChangeDegree(params: ChangeDegreeParams): Promise<any> {
+        const { employeeId, ...restParams } = params;
+
         return this.request<any>({
             method: 'GET',
             url: '/ChangeDegree',
-            params
+            params: {
+                ...restParams,
+                ...(employeeId ? { EmployeeId: employeeId } : {})
+            }
         });
     }
 

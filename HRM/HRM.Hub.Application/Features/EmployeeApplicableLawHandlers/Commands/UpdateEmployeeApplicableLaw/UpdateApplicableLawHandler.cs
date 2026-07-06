@@ -1,22 +1,32 @@
-using HRM.Hub.Application.Features.UtilityServices.BaseUtility.Command.Update;
-
 namespace HRM.Hub.Application.Features.EmployeeApplicableLawHandlers.Commands.UpdateEmployeeApplicableLaw;
-public class UpdateApplicableLawHandler :
-        UpdateHandler<EmployeeApplicableLaws, UpdateApplicableLawCommand>,
-        IRequestHandler<UpdateApplicableLawCommand, Response<bool>>
-{
-    public UpdateApplicableLawHandler(IBaseRepository<EmployeeApplicableLaws> repositoryApplicableLaw)
-        : base(repositoryApplicableLaw)
-    {
-    }
 
-    public override Expression<Func<EmployeeApplicableLaws, bool>>
-        EntityPredicate(UpdateApplicableLawCommand request) =>
-        x => x.Id == request.Id;
+public class UpdateApplicableLawHandler : IRequestHandler<UpdateApplicableLawCommand, Response<bool>>
+{
+    private readonly IBaseRepository<EmployeeApplicableLaws> _repositoryApplicableLaw;
+    private readonly IPromotionAllowanceCalculationService _calculationService;
+
+    public UpdateApplicableLawHandler(
+        IBaseRepository<EmployeeApplicableLaws> repositoryApplicableLaw,
+        IPromotionAllowanceCalculationService calculationService)
+    {
+        _repositoryApplicableLaw = repositoryApplicableLaw;
+        _calculationService = calculationService;
+    }
 
     public async Task<Response<bool>> Handle(UpdateApplicableLawCommand request,
         CancellationToken cancellationToken)
     {
-        return await HandleBase(request, cancellationToken);
+        var entity = await _repositoryApplicableLaw.Find(x => x.Id == request.Id, cancellationToken: cancellationToken);
+        if (entity == null)
+            return ErrorsMessage.NotExistOnUpdate.ToErrorMessage(false);
+
+        entity.Note = request.Note;
+        entity.LastUpdateAt = DateTime.UtcNow;
+
+        if (!_repositoryApplicableLaw.Update(entity))
+            return ErrorsMessage.FailOnUpdate.ToErrorMessage(false);
+
+        _ = await _calculationService.CalculateAsync(entity.EmployeeId, "applicable-law-updated", cancellationToken);
+        return SuccessMessage.Update.ToSuccessMessage(true);
     }
 }

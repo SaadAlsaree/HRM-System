@@ -32,8 +32,8 @@ public class ExtensionRepository<TId> : IDisposable, IExtensionRepository<TId>
     
     public async Task<bool> DeleteRecordAsync(string tableName, TId primaryId)
     {
-        var query = $"update \"{tableName}\" set \"IsDeleted\" = false , \"DeletedAt\" = now() where \"Id\" = '@p0';";
-        return await DbContext.Database.ExecuteSqlRawAsync(query, tableName, primaryId) > 0;
+        var query = $"update \"{tableName}\" set \"IsDeleted\" = true , \"DeletedAt\" = now() where \"Id\" = @p0;";
+        return await DbContext.Database.ExecuteSqlRawAsync(query, primaryId) > 0;
     }
     
     #region IDisposable Support

@@ -11,6 +11,8 @@ namespace HRM.Hub.Application.Features.UtilityServices.TerritoryUtility.Queries.
         {
             Id = z.Id,
             Name = z.Name,
+            ProvinceId = z.ProvinceId,
+            ProvinceName = (z.Province != null ? z.Province.Name : null),
             Status = z.StatusId,
 
         };

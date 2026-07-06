@@ -26,6 +26,9 @@ public class ThanksAndSeniority: BaseEntity<Guid>
     public DateOnly? CalculationDate { get; set; }
 
     public bool? IsCalculation { get; set; }
+    public bool IsConsumed { get; set; }
+    public DateTime? ConsumedAt { get; set; }
+    public Guid? ConsumedCalculationRunId { get; set; }
 
     public string Note { get; set; }
 

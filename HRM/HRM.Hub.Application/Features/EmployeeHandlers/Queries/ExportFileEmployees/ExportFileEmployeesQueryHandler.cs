@@ -8,9 +8,22 @@ public class ExportFileEmployeesQueryHandler : ExportFileHandler<Employees, Expo
     public ExportFileEmployeesQueryHandler(IBaseRepository<Employees> employeesRepository)
         : base(employeesRepository)
     {
-        _headers = new string[] { };
-        _title = "";
-        _titleSheet = "";
+        _headers = new[]
+        {
+            "ت",
+            "الاسم الكامل",
+            "الرقم الوظيفي",
+            "الرقم الاحصائي",
+            "رقم الاضبارة",
+            "المسمى الوظيفي",
+            "الجنس",
+            "تاريخ الميلاد",
+            "الجنسية",
+            "الديانة",
+            "حالة الخدمة"
+        };
+        _title = "قائمة الموظفين";
+        _titleSheet = "الموظفون";
     }
 
     public override string[] Headers
@@ -31,9 +44,21 @@ public class ExportFileEmployeesQueryHandler : ExportFileHandler<Employees, Expo
 
     public override Expression<Func<Employees, List<object>>> Selector => x => new List<object>
     {
+        x.Id,
+        x.FullName ?? string.Empty,
+        x.JobCode ?? string.Empty,
+        x.StatisticalIndex ?? string.Empty,
+        x.LotNumber ?? string.Empty,
+        (x.ManagementInformation != null && x.ManagementInformation.JobTitle != null ? x.ManagementInformation.JobTitle.Name : string.Empty),
+        x.Gender.ToString(),
+        x.BirthDate != null ? x.BirthDate.Value.ToString() : string.Empty,
+        x.Nationalism ?? string.Empty,
+        x.Religion ?? string.Empty,
+        x.StatusWorkingId.ToString()
     };
 
-    public override Func<IQueryable<Employees>, IIncludableQueryable<Employees, object>> Include => null;
+    public override Func<IQueryable<Employees>, IIncludableQueryable<Employees, object>> Include =>
+        inc => inc.Include(e => e.ManagementInformation).ThenInclude(m => m.JobTitle);
 
     public async Task<Response<byte[]>> Handle(ExportFileEmployeesQuery request, CancellationToken cancellationToken)
     {

@@ -15,23 +15,35 @@ namespace HRM.Hub.Application.Features.EmployeePositionHandlers.Commands.CreateE
             CreateEmployeePositionCommend request)
             => x => x.EmployeeId == request.EmployeeId && x.AssignedOrderNo == request.AssignedOrderNo;
 
-        private async Task ChangeStatusToOld(CreateEmployeePositionCommend request, CancellationToken cancellationToken)
+        private async Task AutoClosePreviousPosition(CreateEmployeePositionCommend request, CancellationToken cancellationToken)
         {
-           if (request.CurrentPosition.Count != 0)
+            if (request.CurrentPosition.Count != 0)
             {
-                var getCurrentPosition = await _repositoryEmployeePosition
+                var positionsToClose = await _repositoryEmployeePosition
                     .Query(x => x.EmployeeId == request.EmployeeId && x.EmployeePositionType == EmployeePositionTypeEnum.New
-                    && request.CurrentPosition.Select(z=>z.Id).ToArray().Contains(x.Id))
+                    && request.CurrentPosition.Select(z => z.Id).ToArray().Contains(x.Id))
                     .ToListAsync(cancellationToken: cancellationToken);
-                foreach (var item in getCurrentPosition)
+                foreach (var item in positionsToClose)
                 {
                     item.EmployeePositionType = EmployeePositionTypeEnum.Old;
-                    item.EndAssignedOrderDate = item.EndAssignedOrderDate;
-                    item.EndAssignedOrderNo = item.EndAssignedOrderNo;
+                    item.EndAssignedOrderDate = DateOnly.FromDateTime(DateTime.Now);
+                    item.EndAssignedOrderNo = request.AssignedOrderNo;
                     _repositoryEmployeePosition.Update(item);
                 }
             }
-
+            else
+            {
+                var existingActive = await _repositoryEmployeePosition
+                    .Query(x => x.EmployeeId == request.EmployeeId && x.EmployeePositionType == EmployeePositionTypeEnum.New)
+                    .ToListAsync(cancellationToken: cancellationToken);
+                foreach (var item in existingActive)
+                {
+                    item.EmployeePositionType = EmployeePositionTypeEnum.Old;
+                    item.EndAssignedOrderDate = DateOnly.FromDateTime(DateTime.Now);
+                    item.EndAssignedOrderNo = request.AssignedOrderNo;
+                    _repositoryEmployeePosition.Update(item);
+                }
+            }
         }
 
         protected override EmployeePosition MapToEntity(CreateEmployeePositionCommend request)
@@ -48,6 +60,7 @@ namespace HRM.Hub.Application.Features.EmployeePositionHandlers.Commands.CreateE
                 SubDirectorateId = request.SubDirectorateId,
                 DepartmentId = request.DepartmentId,
                 AssignedDate = request.AssignedDate,
+                StartDate = request.StartDate,
                 SectionId = request.SectionId,
                 UnitId = request.UnitId,
                 PositionId = request.PositionId,
@@ -59,7 +72,8 @@ namespace HRM.Hub.Application.Features.EmployeePositionHandlers.Commands.CreateE
         public async Task<Response<bool>> Handle(CreateEmployeePositionCommend request,
             CancellationToken cancellationToken)
         {
-            await ChangeStatusToOld(request, cancellationToken);
+            await AutoClosePreviousPosition(request, cancellationToken);
+
             return await HandleBase(request, cancellationToken);
         }
     }

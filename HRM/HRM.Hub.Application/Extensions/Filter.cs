@@ -120,6 +120,18 @@ public static class FilterExtensions
                         query = query.Where(GenerateEqualityExpression<TEntity, int>(property.Name, intValue));
                     }
                 }
+                else if (property.PropertyType == typeof(int?) && value is int intValue2 && intValue2 > 0)
+                {
+                    var entityProperty = typeof(TEntity).GetProperty(property.Name);
+                    if (entityProperty != null)
+                    {
+                        var targetType = Nullable.GetUnderlyingType(entityProperty.PropertyType) ?? entityProperty.PropertyType;
+                        if (targetType == typeof(int))
+                        {
+                            query = query.Where(GenerateEqualityExpression<TEntity, int?>(property.Name, intValue2));
+                        }
+                    }
+                }
             }
         }
 

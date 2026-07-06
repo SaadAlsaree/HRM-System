@@ -21,6 +21,7 @@ import { addressInformationService } from '@/services/address-information.servic
 import { Plus } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/spinner';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 const formSchema = z.object({
    governorateId: z.string(),
@@ -48,26 +49,14 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
    const [provinces, setProvinces] = useState([]);
    const [territories, setTerritories] = useState([]);
    const router = useRouter();
+   const { refresh } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       const fetchGovernorate = async () => {
          const response = await governorateService.getGovernorate();
          setGovernorate(response?.data?.items);
       };
-
-      const fetchProvinces = async () => {
-         const response = await provinceService.getProvinces();
-         setProvinces(response?.data?.items);
-      };
-
-      const fetchTerritories = async () => {
-         const response = await territoryService.getTerritories();
-         setTerritories(response?.data?.items);
-      };
-
       fetchGovernorate();
-      fetchProvinces();
-      fetchTerritories();
    }, []);
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -100,6 +89,33 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
       }
    });
 
+   const watchGovernorateId = form.watch('governorateId');
+   const watchProvinceId = form.watch('provinceId');
+
+   useEffect(() => {
+      const fetchProvinces = async () => {
+         if (!watchGovernorateId) {
+            setProvinces([]);
+            return;
+         }
+         const response = await provinceService.getProvinces({ GovernorateId: Number(watchGovernorateId) });
+         setProvinces(response?.data?.items || []);
+      };
+      fetchProvinces();
+   }, [watchGovernorateId]);
+
+   useEffect(() => {
+      const fetchTerritories = async () => {
+         if (!watchProvinceId) {
+            setTerritories([]);
+            return;
+         }
+         const response = await territoryService.getTerritories({ ProvinceId: Number(watchProvinceId) });
+         setTerritories(response?.data?.items || []);
+      };
+      fetchTerritories();
+   }, [watchProvinceId]);
+
    async function onSubmit(values: z.infer<typeof formSchema>) {
       setSubmitting(true);
       try {
@@ -111,6 +127,7 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
                </pre>
             );
             setSubmitting(false);
+            refresh();
             router.refresh();
             setOpen(false);
             form.reset();
@@ -126,6 +143,7 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
                </pre>
             );
             setSubmitting(false);
+            refresh();
             router.refresh();
             setOpen(false);
             form.reset();
@@ -163,21 +181,27 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
                            name='governorateId'
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>المحافظة</FormLabel>
-                                 <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
-                                    <FormControl>
-                                       <SelectTrigger>
-                                          <SelectValue placeholder='المحافظة' />
-                                       </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                       {governorateOptions.map((item) => (
-                                          <SelectItem key={item.value} value={item.value.toString()}>
-                                             {item.label}
-                                          </SelectItem>
-                                       ))}
-                                    </SelectContent>
-                                 </Select>
+                                  <FormLabel>المحافظة</FormLabel>
+                                  <Select
+                                     onValueChange={(value) => {
+                                        field.onChange(value);
+                                        form.setValue('provinceId', '');
+                                        form.setValue('territoryId', '');
+                                     }}
+                                     defaultValue={field.value?.toString()}>
+                                     <FormControl>
+                                        <SelectTrigger>
+                                           <SelectValue placeholder='المحافظة' />
+                                        </SelectTrigger>
+                                     </FormControl>
+                                     <SelectContent>
+                                        {governorateOptions.map((item) => (
+                                           <SelectItem key={item.value} value={item.value.toString()}>
+                                              {item.label}
+                                           </SelectItem>
+                                        ))}
+                                     </SelectContent>
+                                  </Select>
 
                                  <FormMessage />
                               </FormItem>
@@ -191,21 +215,26 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
                            name='provinceId'
                            render={({ field }) => (
                               <FormItem>
-                                 <FormLabel>القضاء</FormLabel>
-                                 <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
-                                    <FormControl>
-                                       <SelectTrigger>
-                                          <SelectValue placeholder='القضاء' />
-                                       </SelectTrigger>
-                                    </FormControl>
-                                    <SelectContent>
-                                       {provinceOptions.map((item) => (
-                                          <SelectItem key={item.value} value={item.value.toString()}>
-                                             {item.label}
-                                          </SelectItem>
-                                       ))}
-                                    </SelectContent>
-                                 </Select>
+                                  <FormLabel>القضاء</FormLabel>
+                                  <Select
+                                     onValueChange={(value) => {
+                                        field.onChange(value);
+                                        form.setValue('territoryId', '');
+                                     }}
+                                     defaultValue={field.value?.toString()}>
+                                     <FormControl>
+                                        <SelectTrigger>
+                                           <SelectValue placeholder='القضاء' />
+                                        </SelectTrigger>
+                                     </FormControl>
+                                     <SelectContent>
+                                        {provinceOptions.map((item) => (
+                                           <SelectItem key={item.value} value={item.value.toString()}>
+                                              {item.label}
+                                           </SelectItem>
+                                        ))}
+                                     </SelectContent>
+                                  </Select>
 
                                  <FormMessage />
                               </FormItem>

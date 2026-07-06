@@ -11,6 +11,7 @@ export const columnsAffiliatesFromOrg: { label: string; value: string; className
     { label: " تاريخ الامر الاداري", value: 'administrativeOrderDate', className: 'font-bold' },
     { label: "رقم كتاب التكليف", value: 'assignedOrderNo', className: 'font-bold' },
     { label: "تاريخ التكليف	", value: 'assignedOrderDate', className: 'font-bold' },
+    { label: 'تاريخ المباشرة', value: 'startDate', className: 'font-bold' },
     { label: 'الحالة', value: 'status', className: 'font-bold' },
     { label: 'المرفقات', value: 'attachments', className: 'font-bold' },
     { label: 'الملاحظات', value: 'note', className: 'font-bold' },

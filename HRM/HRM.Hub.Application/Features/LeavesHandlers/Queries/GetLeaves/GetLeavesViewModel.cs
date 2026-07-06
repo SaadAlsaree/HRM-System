@@ -1,4 +1,6 @@
-﻿namespace HRM.Hub.Application.Features.LeavesHandlers.Queries.GetLeaves;
+﻿using HRM.Hub.Domain.Common.Enums;
+
+namespace HRM.Hub.Application.Features.LeavesHandlers.Queries.GetLeaves;
 public class GetLeavesViewModel: BaseViewModel<Guid>
 {
     public string StatisticalIndex { get; set; }
@@ -8,7 +10,15 @@ public class GetLeavesViewModel: BaseViewModel<Guid>
     public DateOnly? ToDate { get; set; }
     public int? CountOfDays { get; set; }
     public int? CountOfMinutes { get; set; }
+    public string Reason { get; set; }
     public string Note { get; set; }
+    public int TypeOfLeaveId { get; set; }
+    public string TypeOfLeaveName { get; set; }
+    public LeaveStatus LeaveStatusId { get; set; }
+    public string LeaveStatusName { get; set; }
+    public Guid? ApproverId { get; set; }
+    public DateTime? ApprovedAt { get; set; }
+    public DateTime? ActivatedAt { get; set; }
     public int? CountryId { get; set; }
     public string CountryName { get; set; }
     public DateTime? DateOfAssignment { get; set; }

@@ -1,16 +1,23 @@
 import React from 'react';
-import { jobDegreeService } from '@/services/system-settings/job-degree.service';
 import JobDegreeToolbar from './_components/job-degree-toolbar';
 import { Separator } from '@/components/ui/separator';
 import JobDegreeTable from './_components/job-degree-table';
 import Pagination from '@/components/Pagination';
 import { columnsJobDegree } from './_components/columns';
+import { fetchServer } from '@/lib/fetchServer';
 
 export interface IJobDegree {
    id: number;
    name: string;
    increaseAmount: number;
    status?: string;
+}
+
+interface PagedResponse<T> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
 }
 
 interface Props {
@@ -24,8 +31,10 @@ const JobDegreePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await jobDegreeService.getJobDegree({ Page, PageSize });
-   const jobDegrees: [] = data?.data?.items ?? [];
+   const data = await fetchServer<PagedResponse<IJobDegree>>('/JobDegree', 'GET', {
+      params: { Page, PageSize }
+   });
+   const jobDegrees: IJobDegree[] = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

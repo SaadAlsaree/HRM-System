@@ -11,6 +11,7 @@ public class CreateEmployeePositionCommend : IRequest<Response<bool>>
     public DateOnly? AssignedOrderDate { get; set; }
     public string AssignedOrderNo { get; set; }
     public DateOnly? AssignedDate { get; set; }
+    public DateOnly? StartDate { get; set; }
     public DateOnly? AdministrativeOrderDate { get; set; }
     public string AdministrativeOrderNo { get; set; }
     public int? DirectorateId { get; set; }

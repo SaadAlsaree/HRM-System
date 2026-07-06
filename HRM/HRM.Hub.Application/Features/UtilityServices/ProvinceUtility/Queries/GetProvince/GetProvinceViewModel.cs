@@ -3,6 +3,8 @@ public class GetProvinceViewModel
 {
     public int Id { get; set; }
     public string Name { get; set; }
+    public int? GovernorateId { get; set; }
+    public string GovernorateName { get; set; }
     public string StatusName { get; set; }
     public Status Status { get; set; }
 }

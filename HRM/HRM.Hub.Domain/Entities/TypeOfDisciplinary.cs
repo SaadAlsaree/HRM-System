@@ -5,5 +5,8 @@ public class TypeOfDisciplinary : BaseEntity<int>
     public string Name { get; set; }
 
     public int CountOfDayDelay { get; set; }
+    public bool AffectsPromotion { get; set; }
+    public bool AffectsAllowance { get; set; }
+    public int? DefaultDelayDays { get; set; }
     public virtual ICollection<EmployeeDisciplinary> EmployeeDisciplinary { get; set; } = new List<EmployeeDisciplinary>();
 }

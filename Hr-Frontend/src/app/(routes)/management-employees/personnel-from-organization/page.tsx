@@ -10,6 +10,8 @@ interface Props {
    searchParams: {
       page: string;
       PageSize: string;
+      status?: string;
+      searchTerm?: string;
    };
 }
 
@@ -24,8 +26,9 @@ export interface IAffiliatesFromOrg {
   typeOfAssignmentId?: number;
   typeOfAssignmentName?: string;
   orderNo?: string;
-  orderDate?: string; // ISO format date: e.g., "2025-05-19"
-  directorateName?: string;
+   orderDate?: string; // ISO format date: e.g., "2025-05-19"
+   issuingAuthority?: string;
+   directorateName?: string;
   subDirectorateName?: string;
   assignmentSite?: number;
   assignedFromOrganization?: string;
@@ -53,8 +56,10 @@ export interface IAffiliatesFromOrg {
 const AffiliatesFromOrg = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
+   const Status = searchParams.status ? parseInt(searchParams.status) : undefined;
+   const SearchTerm = searchParams.searchTerm || undefined;
 
-   const data = await assignmentService.getAssignment({ Page, PageSize ,AssignmentSite: 1});
+   const data = await assignmentService.getAssignment({ Page, PageSize, status: Status, searchTerm: SearchTerm, AssignmentSite: 1 });
    const affiliatesFromOrgData = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 

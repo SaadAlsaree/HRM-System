@@ -25,6 +25,7 @@ const formSchema = z.object({
     fullName: z.string().min(1, 'اسم الموظف مطلوب'),
     orderNo: z.string().min(1, 'رقم الأمر الإداري مطلوب'),
     orderDate: z.string().min(1, 'تاريخ الأمر الإداري مطلوب'),
+    issuingAuthority: z.string().min(1, 'جهة الاصدار مطلوبة'),
     typeOfAssignmentId: z.string().min(1, 'نوع الامر مطلوبة'),
     assignedFromOrganization: z.string().min(1, 'الجهة المنتسب منها مطلوبة'),
     assignedToOrganization: z.string().min(1, 'الجهة المنتسب اليها مطلوبة'),
@@ -87,6 +88,7 @@ const AffiliatesToOrgForm = ({ data, icon, title, variant }: Props) => {
             fullName: data?.fullName ?? '',
             orderNo: data?.orderNo ?? '',
             orderDate: data?.orderDate ?? '',
+            issuingAuthority: data?.issuingAuthority ?? '',
             assignedToOrganization: data?.assignedToOrganization ?? '',
             typeOfAssignmentId: data?.typeOfAssignmentId ?? '',
             assignedFromOrganization: data?.assignedFromOrganization ?? '',
@@ -301,7 +303,19 @@ const AffiliatesToOrgForm = ({ data, icon, title, variant }: Props) => {
                                     </FormItem>
                                 )}
                             />
-                           
+                            <FormField
+                                control={form.control}
+                                name='issuingAuthority'
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>جهة الاصدار</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder='جهة الاصدار' type='text' {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name='durationOfAssignment'

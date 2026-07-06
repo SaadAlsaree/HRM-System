@@ -1,4 +1,4 @@
-import { retirementService } from '@/services/retirement.service';
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import RetirementToolbar from './_components/retirement-toolbar';
 import RetirementTable from './_components/retirement-table';
@@ -49,7 +49,13 @@ const RetirementPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await retirementService.getRetirements({ Page, PageSize });
+   const data = await fetchServer<{ data?: { items?: IRetirement[]; totalCount?: number } }>(
+      '/Retirement',
+      'GET',
+      {
+         params: { Page, PageSize }
+      }
+   );
    const retirementList: IRetirement[] = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 

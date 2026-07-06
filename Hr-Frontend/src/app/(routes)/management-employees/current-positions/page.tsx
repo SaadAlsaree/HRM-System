@@ -10,6 +10,8 @@ interface Props {
    searchParams: {
       page: string;
       PageSize: string;
+      status?: string;
+      searchTerm?: string;
    };
 }
 
@@ -44,8 +46,10 @@ export interface ICurrentPosition {
 const CurrentPositionPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
+   const Status = searchParams.status ? parseInt(searchParams.status) : undefined;
+   const SearchTerm = searchParams.searchTerm || undefined;
 
-   const data = await employeePositionService.getEmployeePosition({ Page, PageSize });
+   const data = await employeePositionService.getEmployeePosition({ Page, PageSize, status: Status, searchTerm: SearchTerm });
    const currentPositionData = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 

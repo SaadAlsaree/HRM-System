@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 import { serviceCalculationService } from '@/services/service-calculation.service';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 interface IServiceCalculation {
    id?: string;
@@ -28,6 +29,7 @@ const ServiceCalculationProfile = ({ employeeId }: Props) => {
    const [data, setData] = useState<IServiceCalculation[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       const fetchServiceCalculation = async () => {
@@ -49,7 +51,7 @@ const ServiceCalculationProfile = ({ employeeId }: Props) => {
          }
       };
       fetchServiceCalculation();
-   }, [employeeId]);
+   }, [employeeId, refreshKey]);
 
    if (loading)
       return (

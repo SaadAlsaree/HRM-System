@@ -43,4 +43,13 @@ public class GetEmployeeByIdViewModel : BaseViewModel<Guid>
 
     public int? JobDescriptionId { get; set; }
     public string MotherFullName { get; set; }
+
+    public DateOnly? HireDate { get; set; }
+    public DateOnly? EndOfServiceDate { get; set; }
+    public int ServiceYears { get; set; }
+    public int ServiceMonths { get; set; }
+    public int ServiceDays { get; set; }
+    public int ServiceTotalDays { get; set; }
+    public string ServiceDurationText { get; set; }
+    public bool HasInterruption { get; set; }
 }

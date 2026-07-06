@@ -7,4 +7,5 @@ public class GetTerritoryQuery : IRequest<Response<PagedResult<GetTerritoryViewM
 {
     public int Page { get; set; }
     public byte PageSize { get; set; }
+    public int? ProvinceId { get; set; }
 }

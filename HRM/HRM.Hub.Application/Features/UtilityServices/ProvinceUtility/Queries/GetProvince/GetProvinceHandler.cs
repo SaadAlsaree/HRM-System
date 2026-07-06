@@ -11,6 +11,8 @@ namespace HRM.Hub.Application.Features.UtilityServices.ProvinceUtility.Queries.G
         {
             Id = z.Id,
             Name = z.Name,
+            GovernorateId = z.GovernorateId,
+            GovernorateName = (z.Governorate != null ? z.Governorate.Name : null),
             Status = z.StatusId,
 
         };

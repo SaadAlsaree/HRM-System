@@ -1,0 +1,17 @@
+export const columnsAffiliation: { label: string; value: string; className?: string }[] = [
+    { label: 'الرقم الوظيفي', value: 'jobCode', className: 'font-bold' },
+    { label: 'اسم الموظف', value: 'fullName', className: 'font-bold' },
+    { label: 'جهة الانتساب', value: 'originalEntity', className: 'font-bold' },
+    { label: 'الوزارة', value: 'ministry', className: 'font-bold' },
+    { label: 'سبب الانتساب', value: 'reasonForJoining', className: 'font-bold' },
+    { label: 'تاريخ البداية', value: 'fromDate', className: 'font-bold' },
+    { label: 'تاريخ النهاية', value: 'toDate', className: 'font-bold' },
+    { label: 'نوع التكليف', value: 'typeOfAssignmentName', className: 'font-bold' },
+    { label: 'مدة الانتساب', value: 'durationMonths', className: 'font-bold' },
+    { label: 'عدد التجديدات', value: 'renewalsCount', className: 'font-bold' },
+    { label: 'رقم الامر', value: 'orderNo', className: 'font-bold' },
+    { label: 'تاريخ الامر', value: 'orderDate', className: 'font-bold' },
+    { label: 'جهة الاصدار', value: 'issuingAuthority', className: 'font-bold' },
+    { label: 'ملاحظات', value: 'note', className: 'font-bold' },
+    { label: 'الحالة', value: 'status', className: 'font-bold' },
+];

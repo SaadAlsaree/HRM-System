@@ -14,7 +14,22 @@ namespace HRM.Hub.Application.Features.UtilityServices.TypeOfLeaveUtility.Comman
             return new TypeOfLeave
             {
                 Name = request.Name,
-                
+                Description = request.Description,
+                MaxDurationDays = request.MaxDurationDays,
+                RequiresAdministrativeOrder = request.RequiresAdministrativeOrder,
+                RequiresApprovals = request.RequiresApprovals,
+                AffectsService = request.AffectsService,
+                AffectsPromotion = request.AffectsPromotion,
+                AffectsBonus = request.AffectsBonus,
+                AffectsSalary = request.AffectsSalary,
+                AffectsRetirement = request.AffectsRetirement,
+                AllowsExtension = request.AllowsExtension,
+                AllowsTermination = request.AllowsTermination,
+                AllowsCarryover = request.AllowsCarryover,
+                CountsTowardsAnnualBalance = request.CountsTowardsAnnualBalance,
+                IsBalanceBased = request.IsBalanceBased,
+                MaxCarryoverDays = request.MaxCarryoverDays,
+                DefaultSalaryStatusId = request.DefaultSalaryStatusId,
             };
         }
 

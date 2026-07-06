@@ -1,10 +1,10 @@
 'use client';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { columnsGrades } from './columns';
-import React, { useState, useEffect } from 'react';
-import { promotionsService } from '@/services/promotions.service';
+import React, { useEffect, useState } from 'react';
+import { useFetchClient } from '@/lib/fetchClient';
 
-export interface IPromotions {
+export interface IChangeDegree {
    id?: string;
    employeeId?: string;
    fullName?: string;
@@ -12,96 +12,100 @@ export interface IPromotions {
    lotNumber?: string;
    statusName?: string;
    status?: number;
-   sentPromotionGroupId?: number;
-   sentPromotionGroupName?: string;
-   degreeFromId?: number;
-   degreeFromName?: string;
-   degreeToId?: number;
-   degreeToName?: string;
+   jobDegreeFromId?: number;
+   jobDegreeFromName?: string;
+   jobDegreeToId?: number;
+   jobDegreeToName?: string;
    jobCategoryFromId?: number;
    jobCategoryFromName?: string;
    jobCategoryToId?: number;
    jobCategoryToName?: string;
-   oldEducationInformationId?: string;
-   oldEducationInformationName?: string;
-   newEducationInformationId?: string;
-   newEducationInformationName?: string;
-   dueDateDegree?: string; // assuming it's a date string
-   dueDateCategory?: string; // assuming it's a date string
-   bookNo?: string;
-   bookDate?: string; // assuming it's a date string
-   categoryPerMonth?: number;
-   serviceRecycle?: number;
-   typeOfChange?: number;
+   oldDegreeDueDate?: string;
+   newDegreeDueDate?: string;
+   oldCategoryDueDate?: string;
+   newCategoryDueDate?: string;
+   orderNo?: string;
+   orderDate?: string;
    note?: string;
 }
 
 type Props = {
    employeeId?: string;
 };
+
+interface ChangeDegreeListResponse {
+   data?: {
+      items?: IChangeDegree[];
+   };
+}
+
 const GradesTable = ({ employeeId }: Props) => {
-   const [promotions, setPromotions] = useState<IPromotions[]>([]);
+   const fetchClient = useFetchClient();
+   const [changeDegrees, setChangeDegrees] = useState<IChangeDegree[]>([]);
    const [isLoading, setIsLoading] = useState(false);
-   const [totalPages, setTotalPages] = useState(0);
 
    useEffect(() => {
-      const fetchPromotions = async () => {
+      if (!employeeId) return;
+
+      const fetchChangeDegrees = async () => {
          setIsLoading(true);
          try {
-            const response = await promotionsService.getPromotions({ employeeId, Page: 1, PageSize: 100 });
+            const response = await fetchClient<ChangeDegreeListResponse>('/ChangeDegree', 'GET', {
+               params: {
+                  EmployeeId: employeeId,
+                  Page: 1,
+                  PageSize: 100
+               }
+            });
 
-            setPromotions(response?.data?.items);
-            setTotalPages(response?.data?.totalCount);
+            setChangeDegrees(response?.data?.items ?? []);
          } catch (error) {
-            console.error('Error fetching promotions:', error);
-            // toast.error('Failed to fetch promotions');
+            console.error('Error fetching change degrees:', error);
+            setChangeDegrees([]);
          } finally {
             setIsLoading(false);
          }
       };
 
-      fetchPromotions();
-   }, [employeeId]);
-
-   console.log(totalPages);
+      fetchChangeDegrees();
+   }, [employeeId, fetchClient]);
 
    return (
       <div className='border rounded-lg p-2 bg-white dark:bg-gray-900'>
          <Table>
             <TableHeader>
                <TableRow>
-                  {columnsGrades?.map((column) => (
+                  {columnsGrades.map((column) => (
                      <TableHead align='right' key={column.value} className={column.className}>
                         {column.label}
                      </TableHead>
                   ))}
-                  {/* <TableHead className='w-[100px] text-center'>
-                  <AlignJustify className='justify-center' />
-               </TableHead> */}
                </TableRow>
             </TableHeader>
             <TableBody>
                {isLoading && (
                   <TableRow>
-                     <TableCell className='h-10 text-center'>جاري التحميل...</TableCell>
+                     <TableCell colSpan={columnsGrades.length} className='h-10 text-center'>
+                        جاري التحميل...
+                     </TableCell>
                   </TableRow>
                )}
-               {promotions?.length === 0 && !isLoading && (
+               {changeDegrees.length === 0 && !isLoading && (
                   <TableRow>
-                     <TableCell className='h-10 text-center'>لا يوجد بيانات</TableCell>
+                     <TableCell colSpan={columnsGrades.length} className='h-10 text-center'>
+                        لا يوجد بيانات
+                     </TableCell>
                   </TableRow>
                )}
-               {promotions?.map((item) => (
+               {changeDegrees.map((item) => (
                   <TableRow key={item.id}>
-                     <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
-
-                     <TableCell>{item?.degreeToName}</TableCell>
-                     <TableCell>{item?.dueDateDegree}</TableCell>
-
-                     <TableCell>{item?.bookDate}</TableCell>
-                     <TableCell>{item?.note}</TableCell>
-                     <TableCell>{item?.bookDate}</TableCell>
-                     <TableCell>{item?.dueDateDegree}</TableCell>
+                     <TableCell>{item.id?.toString().toUpperCase().split('-', 1)}</TableCell>
+                     <TableCell>{item.jobDegreeFromName}</TableCell>
+                     <TableCell>{item.jobDegreeToName}</TableCell>
+                     <TableCell>{item.newDegreeDueDate}</TableCell>
+                     <TableCell>{item.orderNo}</TableCell>
+                     <TableCell>{item.statusName}</TableCell>
+                     <TableCell>{item.note}</TableCell>
                   </TableRow>
                ))}
             </TableBody>

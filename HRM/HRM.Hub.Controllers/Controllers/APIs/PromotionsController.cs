@@ -1,4 +1,4 @@
-﻿using MediatR;
+using MediatR;
 using System.Net;
 using HRM.Hub.Application.Features.PromotionHandlers.Commands.CreatePromotion;
 using HRM.Hub.Application.Features.PromotionHandlers.Commands.UpdatePromotion;
@@ -14,14 +14,17 @@ using HRM.Hub.Domain.Common.Enums;
 using HRM.Hub.Application.Features.Attachment.Commands.CreateAttachment;
 using HRM.Hub.Application.Features.Attachment.Queries.GetAttachment;
 using HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotionExcelFile;
+using HRM.Hub.Application.Features.PromotionReport.Queries.GetReportPromotions;
+using HRM.Hub.Application.Features.UtilityServices.BaseUtility.Query.GetAll;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HRM.Hub.Controllers.Controllers.APIs;
 
 [ApiController]
 [Produces("application/json")]
 [Route("hub/hrm/v1/api/[controller]")]
-//[Authorize(AuthenticationSchemes = "Bearer", Policy = "")]
 [Tags("Promotions")]
+//[Authorize(AuthenticationSchemes = "Bearer", Policy = "")]
 public sealed class PromotionsController : Base<PromotionsController>
 {
     private readonly IMediator _mediator;
@@ -33,6 +36,7 @@ public sealed class PromotionsController : Base<PromotionsController>
 
     #region Promotions
 
+    [AllowAnonymous]
     [ServiceFilter(typeof(LogActionArguments))]
     [HttpGet]
     [ProducesResponseType(typeof(Response<IEnumerable<GetPromotionViewModel>>), (int)HttpStatusCode.OK)]
@@ -64,6 +68,16 @@ public sealed class PromotionsController : Base<PromotionsController>
         [FromBody] CreatePromotionCommend commend)
     {
         return await Okey(() => _mediator.Send(commend));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPost("Initialize")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> Initialize(
+        [FromBody] HRM.Hub.Application.Features.PromotionHandlers.Commands.InitializePromotionData.InitializePromotionDataCommand command)
+    {
+        return await Okey(() => _mediator.Send(command));
     }
 
     [ServiceFilter(typeof(LogActionArguments))]
@@ -110,6 +124,27 @@ public sealed class PromotionsController : Base<PromotionsController>
     {
         return await Okey(() => _mediator.Send(query));
     }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpGet("[action]")]
+    [ProducesResponseType(typeof(Response<HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotionDashboard.GetPromotionDashboardViewModel>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotionDashboard.GetPromotionDashboardViewModel>>> Dashboard(
+        [FromQuery] HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotionDashboard.GetPromotionDashboardQuery query)
+    {
+        return await Okey(() => _mediator.Send(query));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpGet("[action]")]
+    [ProducesResponseType(typeof(Response<HRM.Hub.Application.Features.UtilityServices.BaseUtility.Query.GetAll.PagedResult<HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotionDashboardDetails.GetPromotionDashboardDetailsViewModel>>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<HRM.Hub.Application.Features.UtilityServices.BaseUtility.Query.GetAll.PagedResult<HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotionDashboardDetails.GetPromotionDashboardDetailsViewModel>>>> DashboardDetails(
+        [FromQuery] HRM.Hub.Application.Features.PromotionHandlers.Queries.GetPromotionDashboardDetails.GetPromotionDashboardDetailsQuery query)
+    {
+        return await Okey(() => _mediator.Send(query));
+    }
+
     [ServiceFilter(typeof(LogActionArguments))]
     [HttpPost("[action]")]
     [ProducesResponseType(typeof(Response<IEnumerable<GetAttachmentViewModel>>), (int)HttpStatusCode.OK)]
@@ -119,6 +154,16 @@ public sealed class PromotionsController : Base<PromotionsController>
     {
         commend.TableName = TableNames.Promotion;
         return await Okey(() => _mediator.Send(commend));
+    }
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpGet("[action]")]
+    [AllowAnonymous]
+    [ProducesResponseType(typeof(Response<PagedResult<GetReportPromotionsViewModel>>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<PagedResult<GetReportPromotionsViewModel>>>> Reports(
+        [FromQuery] GetReportPromotionsQuery query)
+    {
+        return await Okey(() => _mediator.Send(query));
     }
     #endregion
     [ServiceFilter(typeof(LogActionArguments))]

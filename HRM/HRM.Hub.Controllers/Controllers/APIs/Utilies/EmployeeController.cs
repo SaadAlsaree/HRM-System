@@ -6,13 +6,16 @@ using HRM.Hub.Application.Features.EmployeeHandlers.Commands.ChangeStatusWorkEmp
 using HRM.Hub.Application.Features.EmployeeHandlers.Commands.UpdateEmployee;
 using HRM.Hub.Application.Features.EmployeeHandlers.Commands.UpdatePinned;
 using HRM.Hub.Application.Features.EmployeeHandlers.Commands.UpdateSocialStatus;
+using HRM.Hub.Application.Features.EmployeeHandlers.Queries.ExportFileEmployees;
 using HRM.Hub.Application.Features.EmployeeHandlers.Queries.GetEmployee;
 using HRM.Hub.Application.Features.EmployeeHandlers.Queries.GetEmployeeById;
+using HRM.Hub.Application.Features.Services.Commands.DeleteRecord;
 using HRM.Hub.Application.Features.UtilityServices.AcademicAchievementUtility.Queries.GetAcademicAchievement;
 using HRM.Hub.Domain.Common;
 using HRM.Hub.Domain.Common.Enums;
 using HRM.Hub.Persistence.Helpers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -22,6 +25,7 @@ namespace HRM.Hub.Controllers.Controllers.APIs.Utilies;
 [Produces("application/json")]
 [Route("hub/hrm/v1/api/[controller]")]
 [Tags("Employee")]
+[Authorize (Roles = "Admin,Employee,Manager")]
 public class EmployeeController : Base<EmployeeController>
 {
     private readonly IMediator _mediator;
@@ -129,6 +133,41 @@ public class EmployeeController : Base<EmployeeController>
     {
         command.EmployeeId = EmployeeId;
         return await Okey(() => _mediator.Send(command));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpDelete("{EmployeeId:Guid}")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> Delete(Guid EmployeeId)
+    {
+        return await Okey(() => _mediator.Send(new DeleteRecordCommand<Guid>()
+        {
+            Id = EmployeeId,
+            TableName = TableNames.Employees
+        }));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpGet("[action]")]
+    [ProducesResponseType(typeof(Response<byte[]>), StatusCodes.Status200OK)]
+    [FileResultContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<Response<byte[]>>> ExportFile([FromQuery] ExportFileEmployeesQuery query)
+    {
+        try
+        {
+            var response = await _mediator.Send(query);
+
+            if (response.Succeeded)
+                return File(response.Data, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", $"Employees-{DateTime.Now:yyyyMMddHHmmss}.xlsx");
+
+            return BadRequest(response);
+        }
+        catch (Exception ex)
+        {
+            return BadRequest(new { ex.Message });
+        }
     }
 
 

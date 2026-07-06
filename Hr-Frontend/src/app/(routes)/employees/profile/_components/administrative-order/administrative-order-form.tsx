@@ -18,6 +18,7 @@ import { IAdministrativeOrder } from '.';
 import { DatetimePicker } from '@/components/ui/datetime-picker';
 import { formatDate } from '@/utils/format-date';
 import { administrativeOrderService } from '@/services/administrative-order.service';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 const administrativeOrderTypeOptions = [
    { label: 'الأمر الوزاري بالتعيين', value: 1 },
@@ -48,6 +49,7 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
    const [isSubmitting, setSubmitting] = useState(false);
 
    const router = useRouter();
+   const { refresh } = useEmployeeProfileRefresh();
 
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
@@ -87,6 +89,7 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
             form.reset();
             setSubmitting(false);
             setOpen(false);
+            refresh();
             router.refresh();
          } else {
             values.employeeId = employeeId;
@@ -104,6 +107,7 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
             form.reset();
             setSubmitting(false);
             setOpen(false);
+            refresh();
             router.refresh();
          }
       } catch (error) {

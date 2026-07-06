@@ -9,6 +9,8 @@ public class JobCategory: BaseEntity<int>
     public virtual JobDegree Degree { get; set; }
 
     public virtual ICollection<Promotion> Promotions { get; set; } = new List<Promotion>();
+    public virtual ICollection<PromotionAllowanceRule> PromotionAllowanceRules { get; set; } = new List<PromotionAllowanceRule>();
+    public virtual ICollection<AnnualAllowanceRule> AnnualAllowanceRules { get; set; } = new List<AnnualAllowanceRule>();
     public virtual ICollection<CorrectingAcademicAchievements> CorrectingAcademicAchievementDegreeFrom { get; set; } = new List<CorrectingAcademicAchievements>();
 
     public virtual ICollection<CorrectingAcademicAchievements> CorrectingAcademicAchievementJobCategoryTo { get; set; } = new List<CorrectingAcademicAchievements>();

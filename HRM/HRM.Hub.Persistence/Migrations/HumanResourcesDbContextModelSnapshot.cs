@@ -360,6 +360,394 @@ namespace HRM.Hub.Persistence.Migrations
                     b.ToTable("AdministrativeOrder");
                 });
 
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.Affiliation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AssignmentSite")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int?>("DurationMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("EndOrderDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("EndOrderNo")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("FromDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("IssuingAuthority")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int?>("MaxRenewals")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Ministry")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("OrderDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("OrderNo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("OriginalEntity")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ReasonForJoining")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly?>("ReleaseDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("ReleaseOrderDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ReleaseOrderNo")
+                        .HasColumnType("text");
+
+                    b.Property<int>("RenewalCount")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly?>("ToDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("TypeOfAssignmentId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("TypeOfAssignmentId");
+
+                    b.ToTable("Affiliations");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.AnnualAllowanceCalculationDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("AfterDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("BeforeDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DeltaDays")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DeltaMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("RunId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SourceEntityId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SourceEntityName")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StepCode")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("RunId");
+
+                    b.ToTable("AnnualAllowanceCalculationDetails");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.AnnualAllowanceCalculationRun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AnnualAllowanceStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly>("BaseDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly>("BaseDueDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("FinalDueDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateOnly>("LastAllowanceDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("LegalTermMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ServiceMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Summary")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Trigger")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("AnnualAllowanceCalculationRuns");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.AnnualAllowanceRecord", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("AdministrativeOrderDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("AdministrativeOrderNo")
+                        .HasColumnType("text");
+
+                    b.Property<int>("AnnualAllowanceStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BonusTypeId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("CalculationRunId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateOnly>("DueDate")
+                        .HasColumnType("date");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("EnteredDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateOnly?>("ImplementationDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("ReasonForAmendment")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CalculationRunId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("AnnualAllowanceRecord");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.AnnualAllowanceRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AcademicAchievementId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ApplicableLawId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BaseMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("JobCategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("JobDegreeId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcademicAchievementId");
+
+                    b.HasIndex("ApplicableLawId");
+
+                    b.HasIndex("JobCategoryId");
+
+                    b.HasIndex("JobDegreeId");
+
+                    b.ToTable("AnnualAllowanceRule");
+                });
+
             modelBuilder.Entity("HRM.Hub.Domain.Entities.AppSetting", b =>
                 {
                     b.Property<int>("Id")
@@ -463,6 +851,15 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<string>("EndReleaseOrderNo")
                         .HasColumnType("text");
 
+                    b.Property<Guid?>("ExtendedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("ExtensionDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ExtensionReason")
+                        .HasColumnType("text");
+
                     b.Property<DateOnly?>("HireDate")
                         .HasColumnType("date");
 
@@ -474,6 +871,9 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
+
+                    b.Property<string>("IssuingAuthority")
+                        .HasColumnType("text");
 
                     b.Property<DateTime?>("LastUpdateAt")
                         .HasColumnType("timestamp without time zone");
@@ -966,6 +1366,49 @@ namespace HRM.Hub.Persistence.Migrations
                     b.ToTable("ContactInformation");
                 });
 
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.ContractType", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Name")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("ContractType");
+                });
+
             modelBuilder.Entity("HRM.Hub.Domain.Entities.CorrectingAcademicAchievements", b =>
                 {
                     b.Property<Guid>("Id")
@@ -1113,6 +1556,63 @@ namespace HRM.Hub.Persistence.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Country");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.DepartmentOwner", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("FromDate")
+                        .HasColumnType("date");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly?>("ToDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("DepartmentOwners");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Departments", b =>
@@ -1776,6 +2276,9 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<int?>("SectionId")
                         .HasColumnType("integer");
 
+                    b.Property<DateOnly?>("StartDate")
+                        .HasColumnType("date");
+
                     b.Property<int?>("Status")
                         .HasColumnType("integer");
 
@@ -2099,6 +2602,9 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uuid");
 
+                    b.Property<DateTime?>("EndDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -2116,6 +2622,9 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Property<string>("Reason")
                         .HasColumnType("text");
+
+                    b.Property<DateTime?>("StartDate")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("integer");
@@ -2436,11 +2945,221 @@ namespace HRM.Hub.Persistence.Migrations
                     b.ToTable("Laws");
                 });
 
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.LeaveApproval", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<Guid>("ApproverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("DecidedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("Decision")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LeaveId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LeaveId")
+                        .HasDatabaseName("IX_LeaveApproval_LeaveId");
+
+                    b.ToTable("LeaveApprovals");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.LeaveExtension", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("ExtensionDays")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LeaveId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly>("NewEndDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("OrderDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("OrderNo")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LeaveId")
+                        .HasDatabaseName("IX_LeaveExtension_LeaveId");
+
+                    b.ToTable("LeaveExtensions");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.LeaveTransitionLog", b =>
+                {
+                    b.Property<long>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bigint");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+
+                    b.Property<string>("AfterSnapshot")
+                        .HasColumnType("text");
+
+                    b.Property<string>("BeforeSnapshot")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("FromStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("LeaveId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Note")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ToStatus")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TransitionedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("TransitionedBy")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LeaveId")
+                        .HasDatabaseName("IX_LeaveTransitionLog_LeaveId");
+
+                    b.ToTable("LeaveTransitionLogs");
+                });
+
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Leaves", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ActivatedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool?>("AffectsAllowance")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("AffectsPromotion")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("ApprovalNote")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("ApprovedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("ApproverId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("CancelledAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<int?>("CountOfDays")
                         .HasColumnType("integer");
@@ -2475,6 +3194,12 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<DateTime?>("DateOfStart")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int?>("DelayDaysOverride")
+                        .HasColumnType("integer");
+
+                    b.Property<bool>("DelayWholeDuration")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp without time zone");
 
@@ -2486,6 +3211,9 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Property<Guid>("EmployeeId")
                         .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ExpiredAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateOnly?>("FromDate")
                         .HasColumnType("date");
@@ -2510,6 +3238,12 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Property<Guid?>("LastUpdateBy")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("LeaveStatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("LegacyTypeOfLeaveId")
+                        .HasColumnType("integer");
 
                     b.Property<int?>("LongLeaveTypeId")
                         .HasColumnType("integer");
@@ -2541,6 +3275,12 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<string>("OrderNo")
                         .HasColumnType("text");
 
+                    b.Property<string>("Reason")
+                        .HasColumnType("text");
+
+                    b.Property<DateTime?>("RejectedAt")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<DateTime?>("ReleaseDate")
                         .HasColumnType("timestamp without time zone");
 
@@ -2552,6 +3292,9 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Property<int>("StatusId")
                         .HasColumnType("integer");
+
+                    b.Property<DateTime?>("SubmittedAt")
+                        .HasColumnType("timestamp without time zone");
 
                     b.Property<DateOnly?>("ToDate")
                         .HasColumnType("date");
@@ -2571,6 +3314,9 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.HasIndex("SicknessTypeId");
 
+                    b.HasIndex("TypeOfLeaveId")
+                        .HasDatabaseName("IX_Leaves_TypeOfLeaveId");
+
                     b.ToTable("Leaves");
                 });
 
@@ -2579,7 +3325,13 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<int>("AnnualBalance")
+                        .HasColumnType("integer");
+
                     b.Property<int?>("Balance")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CarriedOverBalance")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("CreateAt")
@@ -2597,6 +3349,9 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<DateTime?>("DoneProcdureDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int>("EarnedBalance")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -2610,6 +3365,9 @@ namespace HRM.Hub.Persistence.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UsedBalance")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -3375,6 +4133,9 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<int>("JobDegreeId")
                         .HasColumnType("integer");
 
+                    b.Property<DateOnly?>("LastAllowanceDate")
+                        .HasColumnType("date");
+
                     b.Property<DateTime?>("LastUpdateAt")
                         .HasColumnType("timestamp without time zone");
 
@@ -3405,6 +4166,220 @@ namespace HRM.Hub.Persistence.Migrations
                     b.HasIndex("SentPromotionGroupId");
 
                     b.ToTable("Promotion");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.PromotionAllowanceCalculationDetail", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("AfterDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateOnly?>("BeforeDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("CalculationKind")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("DeltaDays")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("DeltaMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Reason")
+                        .HasColumnType("text");
+
+                    b.Property<Guid>("RunId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("SourceEntityId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SourceEntityName")
+                        .HasColumnType("text");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("StepCode")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("RunId");
+
+                    b.ToTable("PromotionAllowanceCalculationDetails");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.PromotionAllowanceCalculationRun", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("AllowanceBaseDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("AllowanceBaseMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly?>("AllowanceDueDate")
+                        .HasColumnType("date");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateOnly?>("PromotionBaseDate")
+                        .HasColumnType("date");
+
+                    b.Property<int?>("PromotionBaseMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<DateOnly?>("PromotionDueDate")
+                        .HasColumnType("date");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Summary")
+                        .HasColumnType("text");
+
+                    b.Property<string>("Trigger")
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.ToTable("PromotionAllowanceCalculationRuns");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.PromotionAllowanceRule", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AcademicAchievementId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("ApplicableLawId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("BaseMonths")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("CalculationKind")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("CreateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("CreateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DeletedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("DeletedBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("DoneProcdureDate")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsActive")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("JobCategoryId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("JobDegreeId")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime?>("LastUpdateAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("LastUpdateBy")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("StatusId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AcademicAchievementId");
+
+                    b.HasIndex("ApplicableLawId");
+
+                    b.HasIndex("JobCategoryId");
+
+                    b.HasIndex("JobDegreeId");
+
+                    b.ToTable("PromotionAllowanceRule");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.PromotionGroup", b =>
@@ -3485,6 +4460,9 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<DateTime?>("DoneProcdureDate")
                         .HasColumnType("timestamp without time zone");
 
+                    b.Property<int?>("GovernorateId")
+                        .HasColumnType("integer");
+
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
@@ -3501,6 +4479,8 @@ namespace HRM.Hub.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("GovernorateId");
 
                     b.ToTable("Province");
                 });
@@ -3965,6 +4945,12 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<string>("AcceptanceYear")
                         .HasColumnType("text");
 
+                    b.Property<bool?>("AffectsAllowance")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool?>("AffectsPromotion")
+                        .HasColumnType("boolean");
+
                     b.Property<int?>("CountryId")
                         .HasColumnType("integer");
 
@@ -3973,6 +4959,9 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Property<Guid?>("CreateBy")
                         .HasColumnType("uuid");
+
+                    b.Property<int?>("DelayMonthsOverride")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp without time zone");
@@ -4342,6 +5331,9 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
 
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime?>("LastUpdateAt")
                         .HasColumnType("timestamp without time zone");
 
@@ -4351,11 +5343,17 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<string>("Note")
                         .HasColumnType("text");
 
+                    b.Property<DateTime?>("NotificationDate")
+                        .HasColumnType("timestamp without time zone");
+
                     b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
                     b.Property<Guid>("TeamId")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -4399,10 +5397,15 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("text");
 
+                    b.Property<int?>("ProvinceId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("StatusId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ProvinceId");
 
                     b.ToTable("Territory");
                 });
@@ -4421,6 +5424,12 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Property<DateOnly?>("CalculationDate")
                         .HasColumnType("date");
+
+                    b.Property<DateTime?>("ConsumedAt")
+                        .HasColumnType("timestamp without time zone");
+
+                    b.Property<Guid?>("ConsumedCalculationRunId")
+                        .HasColumnType("uuid");
 
                     b.Property<int>("CountOfMonths")
                         .HasColumnType("integer");
@@ -4447,6 +5456,9 @@ namespace HRM.Hub.Persistence.Migrations
                         .HasColumnType("uuid");
 
                     b.Property<bool?>("IsCalculation")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("IsConsumed")
                         .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
@@ -4477,6 +5489,8 @@ namespace HRM.Hub.Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ConsumedCalculationRunId");
 
                     b.HasIndex("EmployeeId");
 
@@ -4625,6 +5639,12 @@ namespace HRM.Hub.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AffectsAllowance")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AffectsPromotion")
+                        .HasColumnType("boolean");
+
                     b.Property<int>("CountOfDayDelay")
                         .HasColumnType("integer");
 
@@ -4633,6 +5653,9 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Property<Guid?>("CreateBy")
                         .HasColumnType("uuid");
+
+                    b.Property<int?>("DefaultDelayDays")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp without time zone");
@@ -4714,11 +5737,41 @@ namespace HRM.Hub.Persistence.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<bool>("AffectsBonus")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AffectsPromotion")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AffectsRetirement")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AffectsSalary")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AffectsService")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowsCarryover")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowsExtension")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("AllowsTermination")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("CountsTowardsAnnualBalance")
+                        .HasColumnType("boolean");
+
                     b.Property<DateTime>("CreateAt")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<Guid?>("CreateBy")
                         .HasColumnType("uuid");
+
+                    b.Property<int>("DefaultSalaryStatusId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp without time zone");
@@ -4726,8 +5779,14 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<Guid?>("DeletedBy")
                         .HasColumnType("uuid");
 
+                    b.Property<string>("Description")
+                        .HasColumnType("text");
+
                     b.Property<DateTime?>("DoneProcdureDate")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<bool>("IsBalanceBased")
+                        .HasColumnType("boolean");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -4738,8 +5797,20 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Property<Guid?>("LastUpdateBy")
                         .HasColumnType("uuid");
 
+                    b.Property<int?>("MaxCarryoverDays")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("MaxDurationDays")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Name")
                         .HasColumnType("text");
+
+                    b.Property<bool>("RequiresAdministrativeOrder")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("RequiresApprovals")
+                        .HasColumnType("boolean");
 
                     b.Property<int>("StatusId")
                         .HasColumnType("integer");
@@ -4814,6 +5885,12 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Property<DateTime?>("DoneProcdureDate")
                         .HasColumnType("timestamp without time zone");
+
+                    b.Property<int>("EffectAction")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("EffectScope")
+                        .HasColumnType("integer");
 
                     b.Property<bool>("IsDeleted")
                         .HasColumnType("boolean");
@@ -5036,6 +6113,103 @@ namespace HRM.Hub.Persistence.Migrations
                         .IsRequired();
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.Affiliation", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Employees", "Employee")
+                        .WithMany("Affiliations")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("HRM.Hub.Domain.Entities.TypeOfAssignment", "TypeOfAssignment")
+                        .WithMany("Affiliations")
+                        .HasForeignKey("TypeOfAssignmentId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("TypeOfAssignment");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.AnnualAllowanceCalculationDetail", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Employees", "Employee")
+                        .WithMany("AnnualAllowanceCalculationDetails")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("HRM.Hub.Domain.Entities.AnnualAllowanceCalculationRun", "Run")
+                        .WithMany("Details")
+                        .HasForeignKey("RunId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Run");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.AnnualAllowanceCalculationRun", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Employees", "Employee")
+                        .WithMany("AnnualAllowanceCalculationRuns")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.AnnualAllowanceRecord", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.AnnualAllowanceCalculationRun", "CalculationRun")
+                        .WithMany("AnnualAllowanceRecords")
+                        .HasForeignKey("CalculationRunId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.HasOne("HRM.Hub.Domain.Entities.Employees", "Employee")
+                        .WithMany("AnnualAllowanceRecords")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("CalculationRun");
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.AnnualAllowanceRule", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.AcademicAchievement", "AcademicAchievement")
+                        .WithMany("AnnualAllowanceRules")
+                        .HasForeignKey("AcademicAchievementId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.HasOne("HRM.Hub.Domain.Entities.Laws", "ApplicableLaw")
+                        .WithMany("AnnualAllowanceRules")
+                        .HasForeignKey("ApplicableLawId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.HasOne("HRM.Hub.Domain.Entities.JobCategory", "JobCategory")
+                        .WithMany("AnnualAllowanceRules")
+                        .HasForeignKey("JobCategoryId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.HasOne("HRM.Hub.Domain.Entities.JobDegree", "JobDegree")
+                        .WithMany("AnnualAllowanceRules")
+                        .HasForeignKey("JobDegreeId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.Navigation("AcademicAchievement");
+
+                    b.Navigation("ApplicableLaw");
+
+                    b.Navigation("JobCategory");
+
+                    b.Navigation("JobDegree");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Assignments", b =>
@@ -5285,6 +6459,25 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Navigation("JobTitleFrom");
 
                     b.Navigation("JobTitleTo");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.DepartmentOwner", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Departments", "Department")
+                        .WithMany("DepartmentOwners")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("HRM.Hub.Domain.Entities.Employees", "Employee")
+                        .WithMany("DepartmentOwners")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+
+                    b.Navigation("Employee");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Departments", b =>
@@ -5561,6 +6754,39 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Navigation("Degree");
                 });
 
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.LeaveApproval", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Leaves", "Leave")
+                        .WithMany("LeaveApprovals")
+                        .HasForeignKey("LeaveId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Leave");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.LeaveExtension", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Leaves", "Leave")
+                        .WithMany("LeaveExtensions")
+                        .HasForeignKey("LeaveId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Leave");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.LeaveTransitionLog", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Leaves", "Leave")
+                        .WithMany("LeaveTransitionLogs")
+                        .HasForeignKey("LeaveId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Leave");
+                });
+
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Leaves", b =>
                 {
                     b.HasOne("HRM.Hub.Domain.Entities.Country", "Country")
@@ -5588,6 +6814,12 @@ namespace HRM.Hub.Persistence.Migrations
                         .HasForeignKey("SicknessTypeId")
                         .OnDelete(DeleteBehavior.ClientNoAction);
 
+                    b.HasOne("HRM.Hub.Domain.Entities.TypeOfLeave", "TypeOfLeave")
+                        .WithMany("Leaves")
+                        .HasForeignKey("TypeOfLeaveId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
                     b.Navigation("Country");
 
                     b.Navigation("Employee");
@@ -5597,6 +6829,8 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Navigation("NormalLeaveType");
 
                     b.Navigation("SicknessType");
+
+                    b.Navigation("TypeOfLeave");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.LeavesBalance", b =>
@@ -5851,6 +7085,77 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Navigation("SentPromotionGroup");
                 });
 
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.PromotionAllowanceCalculationDetail", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Employees", "Employee")
+                        .WithMany("PromotionAllowanceCalculationDetails")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.HasOne("HRM.Hub.Domain.Entities.PromotionAllowanceCalculationRun", "Run")
+                        .WithMany("Details")
+                        .HasForeignKey("RunId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Run");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.PromotionAllowanceCalculationRun", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Employees", "Employee")
+                        .WithMany("PromotionAllowanceCalculationRuns")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.ClientNoAction)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.PromotionAllowanceRule", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.AcademicAchievement", "AcademicAchievement")
+                        .WithMany("PromotionAllowanceRules")
+                        .HasForeignKey("AcademicAchievementId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.HasOne("HRM.Hub.Domain.Entities.Laws", "ApplicableLaw")
+                        .WithMany("PromotionAllowanceRules")
+                        .HasForeignKey("ApplicableLawId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.HasOne("HRM.Hub.Domain.Entities.JobCategory", "JobCategory")
+                        .WithMany("PromotionAllowanceRules")
+                        .HasForeignKey("JobCategoryId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.HasOne("HRM.Hub.Domain.Entities.JobDegree", "JobDegree")
+                        .WithMany("PromotionAllowanceRules")
+                        .HasForeignKey("JobDegreeId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.Navigation("AcademicAchievement");
+
+                    b.Navigation("ApplicableLaw");
+
+                    b.Navigation("JobCategory");
+
+                    b.Navigation("JobDegree");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.Province", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Governorate", "Governorate")
+                        .WithMany("Provinces")
+                        .HasForeignKey("GovernorateId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.Navigation("Governorate");
+                });
+
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Resignation", b =>
                 {
                     b.HasOne("HRM.Hub.Domain.Entities.Employees", "Employee")
@@ -6082,6 +7387,16 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Navigation("Employee");
                 });
 
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.Territory", b =>
+                {
+                    b.HasOne("HRM.Hub.Domain.Entities.Province", "Province")
+                        .WithMany("Territories")
+                        .HasForeignKey("ProvinceId")
+                        .OnDelete(DeleteBehavior.ClientNoAction);
+
+                    b.Navigation("Province");
+                });
+
             modelBuilder.Entity("HRM.Hub.Domain.Entities.ThanksAndSeniority", b =>
                 {
                     b.HasOne("HRM.Hub.Domain.Entities.Employees", "Employee")
@@ -6157,9 +7472,13 @@ namespace HRM.Hub.Persistence.Migrations
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.AcademicAchievement", b =>
                 {
+                    b.Navigation("AnnualAllowanceRules");
+
                     b.Navigation("CorrectingAcademicAchievements");
 
                     b.Navigation("EducationInformation");
+
+                    b.Navigation("PromotionAllowanceRules");
 
                     b.Navigation("StudyLeave");
                 });
@@ -6176,6 +7495,13 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Navigation("StudyLeave");
                 });
 
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.AnnualAllowanceCalculationRun", b =>
+                {
+                    b.Navigation("AnnualAllowanceRecords");
+
+                    b.Navigation("Details");
+                });
+
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Country", b =>
                 {
                     b.Navigation("EducationInformation");
@@ -6189,6 +7515,8 @@ namespace HRM.Hub.Persistence.Migrations
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Departments", b =>
                 {
+                    b.Navigation("DepartmentOwners");
+
                     b.Navigation("EmployeePositions");
 
                     b.Navigation("ManagementInformation");
@@ -6234,6 +7562,14 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Navigation("AdministrativeOrder");
 
+                    b.Navigation("Affiliations");
+
+                    b.Navigation("AnnualAllowanceCalculationDetails");
+
+                    b.Navigation("AnnualAllowanceCalculationRuns");
+
+                    b.Navigation("AnnualAllowanceRecords");
+
                     b.Navigation("Assignments");
 
                     b.Navigation("Attributes");
@@ -6247,6 +7583,8 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Navigation("ContactInformation");
 
                     b.Navigation("CorrectingAcademicAchievements");
+
+                    b.Navigation("DepartmentOwners");
 
                     b.Navigation("DocVerification");
 
@@ -6290,6 +7628,10 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Navigation("Promotion");
 
+                    b.Navigation("PromotionAllowanceCalculationDetails");
+
+                    b.Navigation("PromotionAllowanceCalculationRuns");
+
                     b.Navigation("Resignations");
 
                     b.Navigation("ServiceCalculation");
@@ -6312,10 +7654,14 @@ namespace HRM.Hub.Persistence.Migrations
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Governorate", b =>
                 {
                     b.Navigation("AddressInformation");
+
+                    b.Navigation("Provinces");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.JobCategory", b =>
                 {
+                    b.Navigation("AnnualAllowanceRules");
+
                     b.Navigation("ChangeDegreeFrom");
 
                     b.Navigation("ChangeDegreeTo");
@@ -6324,12 +7670,16 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Navigation("CorrectingAcademicAchievementJobCategoryTo");
 
+                    b.Navigation("PromotionAllowanceRules");
+
                     b.Navigation("Promotions");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.JobDegree", b =>
                 {
                     b.Navigation("AcademicAchievement");
+
+                    b.Navigation("AnnualAllowanceRules");
 
                     b.Navigation("ChangeDegreeFrom");
 
@@ -6346,6 +7696,8 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Navigation("ManagementInformationEmploymentDegree");
 
                     b.Navigation("ManagementInformationStopJobDegree");
+
+                    b.Navigation("PromotionAllowanceRules");
 
                     b.Navigation("Promotions");
                 });
@@ -6386,7 +7738,20 @@ namespace HRM.Hub.Persistence.Migrations
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Laws", b =>
                 {
+                    b.Navigation("AnnualAllowanceRules");
+
                     b.Navigation("EmployeeApplicableLaws");
+
+                    b.Navigation("PromotionAllowanceRules");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.Leaves", b =>
+                {
+                    b.Navigation("LeaveApprovals");
+
+                    b.Navigation("LeaveExtensions");
+
+                    b.Navigation("LeaveTransitionLogs");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.LevelOfRelationship", b =>
@@ -6416,6 +7781,11 @@ namespace HRM.Hub.Persistence.Migrations
                     b.Navigation("EducationInformation");
                 });
 
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.PromotionAllowanceCalculationRun", b =>
+                {
+                    b.Navigation("Details");
+                });
+
             modelBuilder.Entity("HRM.Hub.Domain.Entities.PromotionGroup", b =>
                 {
                     b.Navigation("Promotion");
@@ -6424,6 +7794,8 @@ namespace HRM.Hub.Persistence.Migrations
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Province", b =>
                 {
                     b.Navigation("AddressInformation");
+
+                    b.Navigation("Territories");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.Sections", b =>
@@ -6493,6 +7865,8 @@ namespace HRM.Hub.Persistence.Migrations
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.TypeOfAssignment", b =>
                 {
+                    b.Navigation("Affiliations");
+
                     b.Navigation("Assignments");
                 });
 
@@ -6509,6 +7883,11 @@ namespace HRM.Hub.Persistence.Migrations
             modelBuilder.Entity("HRM.Hub.Domain.Entities.TypeOfJob", b =>
                 {
                     b.Navigation("JobInformation");
+                });
+
+            modelBuilder.Entity("HRM.Hub.Domain.Entities.TypeOfLeave", b =>
+                {
+                    b.Navigation("Leaves");
                 });
 
             modelBuilder.Entity("HRM.Hub.Domain.Entities.TypeOfSeniority", b =>

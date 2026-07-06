@@ -92,6 +92,19 @@ const data = {
          icon: CircleFadingArrowUp,
          items: [
             {
+               title: 'الاحصائيات',
+               url: '/promotion/dashboard'
+            },
+            {
+               title: 'الترقيات',
+               url: '/promotion'
+            },
+          
+            {
+               title: 'إنشاء ترقية',
+               url: '/promotion/create'
+            },
+            {
                title: 'احتساب خدمة',
                url: '/promotion/service-calculation'
             },
@@ -124,8 +137,16 @@ const data = {
                url: '/promotion/employee-evaluation'
             },
             {
+               title: 'حجب الترفيع',
+               url: '/promotion/withholding'
+            },
+            {
                title: 'تقرير',
                url: '/promotion/reports'
+            },
+            {
+               title: 'العلاوة السنوية',
+               url: '/promotion/annual-allowance'
             }
          ]
       },
@@ -157,6 +178,10 @@ const data = {
             {
                title: 'المناصب السابقة',
                url: '/management-employees/previous-positions'
+            },
+            {
+               title: 'التنسيب والمنسبين',
+               url: '/management-employees/affiliations'
             }
          ]
       },
@@ -281,6 +306,10 @@ const data = {
             {
                title: 'الأقسام',
                url: '/system-settings/departments'
+            },
+            {
+               title: 'مسؤولي الأقسام',
+               url: '/system-settings/department-owners'
             },
             {
                title: 'الشعب',

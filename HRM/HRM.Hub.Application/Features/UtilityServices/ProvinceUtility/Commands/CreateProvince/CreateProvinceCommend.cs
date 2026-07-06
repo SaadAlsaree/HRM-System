@@ -5,4 +5,5 @@ namespace HRM.Hub.Application.Features.UtilityServices.ProvinceUtility.Commands.
 public class CreateProvinceCommend : IRequest<Response<bool>>
 {
     public string Name { get; set; }
+    public int? GovernorateId { get; set; }
 }

@@ -13,11 +13,29 @@ public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<b
 
     public async Task<Response<bool>> Handle(AddEmployeeCommend request, CancellationToken cancellationToken)
     {
+        if (string.IsNullOrWhiteSpace(request.JobCode))
+            return ErrorsMessage.FailOnCreate.ToErrorMessage(false);
         var employee = await _repositoryEmployee.Find(
             z =>
                  z.JobCode == request.JobCode, cancellationToken: cancellationToken);
         if (employee != null)
-            return ErrorsMessage.ExistOnCreate.ToErrorMessage(false);
+            return ErrorsMessage.JobCodeExist.ToErrorMessage(false);
+
+        if (!string.IsNullOrWhiteSpace(request.StatisticalIndex))
+        {
+            var byStatistical = await _repositoryEmployee.Find(
+                z => z.StatisticalIndex == request.StatisticalIndex, cancellationToken: cancellationToken);
+            if (byStatistical != null)
+                return ErrorsMessage.StatisticalIndexExist.ToErrorMessage(false);
+        }
+
+        if (!string.IsNullOrWhiteSpace(request.LotNumber))
+        {
+            var byLot = await _repositoryEmployee.Find(
+                z => z.LotNumber == request.LotNumber, cancellationToken: cancellationToken);
+            if (byLot != null)
+                return ErrorsMessage.LotNumberExist.ToErrorMessage(false);
+        }
 
         var employeeData = new Employees()
         {

@@ -1,9 +1,8 @@
 'use client';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import EmployeeSearch, { IEmployeeSearch } from '@/app/_components/employee-search';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { IJobDegree } from '@/app/(routes)/system-settings/job-degree/page';
-import { useQueryState } from 'nuqs';
 import { Button } from '@/components/ui/button';
 import { CalendarIcon, FileSpreadsheet, RefreshCw } from 'lucide-react';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -18,25 +17,36 @@ type Props = {
 };
 
 const ReportToolbar = ({ jobDegreesList }: Props) => {
-   const [selectedUser, setSelectedUser] = useState<IEmployeeSearch | null>(null);
+   const [, setSelectedUser] = useState<IEmployeeSearch | null>(null);
    const router = useRouter();
    const searchParams = useSearchParams();
+   const degreeId = searchParams.get('degreeId');
+   const fromDate = searchParams.get('fromDate');
+   const toDate = searchParams.get('toDate');
+   const employeeId = searchParams.get('employeeId');
 
-   // Using nuqs for state management
-   const [degreeId, setDegreeId] = useQueryState('degreeId');
-   const [fromDate, setFromDate] = useQueryState('fromDate');
-   const [toDate, setToDate] = useQueryState('toDate');
+   const updateParams = (updates: Record<string, string | null>) => {
+      const params = new URLSearchParams(searchParams.toString());
+
+      Object.entries(updates).forEach(([key, value]) => {
+         if (value) {
+            params.set(key, value);
+         } else {
+            params.delete(key);
+         }
+      });
+
+      params.set('page', '1');
+      router.push(`?${params.toString()}`);
+   };
 
    const handleUserSelect = (user: IEmployeeSearch | null) => {
       setSelectedUser(user);
+      updateParams({ employeeId: user?.employeeId ?? null });
    };
 
    const resetFilters = () => {
-      setDegreeId(null);
-      setFromDate(null);
-      setToDate(null);
       setSelectedUser(null);
-      // Clear URL params
       router.push('/promotion/reports');
    };
 
@@ -45,18 +55,7 @@ const ReportToolbar = ({ jobDegreesList }: Props) => {
       return { value: item.id, label: item.name };
    });
 
-   useEffect(() => {
-      if (selectedUser?.employeeId) {
-         const params = new URLSearchParams(searchParams);
-         params.set('employeeId', selectedUser.employeeId);
-         router.push(`?${params.toString()}`);
-      }
-   }, [selectedUser, searchParams, router]);
-
    const handleExportToExcel = () => {
-      // This is just the button handler placeholder
-      // The actual export functionality would be implemented by the backend
-      const employeeId = searchParams.get('employeeId') || '';
       if (employeeId) {
          promotionsService.exportPromotions(employeeId);
       }
@@ -79,7 +78,7 @@ const ReportToolbar = ({ jobDegreesList }: Props) => {
             {/* Degree Filter */}
             <div className='flex flex-col gap-1'>
                <label className='text-sm text-muted-foreground'>الدرجة الوظيفية</label>
-               <Select onValueChange={(value) => setDegreeId(value === 'all' ? null : value)}>
+               <Select value={degreeId ?? 'all'} onValueChange={(value) => updateParams({ degreeId: value === 'all' ? null : value })}>
                   <SelectTrigger className='w-[200px]'>
                      <SelectValue placeholder='اختر الدرجة' />
                   </SelectTrigger>
@@ -108,7 +107,7 @@ const ReportToolbar = ({ jobDegreesList }: Props) => {
                      <Calendar
                         mode='single'
                         selected={fromDate ? new Date(fromDate) : undefined}
-                        onSelect={(date) => setFromDate(date ? date.toISOString() : null)}
+                        onSelect={(date) => updateParams({ fromDate: date ? format(date, 'yyyy-MM-dd') : null })}
                         initialFocus
                      />
                   </PopoverContent>
@@ -129,7 +128,7 @@ const ReportToolbar = ({ jobDegreesList }: Props) => {
                      <Calendar
                         mode='single'
                         selected={toDate ? new Date(toDate) : undefined}
-                        onSelect={(date) => setToDate(date ? date.toISOString() : null)}
+                        onSelect={(date) => updateParams({ toDate: date ? format(date, 'yyyy-MM-dd') : null })}
                         initialFocus
                      />
                   </PopoverContent>
@@ -137,7 +136,7 @@ const ReportToolbar = ({ jobDegreesList }: Props) => {
             </div>
 
             {/* Reset Filters Button */}
-            {(degreeId || fromDate || toDate || selectedUser) && (
+            {(degreeId || fromDate || toDate || employeeId) && (
                <div className='flex flex-col gap-1'>
                   <label className='text-sm text-muted-foreground'>إعادة تعيين</label>
                   <Button variant='outline' className='w-[120px]' onClick={resetFilters}>

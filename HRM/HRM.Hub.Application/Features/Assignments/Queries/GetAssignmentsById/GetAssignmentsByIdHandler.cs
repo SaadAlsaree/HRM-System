@@ -27,6 +27,7 @@ public class GetAssignmentsByIdHandler : IRequestHandler<GetAssignmentsByIdQuery
                 TypeOfAssignmentName = a.TypeOfAssignment.Name,
                 OrderNo = a.OrderNo,
                 OrderDate = a.OrderDate,
+                IssuingAuthority = a.IssuingAuthority,
                 AssignmentSite = a.AssignmentSite,
                 AssignedFromOrganization = a.AssignedFromOrganization,
                 AssignedToOrganization = a.AssignedToOrganization,

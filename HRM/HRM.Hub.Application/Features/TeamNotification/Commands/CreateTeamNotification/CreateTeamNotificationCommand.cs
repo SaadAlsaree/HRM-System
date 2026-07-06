@@ -6,5 +6,7 @@ public class CreateTeamNotificationCommand : IRequest<Response<bool>>
     public string Body { get; set; }
     public string Note { get; set; }
     public Status Status { get; set; }
+    public NotificationType Type { get; set; }
+    public DateTime? NotificationDate { get; set; }
     public Guid? CreateBy { get; set; }
 }

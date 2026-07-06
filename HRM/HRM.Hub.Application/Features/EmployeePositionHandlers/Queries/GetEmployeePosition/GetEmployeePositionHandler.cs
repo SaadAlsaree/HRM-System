@@ -24,6 +24,7 @@ public class GetEmployeePositionHandler : GetAllWithCountHandler<EmployeePositio
         DepartmentId = z.DepartmentId,
         DepartmentName = z.Department.Name,
         AssignedDate = z.AssignedDate,
+        StartDate = z.StartDate,
         JobCode = z.Employee.JobCode,
         LotNumber = z.Employee.LotNumber,
         SectionId = z.SectionId,

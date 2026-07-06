@@ -12,8 +12,6 @@ namespace HRM.Hub.Controllers.Controllers.APIs;
 [Produces("application/json")]
 [Route("hub/hrm/v1/api/[controller]/[action]")]
 [Tags(" Dashboard")]
-//[Authorize(AuthenticationSchemes = "Bearer", Policy = "")]
-[Permission]
 public sealed class DashboardController : Base<DashboardController>
 {
     private readonly IMediator _mediator;

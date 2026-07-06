@@ -17,6 +17,7 @@ import LeavesBalancesTable from './leaves-balances/leaves-balances-table';
 import ServiceLinePage from './service-line';
 import MaritalStatusTable from './marital-status/marital-status-table';
 import AcademicAchievementPage from './academic-achievement';
+import { EmployeeProfileRefreshProvider } from '@/hooks/use-employee-profile-refresh';
 
 type Props = {
    AdministrativeOrder: IEmployeeAdministrativeOrder;
@@ -28,8 +29,9 @@ type Props = {
 
 const ProfileTabs = ({ AdministrativeOrder, EducationInfo, EmployeeInfo, ManagementInfo }: Props) => {
    return (
+      <EmployeeProfileRefreshProvider>
       <div>
-         <Tabs defaultValue='employee-file' className='w-full'>
+          <Tabs defaultValue='employee-file' className='w-full'>
             <TabsList className='mb-6 bg-white dark:bg-gray-900  p-2 rounded-lg shadow overflow-x-auto flex h-auto'>
                <TabsTrigger
                   value='employee-file'
@@ -179,8 +181,9 @@ const ProfileTabs = ({ AdministrativeOrder, EducationInfo, EmployeeInfo, Managem
                <LeavesBalancesTable employeeId={EmployeeInfo?.employeeId as string} />
             </TabsContent>
             {/* Placeholder content for other tabs */}
-         </Tabs>
+          </Tabs>
       </div>
+      </EmployeeProfileRefreshProvider>
    );
 };
 

@@ -17,6 +17,7 @@ import {
    PaginationPrevious
 } from '@/components/ui/pagination';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 export interface IAdministrativeOrder {
    id: string | number | null;
@@ -48,6 +49,7 @@ const AdministrativeOrderPage = ({ initialPage = 1, pageSize = 10, employeeId, s
    const [error, setError] = useState<string | undefined>();
    const [currentPage, setCurrentPage] = useState(initialPage);
    const [totalPages, setTotalPages] = useState(0);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       const fetchData = async () => {
@@ -70,7 +72,7 @@ const AdministrativeOrderPage = ({ initialPage = 1, pageSize = 10, employeeId, s
          }
       };
       fetchData();
-   }, [currentPage, pageSize, employeeId, status]);
+   }, [currentPage, pageSize, employeeId, status, refreshKey]);
 
    const handlePageChange = (page: number) => {
       setCurrentPage(page);

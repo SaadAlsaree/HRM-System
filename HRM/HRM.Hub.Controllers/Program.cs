@@ -1,5 +1,8 @@
 using HRM.Hub.Application;
 using HRM.Hub.Persistence;
+using HRM.Hub.Persistence.Configuration;
+using HRM.Hub.Persistence.Helpers;
+using HRM.Hub.Persistence.Identity;
 using Microsoft.AspNetCore.DataProtection;
 using Serilog;
 using System.Threading.RateLimiting;
@@ -22,7 +25,13 @@ try
     builder.Services.AddPersistenceServices(builder.Configuration);
     builder.Services.AddApplicationServices();
     builder.Services.ConfigureServices(builder.Configuration);
-    builder.Services.AuthConfigure(builder.Configuration);
+
+    var keycloakSettings = builder.Configuration.GetSection("Keycloak").Get<KeycloakSettings>()
+        ?? throw new InvalidOperationException("Keycloak settings are not configured.");
+    builder.Services.AddKeycloakAuthentication(keycloakSettings, builder.Environment);
+    builder.Services.AddKeycloakAuthorization();
+    builder.Services.AddScoped<ICurrentUserService, CurrentUserService>();
+
     builder.Services.AddEndpointsApiExplorer();
     builder.Services.AddSwaggerGen();
     builder.Services.AddRateLimiter(options =>
@@ -45,20 +54,7 @@ try
     });
     var app = builder.Build();
 
-    if (app.Environment.IsDevelopment())
-    {
-        app.UseSwagger();
-        app.UseSwaggerUI();
-    }
-
-    app.UseHttpsRedirection();
-
-    app.UseAuthorization();
-
-    app.MapControllers();
-
     app.UseRateLimiter();
-    //Rate limitter middleware
     StartupConfigure.ApplicationConfigure(app, builder.Environment, builder.Configuration);
 
     // Register and start recurring jobs

@@ -13,6 +13,7 @@ export interface EmployeeDocumentsTypePayload {
     assignedOrderDate?: string;
     assignedOrderNo?: string;
     assignedDate?: string;
+    startDate?: string;
     administrativeOrderDate?: string;
     administrativeOrderNo?: string;
     directorateId: number;
@@ -34,6 +35,7 @@ export interface UpdateEmployeeDocumentsTypePayload {
     endAssignedOrderNo?: string;
     endAssignedOrderDate?: string;
     assignedDate?: string;
+    startDate?: string;
     assignedOrderDate?: string;
     assignedOrderNo?: string;
     administrativeOrderDate?: string;
@@ -57,6 +59,7 @@ export interface EmployeePositionParams extends IPagination {
     employeePositionType?: EmployeePositionType;
     employeeId?: string;
     status?: Status;
+    searchTerm?: string;
 }
 
 class EmployeePositionService extends ApiClient {

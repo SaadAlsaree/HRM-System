@@ -6,6 +6,7 @@ using HRM.Hub.Persistence.Helpers;
 using HRM.Hub.Application.Features.MovementHandlers.Queries.GetAllMovements;
 using HRM.Hub.Application.Features.MovementHandlers.Queries.GetMovementById;
 using HRM.Hub.Application.Features.MovementHandlers.Commands.CreateMovement;
+using HRM.Hub.Application.Features.MovementHandlers.Commands.ReverseMovement;
 using HRM.Hub.Application.Features.MovementHandlers.Commands.UpdateMovement;
 using HRM.Hub.Application.Features.MovementHandlers.Queries.Dashboard;
 using HRM.Hub.Application.Features.Services.Commands.ChangeStatus;
@@ -31,6 +32,15 @@ public sealed class MovementsController : Base<MovementsController>
     }
 
     #region Movements
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPut("[action]/{movementId:Guid}")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> Reverse(Guid movementId)
+    {
+        return await Okey(() => _mediator.Send(new ReverseMovementCommand { Id = movementId }));
+    }
 
     [ServiceFilter(typeof(LogActionArguments))]
     [HttpPost]

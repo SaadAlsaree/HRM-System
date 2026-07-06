@@ -23,6 +23,7 @@ public class GetEmployeePositionByIdHandler : IRequestHandler<GetEmployeePositio
                 LotNumber = a.Employee.LotNumber,
                 JobCode = a.Employee.JobCode,
                 AssignedDate = a.AssignedDate,
+                StartDate = a.StartDate,
                 EmployeeId = a.EmployeeId,
                 FullName = a.Employee.FullName,
                 EmployeePositionType = a.EmployeePositionType,

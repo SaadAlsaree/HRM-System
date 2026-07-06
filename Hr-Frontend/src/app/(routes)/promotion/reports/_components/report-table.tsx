@@ -1,51 +1,58 @@
 'use client';
-import React from 'react'
+import React from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlignJustify } from 'lucide-react';
-import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
+import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
+import CalculationDetailsDialog from '../../_shared/calculation-details-dialog';
+
+import type { PromotionReportItem } from '../page';
 
 type Props = {
-   columns: { label: string; value: string; className?: string }[];
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   data: any[];
-}
+  columns: { label: string; value: string; className?: string }[];
+  data: PromotionReportItem[];
+};
+
 const ReportTable = ({ columns, data }: Props) => {
   return (
-  <div className="w-full">
-      <ScrollArea className="w-[1400px] whitespace-nowrap rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            {columns.map((column) => (
-              <TableHead align='right' key={column.value} className={column.className}>
-                {column.label}
-              </TableHead>
-            ))}
-            <TableHead className='w-[100px] text-center'>
-              <AlignJustify className='justify-center' />
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {data.map((item) => (
-            <TableRow key={item.id}>
-              <TableCell>{item.jobCode}</TableCell>
-              <TableCell>{item.fullName}</TableCell>
-              <TableCell>{item.lotNumber}</TableCell>
-              <TableCell>{item.oldJobTitleName}</TableCell>
-              <TableCell>{item.newJobTitleName}</TableCell>
-              <TableCell>{item.oldJobDescriptionName}</TableCell>
-              <TableCell>{item.newJobDescriptionName}</TableCell>
-              <TableCell>{item.orderNo}</TableCell>
-              <TableCell>{item.orderDate}</TableCell>
+    <div className='w-full'>
+      <ScrollArea className='w-[1450px] whitespace-nowrap rounded-md border'>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              {columns.map((column) => (
+                <TableHead align='right' key={column.value} className={column.className}>
+                  {column.label}
+                </TableHead>
+              ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-      <ScrollBar orientation="horizontal" />
+          </TableHeader>
+          <TableBody>
+            {data.map((item) => (
+              <TableRow key={item.id}>
+                {columns.map((column) => {
+                  if (column.value === 'actions') {
+                    return (
+                      <TableCell key={column.value}>
+                        <CalculationDetailsDialog
+                          employeeId={item.employeeId}
+                          employeeName={item.fullName}
+                        />
+                      </TableCell>
+                    );
+                  }
+                  return (
+                    <TableCell key={column.value}>
+                      {item[column.value] ?? '-'}
+                    </TableCell>
+                  );
+                })}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <ScrollBar orientation='horizontal' />
       </ScrollArea>
-  </div>
-  )
-}
+    </div>
+  );
+};
 
-export default ReportTable
+export default ReportTable;

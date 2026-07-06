@@ -6,11 +6,18 @@ IRequestHandler<CreateCorrectingAcademicAchievementCommand, Response<bool>>
     private readonly IBaseRepository<Promotion> _repositoryPromotion;
     private readonly IBaseRepository<JobDegree> _repositoryJobDegree;
     private readonly IBaseRepository<JobCategory> _repositoryJobCategory;
-    public CreateCorrectingAcademicAchievementHandler(IBaseRepository<Promotion> repositoryPromotion, IBaseRepository<CorrectingAcademicAchievements> repository, IBaseRepository<JobDegree> repositoryJobDegree, IBaseRepository<JobCategory> repositoryJobCategory) : base(repository)
+    private readonly IPromotionAllowanceCalculationService _calculationService;
+    public CreateCorrectingAcademicAchievementHandler(
+        IBaseRepository<Promotion> repositoryPromotion,
+        IBaseRepository<CorrectingAcademicAchievements> repository,
+        IBaseRepository<JobDegree> repositoryJobDegree,
+        IBaseRepository<JobCategory> repositoryJobCategory,
+        IPromotionAllowanceCalculationService calculationService) : base(repository)
     {
         _repositoryPromotion = repositoryPromotion;
         _repositoryJobDegree = repositoryJobDegree;
         _repositoryJobCategory = repositoryJobCategory;
+        _calculationService = calculationService;
     }
 
     public async Task<Response<bool>> Handle(CreateCorrectingAcademicAchievementCommand request, CancellationToken cancellationToken)
@@ -19,21 +26,19 @@ IRequestHandler<CreateCorrectingAcademicAchievementCommand, Response<bool>>
         if (findPromotion == null)
             return ErrorsMessage.NotFoundData.ToErrorMessage(false);
 
-        findPromotion.DueDateCategory = request.DueDateCategory;
-        findPromotion.DueDateDegree = request.DueDateDegree;
         findPromotion.JobCategoryId = request.JobCategoryToId;
         findPromotion.JobDegreeId = request.DegreeToId;
         findPromotion.Note = "تصويب صحة الصدور";
 
-        Console.WriteLine(findPromotion);
-        Console.WriteLine(request.JobCategoryToId);
-        Console.WriteLine(request.DegreeToId);
-
-
         if (!_repositoryPromotion.Update(findPromotion))
             return ErrorsMessage.FailOnUpdate.ToErrorMessage(false);
 
-        return await base.HandleBase(request, cancellationToken);
+        var result = await base.HandleBase(request, cancellationToken);
+        if (result?.Data != true)
+            return result;
+
+        _ = await _calculationService.CalculateAsync(request.EmployeeId, "correcting-academic-achievement-created", cancellationToken);
+        return result;
     }
 
     protected override Expression<Func<CorrectingAcademicAchievements, bool>> ExistencePredicate(CreateCorrectingAcademicAchievementCommand request) => null;

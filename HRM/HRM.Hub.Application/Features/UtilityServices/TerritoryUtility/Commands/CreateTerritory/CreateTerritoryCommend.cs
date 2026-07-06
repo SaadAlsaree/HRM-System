@@ -5,5 +5,6 @@ namespace HRM.Hub.Application.Features.UtilityServices.TerritoryUtility.Commands
 public class CreateTerritoryCommend : IRequest<Response<bool>>
 {
     public string Name { get; set; }
+    public int? ProvinceId { get; set; }
 
 }

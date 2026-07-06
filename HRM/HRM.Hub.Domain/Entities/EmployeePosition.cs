@@ -13,6 +13,7 @@ public class EmployeePosition : BaseEntity<Guid>
     public DateOnly? AssignedDate { get; set; }
     public string AssignedOrderNo { get; set; }
 
+    public DateOnly? StartDate { get; set; }
     public DateOnly? AdministrativeOrderDate { get; set; }
     public string AdministrativeOrderNo { get; set; }
 

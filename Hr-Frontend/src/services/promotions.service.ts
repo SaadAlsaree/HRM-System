@@ -26,6 +26,7 @@ export interface PromotionPayload {
 
 interface PromotionParams extends IPagination {
     employeeId?: string;
+    EmployeeId?: string;
     status?: Status;
 }
 
@@ -38,10 +39,15 @@ interface patchPromotionPayload {
 class PromotionsService extends ApiClient {
 
     public async getPromotions(params: PromotionParams): Promise<any> {
+        const { employeeId, ...restParams } = params;
+
         return this.request<any>({
             method: 'GET',
             url: '/Promotions',
-            params
+            params: {
+                ...restParams,
+                ...(employeeId ? { EmployeeId: employeeId } : {})
+            }
         });
     }
 
@@ -49,6 +55,14 @@ class PromotionsService extends ApiClient {
         return this.request<any>({
             method: 'POST',
             url: '/Promotions',
+            data: payload
+        });
+    }
+
+    public async initializePromotionData(payload: any): Promise<any> {
+        return this.request<any>({
+            method: 'POST',
+            url: '/Promotions/Initialize',
             data: payload
         });
     }
@@ -110,12 +124,43 @@ class PromotionsService extends ApiClient {
         });
     }
 
-    // Get /Promotions/Reports with params { employeeId: string, degreeId: string, fromDate: date, toDate: date }
-    public async getPromotionsReports(employeeId: string, degreeId: string, fromDate: string, toDate: string): Promise<any> {
+    // Get /Promotions/Reports with params { employeeId, degreeId, fromDate, toDate, Page, PageSize }
+    public async getPromotionsReports(params: {
+        employeeId?: string;
+        degreeId?: string;
+        fromDate?: string;
+        toDate?: string;
+        Page?: number;
+        PageSize?: number;
+    }): Promise<any> {
+        const queryParams: Record<string, string | number> = {};
+        if (params.employeeId) queryParams.employeeId = params.employeeId;
+        if (params.degreeId) queryParams.degreeId = params.degreeId;
+        if (params.fromDate) queryParams.fromDate = params.fromDate;
+        if (params.toDate) queryParams.toDate = params.toDate;
+        if (params.Page) queryParams.Page = params.Page;
+        if (params.PageSize) queryParams.PageSize = params.PageSize;
+
         return this.request<any>({
             method: 'GET',
             url: '/Promotions/Reports',
-            params: { employeeId, degreeId, fromDate, toDate }
+            params: queryParams
+        });
+    }
+    // Get /Promotions/Dashboard with params { year, month }
+    public async getDashboardStats(year?: number, month?: number): Promise<any> {
+        return this.request<any>({
+            method: 'GET',
+            url: '/Promotions/Dashboard',
+            params: { year, month }
+        });
+    }
+
+    public async getDashboardDetails(year: number, filterType: number, month?: number, page: number = 1, pageSize: number = 10): Promise<any> {
+        return this.request<any>({
+            method: 'GET',
+            url: '/Promotions/DashboardDetails',
+            params: { year, month, filterType, page, pageSize }
         });
     }
 }

@@ -12,7 +12,7 @@ interface patchTerritoryPayload {
 
 class TerritoryService extends ApiClient {
 
-    public async getTerritories(params?: IPagination): Promise<any> {
+    public async getTerritories(params?: IPagination & { ProvinceId?: number }): Promise<any> {
         return this.request<any>({
             method: 'GET',
             url: '/Territory',

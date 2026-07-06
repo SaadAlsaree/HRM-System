@@ -17,6 +17,7 @@ public class GetAssignmentsHandler : GetAllWithCountHandler<Domain.Entities.Assi
         LotNumber = z.Employee.LotNumber,
         SubDirectorateName = z.Employee.ManagementInformation.SubDirectorate.Name,
         OrderDate = z.OrderDate,
+        IssuingAuthority = z.IssuingAuthority,
         AssignmentSite = z.AssignmentSite,
         AssignedFromOrganization = z.AssignedFromOrganization,
         AssignedToOrganization = z.AssignedToOrganization,

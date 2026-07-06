@@ -1,4 +1,4 @@
-import { employeeCourseService } from '@/services/Employee/employee-course.service';
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import TrainingCoursesToolbar from './_components/training-courses-toolbar';
 import { columnsCourse } from './_components/columns';
@@ -44,7 +44,13 @@ const TrainingCoursesPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await employeeCourseService.getEmployeeCourses({ Page, PageSize });
+   const data = await fetchServer<{ data?: { items?: ICourse[]; totalCount?: number } }>(
+      '/EmployeeCourse',
+      'GET',
+      {
+         params: { Page, PageSize }
+      }
+   );
    const courseList: ICourse[] = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 

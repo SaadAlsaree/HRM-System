@@ -4,9 +4,15 @@ public class UpdateChangeDegreeHandler : UpdateHandler<ChangeDegrees, UpdateChan
 IRequestHandler<UpdateChangeDegreeCommand, Response<bool>>
 {
     private readonly IBaseRepository<Promotion> _repositoryPromotion;
-    public UpdateChangeDegreeHandler(IBaseRepository<Promotion> repositoryPromotion, IBaseRepository<ChangeDegrees> repository) : base(repository)
+    private readonly IPromotionAllowanceCalculationService _calculationService;
+
+    public UpdateChangeDegreeHandler(
+        IBaseRepository<Promotion> repositoryPromotion,
+        IBaseRepository<ChangeDegrees> repository,
+        IPromotionAllowanceCalculationService calculationService) : base(repository)
     {
         _repositoryPromotion = repositoryPromotion;
+        _calculationService = calculationService;
     }
 
     public override Expression<Func<ChangeDegrees, bool>> EntityPredicate(UpdateChangeDegreeCommand request) =>
@@ -19,8 +25,8 @@ IRequestHandler<UpdateChangeDegreeCommand, Response<bool>>
         if (findPromotion == null)
             return ErrorsMessage.NotFoundData.ToErrorMessage(false);
 
-        findPromotion.DueDateCategory = request.NewCategoryDueDate;
-        findPromotion.DueDateDegree = request.NewDegreeDueDate;
+        findPromotion.JobCategoryId = request.JobCategoryToId;
+        findPromotion.JobDegreeId = request.JobDegreeToId;
         findPromotion.Note = "تعديل الدرجة";
         findPromotion.LastUpdateAt = DateTime.Now;
         findPromotion.LastUpdateBy = request.LastUpdateBy;
@@ -28,6 +34,11 @@ IRequestHandler<UpdateChangeDegreeCommand, Response<bool>>
         if (!_repositoryPromotion.Update(findPromotion))
             return ErrorsMessage.FailOnUpdate.ToErrorMessage(false);
 
-        return await HandleBase(request, cancellationToken);
+        var response = await HandleBase(request, cancellationToken);
+        if (!response.Succeeded)
+            return response;
+
+        _ = await _calculationService.CalculateAsync(request.EmployeeId, "change-degree-updated", cancellationToken);
+        return response;
     }
 }

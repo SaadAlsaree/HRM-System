@@ -20,8 +20,6 @@ namespace HRM.Hub.Controllers.Controllers.APIs;
 [Produces("application/json")]
 [Route("hub/hrm/v1/api/[controller]")]
 [Tags("LogLeavesBalances")]
-//[Authorize(AuthenticationSchemes = "Bearer", Policy = "")]
-[Permission]
 public sealed class LogLeavesBalancesController : Base<LogLeavesBalancesController>
 {
     private readonly IMediator _mediator;

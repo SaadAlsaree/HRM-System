@@ -1,87 +1,93 @@
 'use client';
-import { promotionsService } from '@/services/promotions.service';
+import { useFetchClient } from '@/lib/fetchClient';
 import React, { useEffect, useState } from 'react';
-import { IPromotions } from '../grades/grades-table';
+import { IChangeDegree } from '../grades/grades-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { columnsCategories } from './columns';
 
 type Props = {
    employeeId: string;
 };
+
+interface ChangeDegreeListResponse {
+   data?: {
+      items?: IChangeDegree[];
+   };
+}
+
 const CategoriesTable = ({ employeeId }: Props) => {
-   const [promotions, setPromotions] = useState<IPromotions[]>([]);
+   const fetchClient = useFetchClient();
+   const [changeDegrees, setChangeDegrees] = useState<IChangeDegree[]>([]);
    const [isLoading, setIsLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
-   const [totalPages, setTotalPages] = useState(0);
 
    useEffect(() => {
-      const fetchPromotions = async () => {
-         setIsLoading(true);
-         try {
-            const response = await promotionsService.getPromotions({ employeeId, Page: 1, PageSize: 100 });
+      if (!employeeId) return;
 
-            setPromotions(response?.data?.items);
-            setTotalPages(response?.data?.totalCount);
+      const fetchChangeDegrees = async () => {
+         setIsLoading(true);
+         setError(null);
+         try {
+            const response = await fetchClient<ChangeDegreeListResponse>('/ChangeDegree', 'GET', {
+               params: {
+                  EmployeeId: employeeId,
+                  Page: 1,
+                  PageSize: 100
+               }
+            });
+
+            setChangeDegrees(response?.data?.items ?? []);
          } catch (error) {
-            console.error('Error fetching promotions:', error);
-            setError('Failed to fetch promotions');
-            // toast.error('Failed to fetch promotions');
+            console.error('Error fetching change degrees:', error);
+            setChangeDegrees([]);
+            setError('Failed to fetch change degrees');
          } finally {
             setIsLoading(false);
          }
       };
 
-      fetchPromotions();
-   }, [employeeId]);
+      fetchChangeDegrees();
+   }, [employeeId, fetchClient]);
 
-   if (totalPages === 0)
-      return (
-         <div>
-            <div>لايوجد بيانات !</div>
-         </div>
-      );
-
-   if (error) return <div>حدث خطأ أثناء تحميل البيانات !</div>;
-
-   if (isLoading) return <div>جاري التحميل...</div>;
+   if (error) return <div>حدث خطأ أثناء تحميل البيانات !</div>;
 
    return (
       <div className='border rounded-lg p-2 bg-white dark:bg-gray-900'>
          <Table>
             <TableHeader>
                <TableRow>
-                  {columnsCategories?.map((column) => (
+                  {columnsCategories.map((column) => (
                      <TableHead align='right' key={column.value} className={column.className}>
                         {column.label}
                      </TableHead>
                   ))}
-                  {/* <TableHead className='w-[100px] text-center'>
-                  <AlignJustify className='justify-center' />
-               </TableHead> */}
                </TableRow>
             </TableHeader>
             <TableBody>
                {isLoading && (
                   <TableRow>
-                     <TableCell className='h-10 text-center'>جاري التحميل...</TableCell>
+                     <TableCell colSpan={columnsCategories.length} className='h-10 text-center'>
+                        جاري التحميل...
+                     </TableCell>
                   </TableRow>
                )}
-               {promotions?.length === 0 && !isLoading && (
+               {changeDegrees.length === 0 && !isLoading && (
                   <TableRow>
-                     <TableCell className='h-10 text-center'>لا يوجد بيانات</TableCell>
+                     <TableCell colSpan={columnsCategories.length} className='h-10 text-center'>
+                        لا يوجد بيانات
+                     </TableCell>
                   </TableRow>
                )}
-               {promotions?.map((item) => (
+               {changeDegrees.map((item) => (
                   <TableRow key={item.id}>
-                     <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
-
-                     <TableCell>{item?.degreeToName}</TableCell>
-                     <TableCell>{item?.jobCategoryToName}</TableCell>
-
-                     <TableCell>{item?.bookNo}</TableCell>
-                     <TableCell>{item?.bookDate}</TableCell>
-                     <TableCell>{item?.dueDateDegree}</TableCell>
-                     <TableCell>{item?.note}</TableCell>
+                     <TableCell>{item.id?.toString().toUpperCase().split('-', 1)}</TableCell>
+                     <TableCell>{item.jobCategoryFromName}</TableCell>
+                     <TableCell>{item.jobCategoryToName}</TableCell>
+                     <TableCell>{item.newCategoryDueDate}</TableCell>
+                     <TableCell>{item.jobDegreeToName}</TableCell>
+                     <TableCell>{item.orderNo}</TableCell>
+                     <TableCell>{item.statusName}</TableCell>
+                     <TableCell>{item.note}</TableCell>
                   </TableRow>
                ))}
             </TableBody>

@@ -14,6 +14,12 @@ using HRM.Hub.Application.Features.Attachment.Commands.CreateAttachment;
 using HRM.Hub.Application.Features.Attachment.Queries.GetAttachment;
 using HRM.Hub.Application.Features.LeavesHandlers.Commands.UpdateLeaveHire;
 using HRM.Hub.Application.Features.LeavesHandlers.Commands.CutLeave;
+using HRM.Hub.Application.Features.LeavesHandlers.Commands.SubmitLeave;
+using HRM.Hub.Application.Features.LeavesHandlers.Commands.ApproveLeave;
+using HRM.Hub.Application.Features.LeavesHandlers.Commands.RejectLeave;
+using HRM.Hub.Application.Features.LeavesHandlers.Commands.CancelLeave;
+using HRM.Hub.Application.Features.LeavesHandlers.Commands.ExtendLeave;
+using HRM.Hub.Application.Features.LeavesHandlers.Queries.Reports;
 
 namespace HRM.Hub.Controllers.Controllers.APIs;
 
@@ -50,6 +56,7 @@ public sealed class LeavesController : Base<LeavesController>
         command.LeaveId = id;
         return await Okey(() => _mediator.Send(command));
     }
+
     [ServiceFilter(typeof(LogActionArguments))]
     [HttpPut("[action]/{id}")]
     [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
@@ -59,6 +66,56 @@ public sealed class LeavesController : Base<LeavesController>
         command.LeaveId = id;
         return await Okey(() => _mediator.Send(command));
     }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPut("[action]/{id}")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> Submit(Guid id)
+    {
+        return await Okey(() => _mediator.Send(new SubmitLeaveCommand { LeaveId = id }));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPut("[action]/{id}")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> Approve(Guid id, [FromBody] ApproveLeaveCommand command)
+    {
+        command.LeaveId = id;
+        return await Okey(() => _mediator.Send(command));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPut("[action]/{id}")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> Reject(Guid id, [FromBody] RejectLeaveCommand command)
+    {
+        command.LeaveId = id;
+        return await Okey(() => _mediator.Send(command));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPut("[action]/{id}")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> Cancel(Guid id, [FromBody] CancelLeaveCommand command)
+    {
+        command.LeaveId = id;
+        return await Okey(() => _mediator.Send(command));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPut("[action]/{id}")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> Extend(Guid id, [FromBody] ExtendLeaveCommand command)
+    {
+        command.LeaveId = id;
+        return await Okey(() => _mediator.Send(command));
+    }
+
     [ServiceFilter(typeof(LogActionArguments))]
     [HttpGet("{LeaveId:Guid}")]
     [ProducesResponseType(typeof(Response<GetLeaveByIdViewModel>), (int)HttpStatusCode.OK)]
@@ -71,18 +128,7 @@ public sealed class LeavesController : Base<LeavesController>
         };
         return await Okey(() => _mediator.Send(query));
     }
-    [ServiceFilter(typeof(LogActionArguments))]
-    [HttpDelete("{id}")]
-    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
-    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task<ActionResult<Response<bool>>> ChangeStatus(Guid id)
-    {
-        return await Okey(() => _mediator.Send(new DeleteRecordCommand<Guid>()
-        {
-            Id = id,
-            TableName = TableNames.Leaves
-        }));
-    }
+
     [ServiceFilter(typeof(LogActionArguments))]
     [HttpPatch]
     [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
@@ -120,8 +166,16 @@ public sealed class LeavesController : Base<LeavesController>
     public async Task<ActionResult<Response<bool>>> UpdateLeaveCut(Guid id, [FromBody] CutLeaveCommand command)
     {
         command.LeaveId = id;
-        Console.WriteLine(id);
         return await Okey(() => _mediator.Send(command));
+    }
+
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpGet("[action]")]
+    [ProducesResponseType(typeof(Response<LeaveReportResult>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<LeaveReportResult>>> GetReport([FromQuery] GetLeaveReportQuery query)
+    {
+        return await Okey(() => _mediator.Send(query));
     }
     #endregion
 }

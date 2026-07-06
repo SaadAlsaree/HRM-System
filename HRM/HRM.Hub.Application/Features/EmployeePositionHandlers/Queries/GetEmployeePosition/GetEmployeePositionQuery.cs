@@ -4,6 +4,7 @@ public class GetEmployeePositionQuery :  IRequest<Response<PagedResult<GetEmploy
     public EmployeePositionTypeEnum EmployeePositionType { get; set; }
     public Guid EmployeeId { get; set; }
     public Status Status { get; set; } = Status.None;
+    public string SearchTerm { get; set; }
     public int Page { get; set; }
     public byte PageSize { get; set; }
 }

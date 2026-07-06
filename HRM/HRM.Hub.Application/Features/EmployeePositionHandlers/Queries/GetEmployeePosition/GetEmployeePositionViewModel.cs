@@ -12,6 +12,7 @@ public class GetEmployeePositionViewModel : BaseViewModel<Guid>
     public string DirectorateName { get; set; }
     public int? SubDirectorateId { get; set; }
     public DateOnly? AssignedDate { get; set; }
+    public DateOnly? StartDate { get; set; }
     public string SubDirectorateName { get; set; }
     public int? DepartmentId { get; set; }
     public string DepartmentName { get; set; }

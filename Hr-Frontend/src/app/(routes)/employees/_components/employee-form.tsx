@@ -53,7 +53,9 @@ const workingStatusOptions = [
    { label: 'استقالة', value: 3 },
    { label: 'نقل خدمات', value: 4 },
    { label: 'تقاعد', value: 5 },
-   { label: 'عزل', value: 6 }
+   { label: 'عزل', value: 6 },
+   { label: 'خدمة مقطوعة', value: 7 },
+   { label: 'خدمة منسوخة', value: 8 }
 ];
 
 const formSchema = z.object({
@@ -96,18 +98,18 @@ const formSchema = z.object({
 
 type Props = {
    data?: EmployeePayload;
-   jobDegreesList: [];
-   jobTitlesList: [];
-   jobCategoriesList: [];
-   jobDescriptionsList: [];
-   directoratesList: [];
-   subDirectoratesList: [];
-   departmentsList: [];
-   sectionsList: [];
-   unitsList: [];
-   typeOfJobsList: [];
-   countriesList: [];
-   positionsList: [];
+   jobDegreesList: unknown[];
+   jobTitlesList: unknown[];
+   jobCategoriesList: unknown[];
+   jobDescriptionsList: unknown[];
+   directoratesList: unknown[];
+   subDirectoratesList: unknown[];
+   departmentsList: unknown[];
+   sectionsList: unknown[];
+   unitsList: unknown[];
+   typeOfJobsList: unknown[];
+   countriesList: unknown[];
+   positionsList: unknown[];
 };
 
 export default function EmployeeForm({
@@ -249,56 +251,56 @@ export default function EmployeeForm({
       <Form {...form}>
          <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 py-4'>
             <div className='grid grid-cols-12 gap-4'>
-               <div className='col-span-4'>
-                  <FormField
-                     control={form.control}
-                     name='statisticalIndex'
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>الرقم الوظيفي</FormLabel>
-                           <FormControl>
-                              <Input placeholder='الرقم الوظيفي' type='text' {...field} defaultValue={data?.statisticalIndex?.toString()} />
-                           </FormControl>
+                <div className='col-span-4'>
+                   <FormField
+                      control={form.control}
+                      name='statisticalIndex'
+                      render={({ field }) => (
+                         <FormItem>
+                            <FormLabel>الرقم الاحصائي</FormLabel>
+                            <FormControl>
+                               <Input placeholder='الرقم الاحصائي' type='text' {...field} defaultValue={data?.statisticalIndex?.toString()} />
+                            </FormControl>
 
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-               </div>
+                            <FormMessage />
+                         </FormItem>
+                      )}
+                   />
+                </div>
 
-               <div className='col-span-4'>
-                  <FormField
-                     control={form.control}
-                     name='jobCode'
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>رقم الاضبارة</FormLabel>
-                           <FormControl>
-                              <Input placeholder='رقم الاضبارة' type='text' {...field} defaultValue={data?.jobCode?.toString()} />
-                           </FormControl>
+                <div className='col-span-4'>
+                   <FormField
+                      control={form.control}
+                      name='jobCode'
+                      render={({ field }) => (
+                         <FormItem>
+                            <FormLabel>الرقم الوظيفي</FormLabel>
+                            <FormControl>
+                               <Input placeholder='الرقم الوظيفي' type='text' {...field} defaultValue={data?.jobCode?.toString()} />
+                            </FormControl>
 
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-               </div>
+                            <FormMessage />
+                         </FormItem>
+                      )}
+                   />
+                </div>
 
-               <div className='col-span-4'>
-                  <FormField
-                     control={form.control}
-                     name='lotNumber'
-                     render={({ field }) => (
-                        <FormItem>
-                           <FormLabel>الرقم الاحصائي</FormLabel>
-                           <FormControl>
-                              <Input placeholder='الرقم الاحصائي' type='text' {...field} defaultValue={data?.lotNumber?.toString()} />
-                           </FormControl>
+                <div className='col-span-4'>
+                   <FormField
+                      control={form.control}
+                      name='lotNumber'
+                      render={({ field }) => (
+                         <FormItem>
+                            <FormLabel>رقم الاضبارة</FormLabel>
+                            <FormControl>
+                               <Input placeholder='رقم الاضبارة' type='text' {...field} defaultValue={data?.lotNumber?.toString()} />
+                            </FormControl>
 
-                           <FormMessage />
-                        </FormItem>
-                     )}
-                  />
-               </div>
+                            <FormMessage />
+                         </FormItem>
+                      )}
+                   />
+                </div>
             </div>
 
             <div className='grid grid-cols-12 gap-4'>

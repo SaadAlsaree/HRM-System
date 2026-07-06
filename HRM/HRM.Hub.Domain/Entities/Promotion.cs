@@ -7,6 +7,7 @@ public class Promotion : BaseEntity<Guid>
     public int JobCategoryId { get; set; }
     public DateOnly? DueDateDegree { get; set; }
     public DateOnly? DueDateCategory { get; set; }
+    public DateOnly? LastAllowanceDate { get; set; }
     public bool StopPromotion { get; set; }
     public int? ServiceRecycle { get; set; }
     public string Note { get; set; } = string.Empty;

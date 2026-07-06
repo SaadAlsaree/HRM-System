@@ -7,6 +7,7 @@ public class CreateAssignmentsCommend : IRequest<Response<bool>>
     public int? TypeOfAssignmentId { get; set; }
     public string OrderNo { get; set; }
     public DateOnly? OrderDate { get; set; }
+    public string IssuingAuthority { get; set; }
     public int? DurationOfAssignment { get; set; }
     public DateOnly? ReleaseOrderDate { get; set; }
     public string ReleaseOrderNo { get; set; }

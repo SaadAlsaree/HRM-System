@@ -80,6 +80,7 @@ interface LeavesParams extends IPagination {
     DateFrom?: Date;
     DateTo?: Date;
     TypeOfLeaveId?: number;
+    LeaveStatusId?: number;
     status?: Status;
 }
 
@@ -165,8 +166,58 @@ class LeavesService extends ApiClient {
         });
     }
 
+    // /Leaves/Submit/{id}
+    public async submitLeave(id: string): Promise<any> {
+        return this.request<any>({
+            method: 'PUT',
+            url: `/Leaves/Submit/${id}`
+        });
+    }
 
+    // /Leaves/Approve/{id}
+    public async approveLeave(id: string, payload: { approverId: string; note?: string }): Promise<any> {
+        return this.request<any>({
+            method: 'PUT',
+            url: `/Leaves/Approve/${id}`,
+            data: payload
+        });
+    }
 
+    // /Leaves/Reject/{id}
+    public async rejectLeave(id: string, payload: { approverId: string; note?: string }): Promise<any> {
+        return this.request<any>({
+            method: 'PUT',
+            url: `/Leaves/Reject/${id}`,
+            data: payload
+        });
+    }
+
+    // /Leaves/Cancel/{id}
+    public async cancelLeave(id: string, payload: { reason?: string }): Promise<any> {
+        return this.request<any>({
+            method: 'PUT',
+            url: `/Leaves/Cancel/${id}`,
+            data: payload
+        });
+    }
+
+    // /Leaves/Extend/{id}
+    public async extendLeave(id: string, payload: any): Promise<any> {
+        return this.request<any>({
+            method: 'PUT',
+            url: `/Leaves/Extend/${id}`,
+            data: payload
+        });
+    }
+
+    // /Leaves/GetReport
+    public async getLeaveReport(params: any): Promise<any> {
+        return this.request<any>({
+            method: 'GET',
+            url: '/Leaves/GetReport',
+            params
+        });
+    }
 }
 
 export const leavesService: LeavesService = new LeavesService();
