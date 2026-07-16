@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { departmentService } from '@/services/system-settings/department.service';
 import { directorateService } from '@/services/system-settings/directorate.service';
 import { sectionService } from '@/services/system-settings/section.service';
@@ -9,6 +10,13 @@ import { Separator } from '@/components/ui/separator';
 import UnitTable from './_components/unit-table';
 import Pagination from '@/components/Pagination';
 import { columnsUnit } from './_components/columns';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IUnit {
    id: number;
@@ -35,20 +43,20 @@ const UnitsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const department = await departmentService.getDepartments();
-   const departmentList: [] = department?.data?.items ?? [];
+   const department = await fetchServer<ApiResponse<any>>('/Department');
+   const departmentList = department?.data?.items ?? [];
 
-   const directorate = await directorateService.getDirectorates();
-   const directorateList: [] = directorate?.data?.items ?? [];
+   const directorate = await fetchServer<ApiResponse<any>>('/Directorate');
+   const directorateList = directorate?.data?.items ?? [];
 
-   const subDirectorate = await subDirectorService.getSubDirectorates();
-   const subDirectorateList: [] = subDirectorate?.data?.items ?? [];
+   const subDirectorate = await fetchServer<ApiResponse<any>>('/SubDirectorate');
+   const subDirectorateList = subDirectorate?.data?.items ?? [];
 
-   const sections = await sectionService.getSection();
-   const sectionsList: [] = sections?.data?.items ?? [];
+   const sections = await fetchServer<ApiResponse<any>>('/Section');
+   const sectionsList = sections?.data?.items ?? [];
 
-   const units = await unitService.getUnit({ Page, PageSize });
-   const unitList: [] = units?.data?.items ?? [];
+   const units = await fetchServer<ApiResponse<any>>('/Unit', 'GET', { params: { Page, PageSize } });
+   const unitList = units?.data?.items ?? [];
 
    const totalCount = units?.data?.totalCount ?? 0;
 

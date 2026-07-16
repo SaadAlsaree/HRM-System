@@ -155,7 +155,7 @@ public static class AuthExtensions
     {
         var handler = new HttpClientHandler();
 
-        if (env.IsDevelopment() && settings.Issuer.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+        if (settings.Issuer.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
         {
             // Local Keycloak often uses a self-signed certificate in development.
             handler.ServerCertificateCustomValidationCallback =

@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import RelationshipToolbar from './_components/relationship-toolbar';
 import { Separator } from '@/components/ui/separator';
@@ -5,6 +6,13 @@ import RelationshipTable from './_components/relationship-table';
 import Pagination from '@/components/Pagination';
 import { columnsRelationship } from './_components/columns';
 import { levelOfRelationshipService } from '@/services/system-settings/level-of-relationship.service';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IRelationship {
    id: number;
@@ -23,8 +31,8 @@ const DegreeOfRelationshipPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await levelOfRelationshipService.getLevelOfRelationship({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/LevelOfRelationship', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

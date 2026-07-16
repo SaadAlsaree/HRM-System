@@ -2,7 +2,7 @@ import React from 'react';
 import JobCategoryForm from './job-category-form';
 
 type Props = {
-   jobDegreeList: [];
+   jobDegreeList: any[];
 };
 
 const JobCategoryToolbar = ({ jobDegreeList }: Props) => {

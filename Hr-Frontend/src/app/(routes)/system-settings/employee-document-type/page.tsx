@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { employeeDocumentsTypeService } from '@/services/Employee/employee-documents-type.service';
 import React from 'react';
 import { columnsEmployeeDocumentType } from './_components/columns';
@@ -5,6 +6,13 @@ import EmployeeDocumentTypeToolbar from './_components/employee-document-type-to
 import { Separator } from '@/components/ui/separator';
 import Pagination from '@/components/Pagination';
 import EmployeeDocumentTypeTable from './_components/employee-document-type-table';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IEmployeeDocumentType {
    id: number;
@@ -23,8 +31,8 @@ const EmployeeDocumentTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await employeeDocumentsTypeService.getEmployeeDocumentsType({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/EmployeeDocumentsType', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

@@ -3,7 +3,7 @@ import React from 'react';
 import AcademicAchievementForm from './academic-achievement-form';
 
 type Props = {
-   jobDegreeList: [];
+   jobDegreeList: any[];
 };
 const AcademicAchievementToolbar = ({ jobDegreeList }: Props) => {
    return (

@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import LawToolbar from './_components/law-toolbar';
 import { Separator } from '@/components/ui/separator';
@@ -5,6 +6,13 @@ import { lawService } from '@/services/system-settings/law.service';
 import LawTable from './_components/law-table';
 import Pagination from '@/components/Pagination';
 import { columnsLaw } from './_components/columns';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface ILaw {
    id: number;
@@ -23,8 +31,8 @@ const LawsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await lawService.getLaw({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/Law', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

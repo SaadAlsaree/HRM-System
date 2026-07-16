@@ -40,7 +40,7 @@ export async function fetchServer<T = unknown>(
     method,
     headers,
     body: options.formData ?? toRequestBody(options.body),
-    cache: options.cache,
+    cache: options.cache ?? 'no-store',
     next: options.next
   });
 

@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { countryService } from '@/services/system-settings/country.service';
 import React from 'react';
 import CountryToolbar from './_components/country-toolbar';
@@ -5,6 +6,13 @@ import { Separator } from '@/components/ui/separator';
 import { columnsCountry } from './_components/columns';
 import CountryTable from './_components/country-table';
 import Pagination from '@/components/Pagination';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface ICountry {
    id: number;
@@ -23,8 +31,8 @@ const CountryPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await countryService.getCountries({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/Country', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { typeOfAssignmentService } from '@/services/system-settings/type-of-assignment.service';
 import React from 'react';
 import AssignmentTypeToolbar from './_components/assignment-type-toolbar';
@@ -5,6 +6,13 @@ import { Separator } from '@/components/ui/separator';
 import Pagination from '@/components/Pagination';
 import AssignmentTypeTable from './_components/assignment-type-table';
 import { columnsAssignmentType } from './_components/columns';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IAssignmentType {
    id: number;
@@ -23,7 +31,7 @@ const AssignmentTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await typeOfAssignmentService.getTypeOfAssignments({ Page, PageSize });
+   const data = await fetchServer<ApiResponse<any>>('/TypeOfAssignment', 'GET', { params: { Page, PageSize } });
    const dataList: IAssignmentType[] = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;

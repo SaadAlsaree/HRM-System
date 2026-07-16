@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { studyStatusService } from '@/services/system-settings/study-status.service';
 import React from 'react';
 import StudyStatusToolbar from './_components/study-status-toolbar';
@@ -5,6 +6,13 @@ import StudyStatusTable from './_components/study-status-table';
 import Pagination from '@/components/Pagination';
 import { Separator } from '@/components/ui/separator';
 import { columnsStudyStatus } from './_components/columns';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IStudyStatus {
    id: number;
@@ -23,8 +31,8 @@ const StudyStatusPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await studyStatusService.getStudyStatuses({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/StudyStatus', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

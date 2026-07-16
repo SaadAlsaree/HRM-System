@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import { Separator } from '@/components/ui/separator';
 import CertificateTypeTable from './_components/certificate-type-table';
@@ -5,6 +6,13 @@ import { columnsCertificateType } from './_components/columns';
 import CertificateTypeToolbar from './_components/certificate-type-toolbar';
 import { academicCertificateTypeService } from '@/services/system-settings/academic-certificate-type.service';
 import Pagination from '@/components/Pagination';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 interface Props {
    searchParams: {
@@ -16,8 +24,8 @@ const CertificateTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await academicCertificateTypeService.getAcademicCertificateTypes({ Page, PageSize });
-   const academicCertificateType: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/AcademicCertificateType', 'GET', { params: { Page, PageSize } });
+   const academicCertificateType = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

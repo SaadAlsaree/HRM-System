@@ -13,7 +13,7 @@ import JobCategoryForm from './job-category-form';
 type Props = {
    columns: { label: string; value: string; className?: string }[];
    data?: IJobCategory[];
-   jobDegreeList: [];
+   jobDegreeList: any[];
 };
 
 const JobCategoryTable = ({ columns, data, jobDegreeList }: Props) => {

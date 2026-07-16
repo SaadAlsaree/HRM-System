@@ -3,10 +3,8 @@ import DepartmentToolbar from './_components/department-toolbar';
 import { Separator } from '@/components/ui/separator';
 import DepartmentTable from './_components/department-table';
 import { columnsDepartment } from './_components/columns';
-import { departmentService } from '@/services/system-settings/department.service';
-import { subDirectorService } from '@/services/system-settings/sub-directorate.service';
-import { directorateService } from '@/services/system-settings/directorate.service';
 import Pagination from '@/components/Pagination';
+import { fetchServer } from '@/lib/fetchServer';
 
 interface Props {
    searchParams: {
@@ -15,18 +13,25 @@ interface Props {
    };
 }
 
+interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
+
 const DepartmentsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const department = await departmentService.getDepartments({ Page, PageSize });
-   const departmentList: [] = department?.data?.items ?? [];
+   const department = await fetchServer<ApiResponse<any>>('/Department', 'GET', { params: { Page, PageSize } });
+   const departmentList = department?.data?.items ?? [];
 
-   const directorate = await directorateService.getDirectorates();
-   const directorateList: [] = directorate?.data?.items ?? [];
+   const directorate = await fetchServer<ApiResponse<any>>('/Directorate');
+   const directorateList = directorate?.data?.items ?? [];
 
-   const subDirectorate = await subDirectorService.getSubDirectorates();
-   const subDirectorateList: [] = subDirectorate?.data?.items ?? [];
+   const subDirectorate = await fetchServer<ApiResponse<any>>('/SubDirectorate');
+   const subDirectorateList = subDirectorate?.data?.items ?? [];
    const totalCount = department?.data?.totalCount ?? 0;
 
    return (

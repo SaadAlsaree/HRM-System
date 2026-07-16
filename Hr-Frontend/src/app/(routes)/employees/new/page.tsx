@@ -1,6 +1,5 @@
 import React from 'react';
 import EmployeeForm from '../_components/employee-form';
-import { Separator } from '@/components/ui/separator';
 import { fetchServer } from '@/lib/fetchServer';
 
 const NewEmployeeForm = async () => {
@@ -46,26 +45,22 @@ const NewEmployeeForm = async () => {
    const positionsList = positions?.data?.items ?? [];
 
    return (
-      <div className='p-2 bg-white rounded-lg border dark:bg-gray-900'>
-         <h1 className='text-xl text-gray-800 dark:text-gray-100'>أضافة موظف جديد .</h1>
-
-         <Separator className='my-4' />
-         <div className=''>
-            <EmployeeForm
-               jobDegreesList={jobDegreesList}
-               jobTitlesList={jobTitlesList}
-               jobCategoriesList={jobCategoriesList}
-               jobDescriptionsList={jobDescriptionsList}
-               directoratesList={directoratesList}
-               subDirectoratesList={subDirectoratesList}
-               departmentsList={departmentsList}
-               sectionsList={sectionsList}
-               unitsList={unitsList}
-               typeOfJobsList={typeOfJobsList}
-               countriesList={countriesList}
-               positionsList={positionsList}
-            />
-         </div>
+      <div className='flex flex-col gap-4 p-2'>
+         <h1 className='text-xl font-semibold text-foreground'>إضافة موظف جديد</h1>
+         <EmployeeForm
+            jobDegreesList={jobDegreesList}
+            jobTitlesList={jobTitlesList}
+            jobCategoriesList={jobCategoriesList}
+            jobDescriptionsList={jobDescriptionsList}
+            directoratesList={directoratesList}
+            subDirectoratesList={subDirectoratesList}
+            departmentsList={departmentsList}
+            sectionsList={sectionsList}
+            unitsList={unitsList}
+            typeOfJobsList={typeOfJobsList}
+            countriesList={countriesList}
+            positionsList={positionsList}
+         />
       </div>
    );
 };

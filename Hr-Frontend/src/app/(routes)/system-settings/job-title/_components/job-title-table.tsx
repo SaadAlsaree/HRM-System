@@ -12,7 +12,7 @@ import JobTitleForm from './job-title-form';
 type Props = {
    columns: { label: string; value: string; className?: string }[];
    data?: IJobTitle[];
-   jobDegrees: [];
+   jobDegrees: any[];
 };
 
 const JobTitleTable = ({ columns, data, jobDegrees }: Props) => {

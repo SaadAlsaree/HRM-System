@@ -2,8 +2,8 @@ import React from 'react';
 import DepartmentForm from './department-form';
 
 type Props = {
-   directorateList: [];
-   subDirectorateList: [];
+   directorateList: any[];
+   subDirectorateList: any[];
 };
 const DepartmentToolbar = ({ directorateList, subDirectorateList }: Props) => {
    return (

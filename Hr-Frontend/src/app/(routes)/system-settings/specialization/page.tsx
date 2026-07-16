@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { preciseAcademicFieldService } from '@/services/system-settings/precise-academic-field.service';
 import React from 'react';
 import SpecializationToolbar from './_components/specialization-toolbar';
@@ -5,6 +6,13 @@ import { Separator } from '@/components/ui/separator';
 import Pagination from '@/components/Pagination';
 import { columnsSpecialization } from './_components/columns';
 import SpecializationTable from './_components/specialization-table';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IPreciseAcademicField {
    id: number;
@@ -23,8 +31,8 @@ const SpecializationPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await preciseAcademicFieldService.getPreciseAcademicField({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/PreciseAcademicField', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

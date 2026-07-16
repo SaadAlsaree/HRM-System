@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 
 import { typeOfServiceService } from '@/services/system-settings/type-of-service.service';
@@ -6,6 +7,13 @@ import { columnsServiceType } from './_components/columns';
 import { Separator } from '@/components/ui/separator';
 import ServiceTypeTable from './_components/service-type-table';
 import ServiceTypeToolbar from './_components/service-type-toolbar';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IStudyResult {
    id: number;
@@ -24,8 +32,8 @@ const ServiceTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await typeOfServiceService.getTypeOfService({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/TypeOfService', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

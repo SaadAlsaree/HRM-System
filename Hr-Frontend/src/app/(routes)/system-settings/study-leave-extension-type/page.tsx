@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { studyExtensionOrderTypeService } from '@/services/system-settings/study-extension-order-type.service';
 import React from 'react';
 import StudyLeaveExtensionToolbar from './_components/study-leave-extension-toolbar';
@@ -5,6 +6,13 @@ import StudyLeaveExtensionTable from './_components/study-leave-extension-table'
 import { columnsStudyExtension } from './_components/columns';
 import { Separator } from '@/components/ui/separator';
 import Pagination from '@/components/Pagination';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IStudyExtensionOrderType {
    id: number;
@@ -22,8 +30,8 @@ const StudyLeaveExtensionTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await studyExtensionOrderTypeService.getStudyExtensionOrderTypes({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/StudyExtensionOrderType', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

@@ -1,4 +1,4 @@
-﻿using CommandScheduler;
+using CommandScheduler;
 using Hangfire;
 using Hangfire.PostgreSql;
 using MediatR;
@@ -22,7 +22,7 @@ namespace CommandScheduler
                 .UseRecommendedSerializerSettings()
                 .UsePostgreSqlStorage(hangfireConnection, new PostgreSqlStorageOptions
                 {
-                    PrepareSchemaIfNecessary = false
+                    PrepareSchemaIfNecessary = true
                 }));
 
             // Add the processing server as IHostedService

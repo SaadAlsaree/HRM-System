@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { typeOfBookService } from '@/services/system-settings/type-of-book.service';
 import React from 'react';
 import BookTypeToolbar from './_components/book-type-toolbar';
@@ -5,6 +6,13 @@ import { Separator } from '@/components/ui/separator';
 import Pagination from '@/components/Pagination';
 import BookTypeTable from './_components/book-type-table';
 import { columnsBookType } from './_components/columns';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface ITypeOfBook {
    id: number;
@@ -23,8 +31,8 @@ const BookTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await typeOfBookService.getTypeOfBooks({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/TypeOfBook', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

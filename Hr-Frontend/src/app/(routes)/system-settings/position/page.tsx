@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { positionService } from '@/services/system-settings/position.service';
 import React from 'react';
 import { columnsPosition } from './_components/columns';
@@ -5,6 +6,13 @@ import PositionTable from './_components/position-table';
 import PositionToolbar from './_components/position-toolbar';
 import { Separator } from '@/components/ui/separator';
 import Pagination from '@/components/Pagination';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IPosition {
    id: number;
@@ -23,8 +31,8 @@ const PositionPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await positionService.getPositions({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/Position', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

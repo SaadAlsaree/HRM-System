@@ -1,20 +1,22 @@
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance } from "axios";
 
 export class Client {
-    protected instance: AxiosInstance;
-    protected baseUrl: string = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://localhost:5214/hub/hrm/v1/api/";
+  protected instance: AxiosInstance;
+  protected baseUrl: string =
+    process.env.NEXT_PUBLIC_API_BASE_URL ??
+    "http://192.168.25.32:5000/hub/hrm/v1/api/";
 
-    constructor() {
-        this.instance = axios.create({
-            baseURL: this.baseUrl,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            withCredentials: true,
-        });
-    }
+  constructor() {
+    this.instance = axios.create({
+      baseURL: this.baseUrl,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+  }
 
-    getInstance(): AxiosInstance {
-        return this.instance;
-    }
+  getInstance(): AxiosInstance {
+    return this.instance;
+  }
 }

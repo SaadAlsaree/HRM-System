@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import AcademicSpecializationToolbar from './_components/academic-specialization-toolbar';
 import { Separator } from '@/components/ui/separator';
@@ -5,6 +6,13 @@ import { columnsAcademicSpecialization } from './_components/columns';
 import AcademicSpecializationTable from './_components/academic-specialization-table';
 import { academicFieldService } from '@/services/system-settings/academic-field.service';
 import Pagination from '@/components/Pagination';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 interface Props {
    searchParams: {
@@ -16,8 +24,8 @@ const AcademicSpecializationPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await academicFieldService.getAcademicFields({ Page, PageSize });
-   const academicSpecialization: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/AcademicField', 'GET', { params: { Page, PageSize } });
+   const academicSpecialization = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 
    return (

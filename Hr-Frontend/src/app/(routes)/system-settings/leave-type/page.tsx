@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { typeOfLeaveService } from '@/services/Leaves/type-of-leave.service';
 import React from 'react';
 import LeaveTypeToolbar from './_components/leave-type-toolbar';
@@ -5,6 +6,13 @@ import { Separator } from '@/components/ui/separator';
 import LeaveTypeTable from './_components/leave-type-table';
 import Pagination from '@/components/Pagination';
 import { columnsTypeOfLeave } from './_components/columns';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface ITypeOfLeave {
    id: number;
@@ -23,8 +31,8 @@ const LeaveTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await typeOfLeaveService.getTypeOfLeave({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/TypeOfLeave', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

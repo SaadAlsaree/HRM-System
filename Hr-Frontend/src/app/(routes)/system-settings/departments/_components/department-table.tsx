@@ -22,8 +22,8 @@ export interface IDepartment {
 type Props = {
    columns: { label: string; value: string; className?: string }[];
    DepartmentData: IDepartment[];
-   directorateList: [];
-   subDirectorateList: [];
+   directorateList: any[];
+   subDirectorateList: any[];
 };
 
 const DepartmentTable = ({ DepartmentData, columns, directorateList, subDirectorateList }: Props) => {

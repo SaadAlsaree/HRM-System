@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import { columnsAcademicAchievement } from '@/app/(routes)/system-settings/academic-achievement/_components/columns';
 import AcademicAchievementTable from '@/app/(routes)/system-settings/academic-achievement/_components/academic-achievement-table';
@@ -6,6 +7,13 @@ import { Separator } from '@/components/ui/separator';
 import { academicAchievementService } from '@/services/system-settings/academic-chievement.service';
 import Pagination from '@/components/Pagination';
 import { jobDegreeService } from '@/services/system-settings/job-degree.service';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 interface Props {
    searchParams: {
@@ -17,11 +25,11 @@ const AcademicAchievementPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const jobDegrees = await jobDegreeService.getJobDegree();
-   const jobDegreeList: [] = jobDegrees?.data?.items ?? [];
+   const jobDegrees = await fetchServer<ApiResponse<any>>('/JobDegree');
+   const jobDegreeList = jobDegrees?.data?.items ?? [];
 
-   const data = await academicAchievementService.getAcademicAchievements({ Page, PageSize });
-   const academicAchievements: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/AcademicAchievement', 'GET', { params: { Page, PageSize } });
+   const academicAchievements = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 
    console.log(data);

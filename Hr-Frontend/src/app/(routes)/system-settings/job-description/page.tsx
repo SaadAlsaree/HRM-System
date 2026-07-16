@@ -1,9 +1,17 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { jobDescriptionService } from '@/services/system-settings/job-description.service';
 import JobDescriptionToolbar from './_components/job-description-toolbar';
 import { Separator } from '@/components/ui/separator';
 import Pagination from '@/components/Pagination';
 import JobDescriptionTable from './_components/job-description-table';
 import { columnsJobDescription } from './_components/columns';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IJobDescription {
    id: number;
@@ -22,8 +30,8 @@ const JobDescriptionPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await jobDescriptionService.getJobDescription({ Page, PageSize });
-   const jobDescriptions: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/JobDescription', 'GET', { params: { Page, PageSize } });
+   const jobDescriptions = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

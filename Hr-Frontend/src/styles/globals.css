@@ -224,3 +224,45 @@ body {
       @apply bg-background text-foreground;
    }
 }
+
+/* RTL-aware typography for the in-app user guide (react-markdown + @tailwindcss/typography).
+   The prose plugin defaults to LTR; these rules align Arabic content to the right while
+   keeping code blocks and inline code LTR (they contain English code/paths). */
+.rtl-prose {
+   text-align: right;
+}
+.rtl-prose h1,
+.rtl-prose h2,
+.rtl-prose h3,
+.rtl-prose h4,
+.rtl-prose h5,
+.rtl-prose h6 {
+   text-align: right;
+}
+.rtl-prose ul,
+.rtl-prose ol {
+   margin-right: 0;
+   margin-left: auto;
+   padding-right: 1.5rem;
+   padding-left: 0;
+}
+.rtl-prose blockquote {
+   border-right-width: 4px;
+   border-left-width: 0;
+   padding-right: 1rem;
+   padding-left: 0;
+}
+/* Keep code LTR so English code/paths render correctly */
+.rtl-prose pre,
+.rtl-prose code {
+   direction: ltr;
+   text-align: left;
+}
+.rtl-prose pre code {
+   text-align: left;
+}
+/* Tables: keep readable in RTL */
+.rtl-prose table {
+   margin-right: 0;
+   margin-left: auto;
+}

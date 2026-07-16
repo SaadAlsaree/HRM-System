@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import Pagination from '@/components/Pagination';
 import { Separator } from '@/components/ui/separator';
 import React from 'react';
@@ -6,6 +7,13 @@ import { columnsJobTitle } from './_components/columns';
 import JobTitleToolbar from './_components/job-title-toolbar';
 import { jobDegreeService } from '@/services/system-settings/job-degree.service';
 import { jobTitleService } from '@/services/system-settings/job-title.service';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IJobTitle {
    id: number;
@@ -26,11 +34,11 @@ const JobTitlePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const jobDegrees = await jobDegreeService.getJobDegree();
-   const jobDegreeList: [] = jobDegrees?.data?.items ?? [];
+   const jobDegrees = await fetchServer<ApiResponse<any>>('/JobDegree');
+   const jobDegreeList = jobDegrees?.data?.items ?? [];
 
-   const data = await jobTitleService.getJobTitle({ Page, PageSize });
-   const jobTitle: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/JobTitle', 'GET', { params: { Page, PageSize } });
+   const jobTitle = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

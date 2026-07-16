@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { normalLeaveTypeService } from '@/services/Leaves/normal-leave-type.service';
 import React from 'react';
 import NormalLeaveToolbar from './_components/normal-leave-toolbar';
@@ -5,6 +6,13 @@ import { Separator } from '@/components/ui/separator';
 import NormalLeaveTable from './_components/normal-leave-table';
 import Pagination from '@/components/Pagination';
 import { columnsNormalLeave } from './_components/columns';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface INormalLeave {
    id: number;
@@ -23,8 +31,8 @@ const NormalLeavePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await normalLeaveTypeService.getNormalLeaveType({ Page: 1, PageSize: 10 });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/NormalLeaveType', 'GET', { params: { Page: 1, PageSize: 10 } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
    return (

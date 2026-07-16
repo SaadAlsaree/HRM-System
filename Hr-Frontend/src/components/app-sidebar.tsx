@@ -12,7 +12,8 @@ import {
    DraftingCompass,
    FileCheck,
    Cog,
-   Loader
+   Loader,
+   BookOpen
 } from 'lucide-react';
 import { NavMain } from '@/components/nav-main';
 // import { NavProjects } from '@/components/nav-projects';
@@ -424,6 +425,12 @@ const data = {
                url: '/system-settings/degree-of-relationship'
             }
          ]
+      },
+      {
+         title: 'دليل المستخدم',
+         url: '/user-guide',
+         icon: BookOpen,
+         items: []
       }
    ],
    projects: [
@@ -456,7 +463,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             {/* <NavProjects projects={data.projects} /> */}
          </SidebarContent>
          <SidebarFooter>
-            <NavUser user={data.user} />
+            <NavUser />
          </SidebarFooter>
          <SidebarRail />
       </Sidebar>

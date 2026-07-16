@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { sicknessTypeService } from '@/services/system-settings/sickness-type.service';
 import React from 'react';
 import MedicalLeaveToolbar from './_components/medical-leave-toolbar';
@@ -5,6 +6,13 @@ import { Separator } from '@/components/ui/separator';
 import MedicalLeaveTable from './_components/medical-leave-table';
 import { columnsMedicalLeave } from './_components/columns';
 import Pagination from '@/components/Pagination';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IMedicalLeaveType {
    id: number;
@@ -22,8 +30,8 @@ const MedicalLeaveTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await sicknessTypeService.getSicknessTypes();
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/SicknessType');
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

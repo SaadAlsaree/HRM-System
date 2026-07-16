@@ -11,10 +11,10 @@ import UnitForm from './unit-form';
 
 type Props = {
    columns: { label: string; value: string; className?: string }[];
-   DepartmentData: [];
-   directorateList: [];
-   subDirectorateList: [];
-   sectionsList: [];
+   DepartmentData: any[];
+   directorateList: any[];
+   subDirectorateList: any[];
+   sectionsList: any[];
    data: IUnit[];
 };
 

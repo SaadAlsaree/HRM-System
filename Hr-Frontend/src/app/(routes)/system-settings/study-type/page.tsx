@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { studyTypeService } from '@/services/system-settings/study-type.service';
 import React from 'react';
 import StudyTypeToolbar from './_components/study-type-toolbar';
@@ -5,6 +6,13 @@ import { Separator } from '@/components/ui/separator';
 import Pagination from '@/components/Pagination';
 import StudyTypeTable from './_components/study-type-table';
 import { columnsStudyType } from './_components/columns';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IStudyType {
    id: number;
@@ -23,8 +31,8 @@ const StudyTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await studyTypeService.getStudyTypes({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/StudyType', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

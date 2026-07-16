@@ -20,7 +20,7 @@ export interface IAcademicAchievement {
 type Props = {
    columns: { label: string; value: string; className?: string }[];
    AcademicAchievementData: IAcademicAchievement[];
-   jobDegreeList: [];
+   jobDegreeList: any[];
 };
 const AcademicAchievementTable = ({ AcademicAchievementData, columns, jobDegreeList }: Props) => {
    const router = useRouter();

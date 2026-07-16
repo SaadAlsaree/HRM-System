@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import Pagination from '@/components/Pagination';
 import { Separator } from '@/components/ui/separator';
 import React from 'react';
@@ -5,6 +6,13 @@ import PenaltyTypeToolbar from './_components/penalty-type-toolbar';
 import PenaltyTypeTable from './_components/penalty-type-table';
 import { columnsPenaltyType } from './_components/columns';
 import { typeOfDisciplinaryService } from '@/services/system-settings/type-of-disciplinary.service';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IPenaltyType {
    id: number;
@@ -24,8 +32,8 @@ const PenaltyTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await typeOfDisciplinaryService.getTypeOfDisciplinary({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/TypeOfDisciplinary', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

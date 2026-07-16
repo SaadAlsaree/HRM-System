@@ -30,9 +30,9 @@ type Props = {
    icon?: React.ReactNode;
    title: string;
    variant?: 'ghost' | 'outline' | 'default' | 'destructive' | 'link';
-   DepartmentData: [];
-   directorateList: [];
-   subDirectorateList: [];
+   DepartmentData: any[];
+   directorateList: any[];
+   subDirectorateList: any[];
 };
 
 export default function SectionForm({ title, data, icon, variant, DepartmentData, directorateList, subDirectorateList }: Props) {

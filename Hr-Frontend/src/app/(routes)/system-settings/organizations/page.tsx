@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import OrganizationToolbar from './_components/organization-toolbar';
 import { Separator } from '@/components/ui/separator';
@@ -5,6 +6,13 @@ import { columnsOrg } from './_components/columns';
 import OrganizationTable from './_components/organization-table';
 import { directorateService } from '@/services/system-settings/directorate.service';
 import Pagination from '@/components/Pagination';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 interface Props {
    searchParams: {
@@ -17,8 +25,8 @@ const OrganizationsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await directorateService.getDirectorates({ Page, PageSize });
-   const directorate: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/Directorate', 'GET', { params: { Page, PageSize } });
+   const directorate = data?.data?.items ?? [];
    const totalCount = data?.data?.totalCount ?? 0;
 
    return (

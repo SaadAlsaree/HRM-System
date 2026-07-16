@@ -2,10 +2,10 @@ import React from 'react';
 import UnitForm from './unit-form';
 
 type Props = {
-   DepartmentData: [];
-   directorateList: [];
-   subDirectorateList: [];
-   sectionList: [];
+   DepartmentData: any[];
+   directorateList: any[];
+   subDirectorateList: any[];
+   sectionList: any[];
 };
 
 const UnitToolbar = ({ DepartmentData, directorateList, subDirectorateList, sectionList }: Props) => {

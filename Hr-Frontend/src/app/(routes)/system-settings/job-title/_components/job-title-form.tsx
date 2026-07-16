@@ -26,7 +26,7 @@ type Props = {
    icon?: React.ReactNode;
    title: string;
    variant?: 'ghost' | 'outline' | 'default' | 'destructive' | 'link';
-   jobDegrees: [];
+   jobDegrees: any[];
 };
 
 const JobTitleForm = ({ title, data, icon, variant, jobDegrees }: Props) => {

@@ -3,12 +3,10 @@
 public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<bool>>
 {
     private readonly IBaseRepository<Employees> _repositoryEmployee;
-    private readonly IBaseRepository<ManagementInformation> _repositoryManagementInformation;
 
-    public AddEmployeeHandler(IBaseRepository<Employees> repositoryEmployee, IBaseRepository<ManagementInformation> repositoryManagementInformation)
+    public AddEmployeeHandler(IBaseRepository<Employees> repositoryEmployee)
     {
         _repositoryEmployee = repositoryEmployee;
-        _repositoryManagementInformation = repositoryManagementInformation;
     }
 
     public async Task<Response<bool>> Handle(AddEmployeeCommend request, CancellationToken cancellationToken)
@@ -37,9 +35,18 @@ public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<b
                 return ErrorsMessage.LotNumberExist.ToErrorMessage(false);
         }
 
+        // ManagementInformation shares the same PK as the Employee (one-to-one).
+        // Attaching it as a navigation property below lets EF Core persist the Employee
+        // together with all related entities (JobInformation, Promotion, ManagementInformation,
+        // LeavesBalances) in a SINGLE SaveChanges call, so the write is atomic: either all
+        // job-related data is saved or none of it is. Previously ManagementInformation was
+        // created in a separate SaveChanges, which caused a partial (silent) save whenever it
+        // failed — leaving the Employee without its job title/description/position.
+        var employeeId = Guid.NewGuid();
+
         var employeeData = new Employees()
         {
-            Id = Guid.NewGuid(),
+            Id = employeeId,
             BirthDate = request.BirthDate,
             BirthPlace = request.BirthPlace,
             FirstName = request.FirstName,
@@ -85,6 +92,20 @@ public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<b
                 JobCategoryId = request.JobCategoryId,
                 JobDegreeId = request.JobDegreeId
             },
+            ManagementInformation = new ManagementInformation()
+            {
+                Id = employeeId,
+                DirectorateId = request.DirectorateId,
+                SubDirectorateId = request.SubDirectorateId,
+                DepartmentId = request.DepartmentId,
+                PositionId = request.PositionId,
+                EmploymentDegreeId = request.JobDegreeId,
+                JobTitleId = request.JobTitleId,
+                JobDescriptionId = request.JobDescriptionId,
+                StatusId = Status.Unverified,
+                IsDeleted = false,
+                Notes = "تم اضافة موظف"
+            },
             LeavesBalances = new LeavesBalance()
             {
                 Balance = 3,
@@ -97,26 +118,24 @@ public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<b
             },
 
         };
-        var result = await _repositoryEmployee.Create(employeeData, cancellationToken);
-        var managementInformation = new ManagementInformation()
+
+        try
         {
-            Id = employeeData.Id,
-            DirectorateId = request.DirectorateId,
-            SubDirectorateId = request.SubDirectorateId,
-            DepartmentId = request.DepartmentId,
-            PositionId = request.PositionId,
-            EmploymentDegreeId = request.JobDegreeId,
-            JobTitleId = request.JobTitleId,
-            JobDescriptionId = request.JobDescriptionId,
-            StatusId = Status.Unverified,
-            IsDeleted = false,
-            Notes = "تم اضافة موظف"
-        };
+            await _repositoryEmployee.Create(employeeData, cancellationToken);
+        }
+        catch
+        {
+            // SaveChanges failed (e.g. an invalid/missing required foreign key such as
+            // JobTitleId/JobDegreeId). Because everything is written in a single SaveChanges,
+            // nothing is persisted here — no partial employee record is left behind.
+            // The validator (AddEmployeeCommendValidator) should normally prevent this path.
+            return Response<bool>.Fail(new MessageResponse
+            {
+                Message = "تعذر حفظ البيانات الوظيفية، يرجى التأكد من اختيار الدرجة والفئة والعنوان الوظيفي والمنصب",
+                Code = "FailOnCreate"
+            });
+        }
 
-        await _repositoryManagementInformation.Create(managementInformation, cancellationToken);
-
-        result.ManagementInformation = managementInformation;
-        _repositoryEmployee.Update(result);
         return SuccessMessage.Create.ToSuccessMessage(true);
     }
 }

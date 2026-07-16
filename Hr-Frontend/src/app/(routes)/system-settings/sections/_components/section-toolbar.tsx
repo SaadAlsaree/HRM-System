@@ -1,9 +1,9 @@
 import React from 'react';
 import SectionForm from './section-form';
 type Props = {
-   DepartmentData: [];
-   directorateList: [];
-   subDirectorateList: [];
+   DepartmentData: any[];
+   directorateList: any[];
+   subDirectorateList: any[];
 };
 
 const SectionToolbar = ({ DepartmentData, directorateList, subDirectorateList }: Props) => {

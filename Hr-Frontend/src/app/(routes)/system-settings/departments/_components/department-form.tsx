@@ -28,8 +28,8 @@ type Props = {
    icon?: React.ReactNode;
    title: string;
    variant?: 'ghost' | 'outline' | 'default' | 'destructive' | 'link';
-   directorateList: [];
-   subDirectorateList: [];
+   directorateList: any[];
+   subDirectorateList: any[];
 };
 
 const DepartmentForm = ({ title, data, icon, variant, directorateList, subDirectorateList }: Props) => {

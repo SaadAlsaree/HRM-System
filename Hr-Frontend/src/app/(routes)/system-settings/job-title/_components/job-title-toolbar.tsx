@@ -2,7 +2,7 @@ import React from 'react';
 import JobTitleForm from './job-title-form';
 
 type Props = {
-   jobDegrees: [];
+   jobDegrees: any[];
 };
 
 const JobTitleToolbar = ({ jobDegrees }: Props) => {

@@ -1,3 +1,4 @@
+import { fetchServer } from '@/lib/fetchServer';
 import { provinceService } from '@/services/system-settings/province.service';
 import React from 'react';
 import RegionToolbar from './_components/region-toolbar';
@@ -5,6 +6,13 @@ import { Separator } from '@/components/ui/separator';
 import RegionTable from './_components/region-table';
 import Pagination from '@/components/Pagination';
 import { columnsRegion } from './_components/columns';
+
+export interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
 
 export interface IRegion {
    id: number;
@@ -23,8 +31,8 @@ const RegionsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await provinceService.getProvinces({ Page, PageSize });
-   const dataList: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/Province', 'GET', { params: { Page, PageSize } });
+   const dataList = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

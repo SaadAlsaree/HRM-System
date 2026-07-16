@@ -1,12 +1,10 @@
-import { jobCategoryService } from '@/services/system-settings/job-category.service';
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import JobCategoryToolbar from './_components/job-category-toolbar';
 import { Separator } from '@/components/ui/separator';
 import JobCategoryTable from './_components/job-category-table';
 import { columnsJobCategory } from './_components/columns';
 import Pagination from '@/components/Pagination';
-import { jobDegreeService } from '@/services/system-settings/job-degree.service';
-
 export interface IJobCategory {
    id: number;
    name: string;
@@ -23,15 +21,22 @@ interface Props {
    };
 }
 
+interface ApiResponse<T = Record<string, unknown>> {
+   data?: {
+      items?: T[];
+      totalCount?: number;
+   };
+}
+
 const JobCategoryPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const jobDegrees = await jobDegreeService.getJobDegree();
-   const jobDegreeList: [] = jobDegrees?.data?.items ?? [];
+   const jobDegrees = await fetchServer<ApiResponse<any>>('/JobDegree');
+   const jobDegreeList = jobDegrees?.data?.items ?? [];
 
-   const data = await jobCategoryService.getJobCategory({ Page, PageSize });
-   const jobCategory: [] = data?.data?.items ?? [];
+   const data = await fetchServer<ApiResponse<any>>('/JobCategory', 'GET', { params: { Page, PageSize } });
+   const jobCategory = data?.data?.items ?? [];
 
    const totalCount = data?.data?.totalCount ?? 0;
 

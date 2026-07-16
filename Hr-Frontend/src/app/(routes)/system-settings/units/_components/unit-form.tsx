@@ -31,10 +31,10 @@ type Props = {
    icon?: React.ReactNode;
    title: string;
    variant?: 'ghost' | 'outline' | 'default' | 'destructive' | 'link';
-   DepartmentData: [];
-   directorateList: [];
-   subDirectorateList: [];
-   sectionList: [];
+   DepartmentData: any[];
+   directorateList: any[];
+   subDirectorateList: any[];
+   sectionList: any[];
 };
 
 export default function UnitForm({ DepartmentData, directorateList, sectionList, subDirectorateList, title, data, icon, variant }: Props) {

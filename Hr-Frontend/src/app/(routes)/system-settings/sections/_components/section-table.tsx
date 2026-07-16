@@ -10,9 +10,9 @@ import { sectionService } from '@/services/system-settings/section.service';
 
 type Props = {
    columns: { label: string; value: string; className?: string }[];
-   DepartmentData: [];
-   directorateList: [];
-   subDirectorateList: [];
+   DepartmentData: any[];
+   directorateList: any[];
+   subDirectorateList: any[];
    data: ISection[];
 };
 
