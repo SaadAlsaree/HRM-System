@@ -216,7 +216,7 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
         employee.Promotion.LastUpdateAt = DateTime.UtcNow;
 
         var isNewEmployeeService = false;
-        var employeeService = employee.EmployeeService ?? await _employeeServiceRepository.Find(x => x.Id == employee.Id, cancellationToken: ct);
+        var employeeService = employee.EmployeeService ?? await _employeeServiceRepository.GetQueryable().IgnoreQueryFilters().FirstOrDefaultAsync(x => x.Id == employee.Id, cancellationToken: ct);
         if (employeeService == null)
         {
             isNewEmployeeService = true;
@@ -232,6 +232,12 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
         {
             employeeService.PromotionCalculation = promotionSummary;
             employeeService.LastUpdateAt = DateTime.UtcNow;
+            if (employeeService.IsDeleted)
+            {
+                employeeService.IsDeleted = false;
+                employeeService.DeletedAt = null;
+                employeeService.DeletedBy = null;
+            }
         }
 
         foreach (var item in applicableThanks)
