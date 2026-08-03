@@ -18,10 +18,11 @@ import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/spinner';
 import EmployeeSearch, { IEmployeeSearch } from '@/app/_components/employee-search';
 import { IMartyrsAndWounded } from '../page';
+import { martyrsWoundedService } from '@/services/martyrs-wounded.service';
 
 const formSchema = z.object({
    employeeId: z.string().optional(),
-   healthStatus: z.number().optional(),
+   healthStatus: z.coerce.number().optional(),
    endDateOfService: z.string().optional(),
    retirementDate: z.string().optional(),
    dateOfDeath: z.string().optional(),
@@ -64,11 +65,15 @@ const MartyrsWoundedForm = ({ title, data, icon, variant }: Props) => {
       setSubmitting(true);
       try {
          if (data) {
-            console.log('payload update', {
+            // console.log('payload update', {
+            //    ...values,
+            //    employeeId: selectedUser?.employeeId ?? data.employeeId ?? ''
+            // });
+            const payload = {
                ...values,
                employeeId: selectedUser?.employeeId ?? data.employeeId ?? ''
-            });
-            // await employeeCourseService.putEmployeeCourseById(data.id as string, payload);
+            };
+            await martyrsWoundedService.updateMartyrsWounded(data.id as string, payload);
 
             toast(
                <pre className=' w-[340px] rounded-md'>
@@ -91,7 +96,7 @@ const MartyrsWoundedForm = ({ title, data, icon, variant }: Props) => {
                setSubmitting(false);
                return;
             }
-            // await employeeCourseService.createEmployeeCourse(payload);
+            await martyrsWoundedService.createMartyrsWounded(payload);
             console.log('payload', payload);
             toast(
                <pre className=' w-[340px] rounded-md'>

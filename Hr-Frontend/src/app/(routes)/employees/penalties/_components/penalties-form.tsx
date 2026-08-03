@@ -21,7 +21,7 @@ import EmployeeSearch, { IEmployeeSearch } from '@/app/_components/employee-sear
 
 const formSchema = z.object({
    typeOfDisciplinaryId: z.number(),
-   countOfDayDelay: z.number().min(1),
+   countOfDayDelay: z.coerce.number().min(1),
    titleOfBook: z.string().min(2).max(75),
    bookNo: z.string().min(2).max(75),
    bookDate: z.coerce.string(),

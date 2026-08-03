@@ -62,6 +62,8 @@ const AnnualAllowanceFormDialog = ({ data, icon, title, variant = 'default' }: P
             const payload: IssueAnnualAllowancePayload = {
                 ...values,
                 employeeId: values.employeeId,
+                implementationDate: values.implementationDate ? values.implementationDate : undefined,
+                reasonForAmendment: values.reasonForAmendment ? values.reasonForAmendment : undefined,
             };
 
             let res;

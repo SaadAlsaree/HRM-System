@@ -1,5 +1,6 @@
 'use client';
 import React, { useEffect, useState } from 'react';
+import { fetchServer } from '@/lib/fetchServer';
 import { leavesService } from '@/services/Leaves/leaves.service';
 import LeaveStatusBadge from '../_shared/leave-status-badge';
 import LeaveActions from '../_shared/leave-actions';

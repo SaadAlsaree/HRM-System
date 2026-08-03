@@ -56,7 +56,7 @@ const LetterOfAppreciationForm = ({ data, icon, title, variant }: Props) => {
         const getBooksType = async () => {
             const categoryList = await typeOfBookService.getTypeOfBooks({Page: 1, PageSize: 100});
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const newCategoryList = categoryList.data.items.map((item: any) => (
+            const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
                 {
                     label: item.name,
                     value: item.id.toString()
@@ -67,7 +67,7 @@ const LetterOfAppreciationForm = ({ data, icon, title, variant }: Props) => {
         const getSeniorityType = async () => {
             const categoryList = await typeOfSeniorityServiceClient.getTypeOfSeniority({Page: 1, PageSize: 100});
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const newCategoryList = categoryList.data.items.map((item: any) => (
+            const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
                 {
                     label: item.name,
                     value: item.id.toString()

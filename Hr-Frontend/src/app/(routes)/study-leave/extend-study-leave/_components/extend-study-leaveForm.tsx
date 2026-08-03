@@ -19,7 +19,7 @@ import { Plus } from 'lucide-react';
 import { studyLeaveExtensionService } from '@/services/study-leave-extension.service';
 
 const formSchema = z.object({
-   studyExtensionOrderTypeId: z.number().min(1, 'نوع الأمر الإداري مطلوب'),
+   studyExtensionOrderTypeId: z.number().optional(),
    studyFileId: z.string().min(1, 'رقم الملف الدراسي مطلوب'),
    orderNo: z.string().min(1, 'رقم الأمر الإداري مطلوب'),
    countOfDay: z.number().min(1, 'عدد الأيام مطلوب'),

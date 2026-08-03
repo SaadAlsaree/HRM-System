@@ -39,8 +39,8 @@ const LetterOfAppreciationPage = async ({ searchParams }: Props) => {
     const PageSize = parseInt(searchParams.PageSize) || 10;
 
     const data = await thanksSeniorityService.getThanksSeniorities({ Page, PageSize});
-    const letterOfAppreciationData = data?.data?.items ?? [];
-    const totalCount = data?.data?.totalCount ?? 0;
+    const letterOfAppreciationData = (data?.items ?? data?.data?.items) ?? [];
+    const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
     return (
         <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

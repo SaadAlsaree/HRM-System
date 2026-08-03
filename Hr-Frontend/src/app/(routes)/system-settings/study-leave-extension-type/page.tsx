@@ -30,10 +30,10 @@ const StudyLeaveExtensionTypePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await fetchServer<ApiResponse<any>>('/StudyExtensionOrderType', 'GET', { params: { Page, PageSize } });
-   const dataList = data?.data?.items ?? [];
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/StudyExtensionOrderType', 'GET', { params: { Page, PageSize } });
+   const dataList = (data?.items ?? data?.data?.items) ?? [];
 
-   const totalCount = data?.data?.totalCount ?? 0;
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

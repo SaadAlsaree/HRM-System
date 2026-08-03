@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination';
 import LeavesToolbar from './_components/leaves-toolbar';
 import LeavesTable from './_components/leaves-table';
 import { columnsLeaves } from './_components/columns';
-import { leavesService } from '@/services/Leaves/leaves.service';
+import { fetchServer } from '@/lib/fetchServer';
 import { countryService } from '@/services/system-settings/country.service';
 
 export interface ILeave {
@@ -47,12 +47,12 @@ const LeavesPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await leavesService.getLeaves({ Page, PageSize, TypeOfLeaveId: 5 });
-   const leavesData = data?.data?.items ?? [];
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Leave', 'GET', { params: { Page, PageSize, TypeOfLeaveId: 5 } });
+   const leavesData = (data?.items ?? data?.data?.items) ?? [];
    const totalCount = data?.totalCount ?? 0;
 
    const country = await countryService.getCountries();
-   const countryData = country?.data?.items ?? [];
+   const countryData = (data?.items ?? data?.data?.items) ?? [];
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

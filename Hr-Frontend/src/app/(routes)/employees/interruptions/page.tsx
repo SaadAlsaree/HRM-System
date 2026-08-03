@@ -34,15 +34,15 @@ const InterruptionsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await fetchServer<{ data?: { items?: IInterruptions[]; totalCount?: number } }>(
+   const data = await fetchServer<{ items?: IInterruptions[]; totalCount?: number; data?: { items?: IInterruptions[]; totalCount?: number } }>(
       '/Interruption',
       'GET',
       {
          params: { Page, PageSize }
       }
    );
-   const interruptionList: IInterruptions[] = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const interruptionList: IInterruptions[] = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

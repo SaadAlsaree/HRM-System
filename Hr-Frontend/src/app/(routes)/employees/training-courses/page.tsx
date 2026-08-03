@@ -44,15 +44,15 @@ const TrainingCoursesPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await fetchServer<{ data?: { items?: ICourse[]; totalCount?: number } }>(
+   const data = await fetchServer<{ items?: ICourse[]; totalCount?: number; data?: { items?: ICourse[]; totalCount?: number } }>(
       '/EmployeeCourse',
       'GET',
       {
          params: { Page, PageSize }
       }
    );
-   const courseList: ICourse[] = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const courseList: ICourse[] = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

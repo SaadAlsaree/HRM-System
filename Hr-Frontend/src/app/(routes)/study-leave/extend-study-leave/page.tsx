@@ -35,8 +35,8 @@ async function ExtendStudyLeavePage({ searchParams }: Props) {
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
    const data = await studyLeaveExtensionService.getStudyLeaveExtensions({ Page, PageSize });
-   const studyLeaveExtensionDetails: IStudyLeaveExtension[] = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const studyLeaveExtensionDetails: IStudyLeaveExtension[] = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    // services
    // data

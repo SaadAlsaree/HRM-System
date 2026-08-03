@@ -69,7 +69,7 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
       const degreeList = await jobDegreeService.getJobDegree({ Page: 1, PageSize: 100 });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newDegreeList = degreeList.data.items.map((item: any) => ({
+      const newDegreeList = (degreeList?.items ?? degreeList?.data?.items ?? []).map((item: any) => ({
          label: item.name,
          value: item.id.toString()
       }));
@@ -81,7 +81,7 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
       const jobTitleList = await jobTitleService.getJobTitle({ Page: 1, PageSize: 100 });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newJobTitleList = jobTitleList.data.items.map((item: any) => ({
+      const newJobTitleList = (jobTitleList?.items ?? jobTitleList?.data?.items ?? []).map((item: any) => ({
          label: item.name,
          value: item.id.toString()
       }));
@@ -91,7 +91,7 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
    const getJobCategoryList = async () => {
       const jobCategoryList = await jobCategoryService.getJobCategory({ Page: 1, PageSize: 100 });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newJobCategoryList = jobCategoryList.data.items.map((item: any) => ({
+      const newJobCategoryList = (jobCategoryList?.items ?? jobCategoryList?.data?.items ?? []).map((item: any) => ({
          label: item.name,
          value: item.id.toString()
       }));
@@ -101,7 +101,7 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
    const getAcademicAchievementList = async () => {
       const academicAchievementList = await academicAchievementService.getAcademicAchievements({ Page: 1, PageSize: 100 });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newAcademicAchievementList = academicAchievementList.data.items.map((item: any) => ({
+      const newAcademicAchievementList = (academicAchievementList?.items ?? academicAchievementList?.data?.items ?? []).map((item: any) => ({
          label: item.name,
          value: item.id.toString()
       }));
@@ -111,7 +111,7 @@ const CertificateCalculationForm = ({ data, icon, title, variant }: Props) => {
    const getJobDescriptionList = async () => {
       const jobDescriptionList = await jobDescriptionService.getJobDescription({ Page: 1, PageSize: 100 });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newJobDescriptionList = jobDescriptionList.data.items.map((item: any) => ({
+      const newJobDescriptionList = (jobDescriptionList?.items ?? jobDescriptionList?.data?.items ?? []).map((item: any) => ({
          label: item.name,
          value: item.id.toString()
       }));

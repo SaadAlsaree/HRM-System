@@ -35,15 +35,15 @@ const ResignationsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await fetchServer<{ data?: { items?: IResignation[]; totalCount?: number } }>(
+   const data = await fetchServer<{ items?: IResignation[]; totalCount?: number; data?: { items?: IResignation[]; totalCount?: number } }>(
       '/Resignation',
       'GET',
       {
          params: { Page, PageSize }
       }
    );
-   const resignationList: IResignation[] = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const resignationList: IResignation[] = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

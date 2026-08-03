@@ -71,7 +71,7 @@ const AccelerateAchievementForm = ({ data, icon, title, variant }: Props) => {
    const getCategoryList = async () => {
       const categoryList = await jobCategoryService.getJobCategory({ Page: 1, PageSize: 100 });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newCategoryList = categoryList.data.items.map((item: any) => ({
+      const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => ({
          label: item.name,
          value: item.id.toString()
       }));
@@ -82,7 +82,7 @@ const AccelerateAchievementForm = ({ data, icon, title, variant }: Props) => {
       const degreeList = await jobDegreeService.getJobDegree({ Page: 1, PageSize: 100 });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newDegreeList = degreeList.data.items.map((item: any) => ({
+      const newDegreeList = (degreeList?.items ?? degreeList?.data?.items ?? []).map((item: any) => ({
          label: item.name,
          value: item.id.toString()
       }));
@@ -93,7 +93,7 @@ const AccelerateAchievementForm = ({ data, icon, title, variant }: Props) => {
    const getJobDescriptionList = async () => {
       const jobDescriptionList = await jobDescriptionService.getJobDescription({ Page: 1, PageSize: 100 });
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newJobDescriptionList = jobDescriptionList.data.items.map((item: any) => ({
+      const newJobDescriptionList = (jobDescriptionList?.items ?? jobDescriptionList?.data?.items ?? []).map((item: any) => ({
          label: item.name,
          value: item.id.toString()
       }));
@@ -104,7 +104,7 @@ const AccelerateAchievementForm = ({ data, icon, title, variant }: Props) => {
       const jobTitleList = await jobTitleService.getJobTitle({ Page: 1, PageSize: 100 });
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const newJobTitleList = jobTitleList.data.items.map((item: any) => ({
+      const newJobTitleList = (jobTitleList?.items ?? jobTitleList?.data?.items ?? []).map((item: any) => ({
          label: item.name,
          value: item.id.toString()
       }));

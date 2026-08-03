@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination';
 import MaternityLeaveToolbar from './_components/maternity-leave-toolbar';
 import MaternityLeaveTable from './_components/maternity-leave-table';
 import { columnsMaternityLeave } from './_components/columns';
-import { leavesService } from '@/services/Leaves/leaves.service';
+import { fetchServer } from '@/lib/fetchServer';
 
 export interface IMaternityLeave {
    id: string;
@@ -37,8 +37,8 @@ const MaternityLeavePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await leavesService.getLeaves({ Page, PageSize, TypeOfLeaveId: 4 });
-   const maternityLeaveData = data?.data?.items ?? [];
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Leave', 'GET', { params: { Page, PageSize, TypeOfLeaveId: 4 } });
+   const maternityLeaveData = (data?.items ?? data?.data?.items) ?? [];
    const totalCount = data?.totalCount ?? 0;
 
    return (

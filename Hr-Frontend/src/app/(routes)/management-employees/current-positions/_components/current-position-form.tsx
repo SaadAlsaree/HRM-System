@@ -68,7 +68,7 @@ const CurrentPositionForm = ({ data, icon, title, variant }: Props) => {
                         const getDirectorateList = async () => {
                             const categoryList = await directorateService.getDirectorates({Page: 1, PageSize: 100});
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            const newCategoryList = categoryList.data.items.map((item: any) => (
+                            const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
                                 {
                                     label: item.name,
                                     value: item.id.toString()
@@ -79,7 +79,7 @@ const CurrentPositionForm = ({ data, icon, title, variant }: Props) => {
                         const getSubDirectorateList = async () => {
                             const categoryList = await subDirectorService.getSubDirectorates({Page: 1, PageSize: 100});
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            const newCategoryList = categoryList.data.items.map((item: any) => (
+                            const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
                                 {
                                     label: item.name,
                                     value: item.id.toString()
@@ -90,7 +90,7 @@ const CurrentPositionForm = ({ data, icon, title, variant }: Props) => {
                         const getDepartmentList = async () => {
                             const categoryList = await departmentService.getDepartments({Page: 1, PageSize: 100});
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            const newCategoryList = categoryList.data.items.map((item: any) => (
+                            const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
                                 {
                                     label: item.name,
                                     value: item.id.toString()
@@ -101,7 +101,7 @@ const CurrentPositionForm = ({ data, icon, title, variant }: Props) => {
                         const getSectionList = async () => {
                             const categoryList = await sectionService.getSection({Page: 1, PageSize: 100});
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            const newCategoryList = categoryList.data.items.map((item: any) => (
+                            const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
                                 {
                                     label: item.name,
                                     value: item.id.toString()
@@ -112,7 +112,7 @@ const CurrentPositionForm = ({ data, icon, title, variant }: Props) => {
                         const getUniteList = async () => {
                             const categoryList = await unitService.getUnit({Page: 1, PageSize: 100});
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            const newCategoryList = categoryList.data.items.map((item: any) => (
+                            const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
                                 {
                                     label: item.name,
                                     value: item.id.toString()
@@ -123,7 +123,7 @@ const CurrentPositionForm = ({ data, icon, title, variant }: Props) => {
                         const getPositionList = async () => {
                             const categoryList = await positionService.getPositions({Page: 1, PageSize: 100});
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            const newCategoryList = categoryList.data.items.map((item: any) => (
+                            const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
                                 {
                                     label: item.name,
                                     value: item.id.toString()

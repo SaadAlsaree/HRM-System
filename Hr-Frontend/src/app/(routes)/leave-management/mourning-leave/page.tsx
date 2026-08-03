@@ -1,4 +1,4 @@
-import { leavesService } from '@/services/Leaves/leaves.service';
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import MourningLeaveToolbar from './_components/mourning-leave-toolbar';
 import { Separator } from '@/components/ui/separator';
@@ -56,8 +56,8 @@ const MourningLeavePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await leavesService.getLeaves({ Page, PageSize, TypeOfLeaveId: 9, status: 1 });
-   const mourningLeaveData = data?.data?.items ?? [];
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Leave', 'GET', { params: { Page, PageSize, TypeOfLeaveId: 9, status: 1 } });
+   const mourningLeaveData = (data?.items ?? data?.data?.items) ?? [];
    const totalCount = data?.totalCount ?? 0;
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

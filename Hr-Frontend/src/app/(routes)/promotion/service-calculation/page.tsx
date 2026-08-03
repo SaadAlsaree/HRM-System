@@ -39,14 +39,14 @@ const ServiceCalculationPage = async ({ searchParams }: Props) => {
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
    const data = await serviceCalculationService.getServiceCalculations({ Page, PageSize });
-   const serviceCalculation = data?.data?.items ?? [];
-   const totalCount = data?.totalCount ?? 0;
+   const serviceCalculation = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
-   const jobDegrees = await jobDegreeService.getJobDegree();
-   const jobDegreesList = jobDegrees?.data?.items ?? [];
+   const jobDegrees = await jobDegreeService.getJobDegree({ Page: 1, PageSize: 100 });
+   const jobDegreesList = (jobDegrees?.items ?? jobDegrees?.data?.items) ?? [];
 
-   const jobTitles = await jobTitleService.getJobTitle();
-   const jobTitlesList = jobTitles?.data?.items ?? [];
+   const jobTitles = await jobTitleService.getJobTitle({ Page: 1, PageSize: 100 });
+   const jobTitlesList = (jobTitles?.items ?? jobTitles?.data?.items) ?? [];
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

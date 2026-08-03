@@ -1,4 +1,4 @@
-import { leavesService } from '@/services/Leaves/leaves.service';
+import { fetchServer } from '@/lib/fetchServer';
 import React from 'react';
 import SpecialMedicalLeaveToolbar from './_components/special-medical-leave-toolbar';
 import { Separator } from '@/components/ui/separator';
@@ -56,8 +56,8 @@ const SpecialMedicalLeavePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await leavesService.getLeaves({ Page, PageSize, TypeOfLeaveId: 7, status: 1 });
-   const specialMedicalLeaveData = data?.data?.items ?? [];
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Leave', 'GET', { params: { Page, PageSize, TypeOfLeaveId: 7, status: 1 } });
+   const specialMedicalLeaveData = (data?.items ?? data?.data?.items) ?? [];
    const totalCount = data?.totalCount ?? 0;
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

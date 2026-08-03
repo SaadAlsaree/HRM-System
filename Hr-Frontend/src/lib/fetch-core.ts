@@ -52,5 +52,26 @@ export function toRequestBody(body: unknown): BodyInit | undefined {
 }
 
 export function parseJsonResponse<T>(text: string): T {
-  return text ? (JSON.parse(text) as T) : (null as T);
+  if (!text) return null as T;
+  const parsedData = JSON.parse(text);
+  
+  if (parsedData && typeof parsedData === 'object' && !Array.isArray(parsedData)) {
+     // Case 1: Backend returns { items: [...], totalCount: ... } instead of { data: { items: [...], totalCount: ... } }
+     if ('items' in parsedData && !('data' in parsedData)) {
+         return { data: parsedData, ...parsedData } as unknown as T;
+     }
+     
+     // Case 2: Backend returns { data: [...] } where data is an array
+     if ('data' in parsedData && Array.isArray(parsedData.data)) {
+         return { 
+             ...parsedData, 
+             data: { 
+                 items: parsedData.data, 
+                 totalCount: parsedData.totalCount ?? parsedData.data.length 
+             } 
+         } as unknown as T;
+     }
+  }
+  
+  return parsedData as T;
 }

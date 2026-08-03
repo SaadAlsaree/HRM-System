@@ -19,7 +19,7 @@ const PromotionsPage = async ({ searchParams }: Props) => {
     const PageSize = parseInt(searchParams.PageSize || "10");
     const employeeId = searchParams.employeeId;
 
-    const data = await fetchServer<{ data?: { items?: any[]; totalCount?: number } }>(
+    const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>(
         '/Promotions',
         'GET',
         {
@@ -31,8 +31,8 @@ const PromotionsPage = async ({ searchParams }: Props) => {
         }
     );
 
-    const promotions = data?.data?.items ?? [];
-    const totalCount = data?.data?.totalCount ?? 0;
+    const promotions = (data?.items ?? data?.data?.items) ?? [];
+    const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
     return (
         <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

@@ -20,8 +20,8 @@ const AnnualAllowancePage = async ({ searchParams }: Props) => {
     const employeeId = searchParams.employeeId;
 
     const data = await annualAllowanceService.getAnnualAllowances({ Page, PageSize, employeeId });
-    const annualAllowances = data?.data?.items ?? [];
-    const totalCount = data?.data?.totalCount ?? 0;
+    const annualAllowances = (data?.items ?? data?.data?.items) ?? [];
+    const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
     return (
         <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

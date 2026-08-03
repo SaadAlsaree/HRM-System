@@ -43,19 +43,19 @@ const UnitsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const department = await fetchServer<ApiResponse<any>>('/Department');
+   const department = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Department');
    const departmentList = department?.data?.items ?? [];
 
-   const directorate = await fetchServer<ApiResponse<any>>('/Directorate');
+   const directorate = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Directorate');
    const directorateList = directorate?.data?.items ?? [];
 
-   const subDirectorate = await fetchServer<ApiResponse<any>>('/SubDirectorate');
+   const subDirectorate = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/SubDirectorate');
    const subDirectorateList = subDirectorate?.data?.items ?? [];
 
-   const sections = await fetchServer<ApiResponse<any>>('/Section');
+   const sections = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Section');
    const sectionsList = sections?.data?.items ?? [];
 
-   const units = await fetchServer<ApiResponse<any>>('/Unit', 'GET', { params: { Page, PageSize } });
+   const units = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Unit', 'GET', { params: { Page, PageSize } });
    const unitList = units?.data?.items ?? [];
 
    const totalCount = units?.data?.totalCount ?? 0;

@@ -24,9 +24,9 @@ const AcademicSpecializationPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await fetchServer<ApiResponse<any>>('/AcademicField', 'GET', { params: { Page, PageSize } });
-   const academicSpecialization = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/AcademicField', 'GET', { params: { Page, PageSize } });
+   const academicSpecialization = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

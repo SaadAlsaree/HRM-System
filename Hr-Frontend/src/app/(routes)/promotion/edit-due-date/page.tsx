@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination';
 import { columnsEditDueDate } from './_components/columns';
 import EditDueDateToolbar from './_components/edit-dueDate-toolbar';
 import EditDueDateTable from './_components/edit-dueDate-table';
-import { changeDueDateService } from '@/services/change-due-date.service';
+import { fetchServer } from '@/lib/fetchServer';
 
 interface Props {
    searchParams: {
@@ -35,10 +35,10 @@ const EditDueDatePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await changeDueDateService.getChangeDueDate({ Page, PageSize });
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/ChangeDueDate', 'GET', { params: { Page, PageSize } });
 
-   const editDueDate = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const editDueDate = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    console.log(editDueDate);
    return (

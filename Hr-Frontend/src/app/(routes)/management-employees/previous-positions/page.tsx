@@ -50,7 +50,7 @@ const PreviousPositionPage = async ({ searchParams }: Props) => {
    const SearchTerm = searchParams.searchTerm || undefined;
 
    const data = await employeePositionService.getEmployeePosition({ Page, PageSize, status: Status, searchTerm: SearchTerm });
-   const previousPositionData = data?.data?.items ?? [];
+   const previousPositionData = (data?.items ?? data?.data?.items) ?? [];
    const totalCount = data?.totalCount ?? 0;
 
    return (

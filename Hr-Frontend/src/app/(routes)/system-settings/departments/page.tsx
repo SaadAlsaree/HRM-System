@@ -24,13 +24,13 @@ const DepartmentsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const department = await fetchServer<ApiResponse<any>>('/Department', 'GET', { params: { Page, PageSize } });
+   const department = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Department', 'GET', { params: { Page, PageSize } });
    const departmentList = department?.data?.items ?? [];
 
-   const directorate = await fetchServer<ApiResponse<any>>('/Directorate');
+   const directorate = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Directorate');
    const directorateList = directorate?.data?.items ?? [];
 
-   const subDirectorate = await fetchServer<ApiResponse<any>>('/SubDirectorate');
+   const subDirectorate = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/SubDirectorate');
    const subDirectorateList = subDirectorate?.data?.items ?? [];
    const totalCount = department?.data?.totalCount ?? 0;
 

@@ -25,12 +25,12 @@ const AcademicAchievementPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const jobDegrees = await fetchServer<ApiResponse<any>>('/JobDegree');
-   const jobDegreeList = jobDegrees?.data?.items ?? [];
+   const jobDegrees = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/JobDegree');
+   const jobDegreeList = (jobDegrees?.items ?? jobDegrees?.data?.items) ?? [];
 
-   const data = await fetchServer<ApiResponse<any>>('/AcademicAchievement', 'GET', { params: { Page, PageSize } });
-   const academicAchievements = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/AcademicAchievement', 'GET', { params: { Page, PageSize } });
+   const academicAchievements = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    console.log(data);
 

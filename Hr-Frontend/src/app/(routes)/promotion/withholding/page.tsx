@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination';
 import { columnsWithholding } from './_components/columns';
 import WithholdingTable from './_components/withholding-table';
 import WithholdingToolbar from './_components/withholding-toolbar';
-import { promotionWithholdingService } from '@/services/promotion-withholding.service';
+import { fetchServer } from '@/lib/fetchServer';
 
 interface Props {
     searchParams: {
@@ -19,9 +19,9 @@ const PromotionWithholdingPage = async ({ searchParams }: Props) => {
     const PageSize = parseInt(searchParams.PageSize || "10");
     const employeeId = searchParams.employeeId;
 
-    const data = await promotionWithholdingService.getWithholdings({ Page, PageSize, employeeId });
-    const withholdings = data?.data?.items ?? [];
-    const totalCount = data?.data?.totalCount ?? 0;
+    const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/PromotionWithholding', 'GET', { params: { Page, PageSize, employeeId } });
+    const withholdings = (data?.items ?? data?.data?.items) ?? [];
+    const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
     return (
         <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

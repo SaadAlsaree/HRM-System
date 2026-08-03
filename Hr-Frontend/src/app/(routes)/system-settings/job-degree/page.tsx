@@ -14,6 +14,8 @@ export interface IJobDegree {
 }
 
 interface PagedResponse<T> {
+   items?: T[];
+   totalCount?: number;
    data?: {
       items?: T[];
       totalCount?: number;
@@ -34,9 +36,9 @@ const JobDegreePage = async ({ searchParams }: Props) => {
    const data = await fetchServer<PagedResponse<IJobDegree>>('/JobDegree', 'GET', {
       params: { Page, PageSize }
    });
-   const jobDegrees: IJobDegree[] = data?.data?.items ?? [];
+   const jobDegrees: IJobDegree[] = (data?.items ?? data?.data?.items) ?? [];
 
-   const totalCount = data?.data?.totalCount ?? 0;
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

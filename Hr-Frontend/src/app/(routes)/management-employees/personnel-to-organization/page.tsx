@@ -55,8 +55,8 @@ const AffiliatesToOrg = async ({ searchParams }: Props) => {
    const SearchTerm = searchParams.searchTerm || undefined;
 
    const data = await assignmentService.getAssignment({ Page, PageSize, status: Status, searchTerm: SearchTerm, AssignmentSite: 2 });
-   const affiliatesToOrgData = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const affiliatesToOrgData = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

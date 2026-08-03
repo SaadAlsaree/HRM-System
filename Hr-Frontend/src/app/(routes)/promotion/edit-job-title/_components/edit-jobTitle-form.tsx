@@ -49,7 +49,7 @@ const EditJobTitleForm = ({ data, icon, title, variant }: Props) => {
     const getJobDescriptionList = async () => {
                 const jobDescriptionList = await jobDescriptionService.getJobDescription({Page: 1, PageSize: 100});
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const newJobDescriptionList = jobDescriptionList.data.items.map((item: any) => (
+                const newJobDescriptionList = (jobDescriptionList?.items ?? jobDescriptionList?.data?.items ?? []).map((item: any) => (
                     {
                         label: item.name,
                         value: item.id.toString()
@@ -63,7 +63,7 @@ const EditJobTitleForm = ({ data, icon, title, variant }: Props) => {
          
                 
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const newJobTitleList = jobTitleList.data.items.map((item: any) => (
+                const newJobTitleList = (jobTitleList?.items ?? jobTitleList?.data?.items ?? []).map((item: any) => (
                     {
                         label: item.name,
                         value: item.id.toString()

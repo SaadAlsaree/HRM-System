@@ -50,8 +50,8 @@ const CurrentPositionPage = async ({ searchParams }: Props) => {
    const SearchTerm = searchParams.searchTerm || undefined;
 
    const data = await employeePositionService.getEmployeePosition({ Page, PageSize, status: Status, searchTerm: SearchTerm });
-   const currentPositionData = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const currentPositionData = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

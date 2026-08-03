@@ -40,16 +40,16 @@ const SectionsPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const department = await fetchServer<ApiResponse<any>>('/Department');
+   const department = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Department');
    const departmentList = department?.data?.items ?? [];
 
-   const directorate = await fetchServer<ApiResponse<any>>('/Directorate');
+   const directorate = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Directorate');
    const directorateList = directorate?.data?.items ?? [];
 
-   const subDirectorate = await fetchServer<ApiResponse<any>>('/SubDirectorate');
+   const subDirectorate = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/SubDirectorate');
    const subDirectorateList = subDirectorate?.data?.items ?? [];
 
-   const sections = await fetchServer<ApiResponse<any>>('/Section', 'GET', { params: { Page, PageSize } });
+   const sections = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Section', 'GET', { params: { Page, PageSize } });
    const sectionsList = sections?.data?.items ?? [];
 
    const totalCount = sections?.data?.totalCount ?? 0;

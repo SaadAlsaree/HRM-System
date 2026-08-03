@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination';
 import { columnsCertificateCalculation } from './_components/columns';
 import ServiceCalculationTable from './_components/certificate-calculation-table';
 import ServiceCalculationToolbar from './_components/certificate-calculation-toolbar';
-import { correctingAcademicAchievementService } from '@/services/correcting-academic-achievement.service';
+import { fetchServer } from '@/lib/fetchServer';
 
 interface Props {
    searchParams: {
@@ -58,10 +58,10 @@ const CertificateCalculationPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await correctingAcademicAchievementService.getCorrectingAcademicAchievement({ Page, PageSize });
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/CorrectingAcademicAchievement', 'GET', { params: { Page, PageSize } });
 
-   const certificateCalculation = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const certificateCalculation = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

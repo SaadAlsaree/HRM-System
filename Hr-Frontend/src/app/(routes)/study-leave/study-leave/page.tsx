@@ -63,8 +63,8 @@ const StudyLeavePage = async ({ searchParams }: Props) => {
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
    const data = await studyLeaveService.getStudyLeaves({ Page, PageSize });
-   const studyLeaveDetails: IStudyLeave[] = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const studyLeaveDetails: IStudyLeave[] = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    // services
    const academicAchievementData = await academicAchievementService.getAcademicAchievements({ Page: 1, PageSize: 100 });
@@ -75,13 +75,13 @@ const StudyLeavePage = async ({ searchParams }: Props) => {
    const academicCertificateTypeData = await academicCertificateTypeService.getAcademicCertificateTypes({ Page: 1, PageSize: 100 });
 
    // data
-   const academicAchievement: [] = academicAchievementData?.data?.items ?? [];
-   const academicField: [] = academicFieldData?.data?.items ?? [];
-   const country: [] = countryData?.data?.items ?? [];
-   const studyResult: [] = studyResultData?.data?.items ?? [];
-   const studyStatus: [] = studyStatusData?.data?.items ?? [];
+   const academicAchievement: [] = (data?.items ?? data?.data?.items) ?? [];
+   const academicField: [] = (data?.items ?? data?.data?.items) ?? [];
+   const country: [] = (data?.items ?? data?.data?.items) ?? [];
+   const studyResult: [] = (data?.items ?? data?.data?.items) ?? [];
+   const studyStatus: [] = (data?.items ?? data?.data?.items) ?? [];
 
-   const academicCertificateType: [] = academicCertificateTypeData?.data?.items ?? [];
+   const academicCertificateType: [] = (data?.items ?? data?.data?.items) ?? [];
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

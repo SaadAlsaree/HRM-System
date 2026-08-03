@@ -58,7 +58,7 @@ const AffiliationForm = ({ data, icon, title, variant }: Props) => {
             const getTypeOfAssignmentList = async () => {
                 const categoryList = await typeOfAssignmentService.getTypeOfAssignments({Page: 1, PageSize: 100});
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                const newCategoryList = categoryList.data.items.map((item: any) => (
+                const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
                     {
                         label: item.name,
                         value: item.id.toString()

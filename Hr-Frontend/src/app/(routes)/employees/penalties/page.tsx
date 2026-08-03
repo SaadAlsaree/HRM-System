@@ -38,7 +38,7 @@ const PenaltiesPage = async ({ searchParams }: Props) => {
    const PageSize = parseInt(searchParams.PageSize ?? '', 10) || 10;
    const employeeId = (searchParams.employeeId || searchParams.EmployeeId || '').trim();
 
-   const data = await fetchServer<{ data?: { items?: IDisciplinaryDetails[]; totalCount?: number } }>(
+   const data = await fetchServer<{ items?: IDisciplinaryDetails[]; totalCount?: number; data?: { items?: IDisciplinaryDetails[]; totalCount?: number } }>(
       '/EmployeeDisciplinary',
       'GET',
       {
@@ -49,8 +49,8 @@ const PenaltiesPage = async ({ searchParams }: Props) => {
          }
       }
    );
-   const disciplinaryDetails: IDisciplinaryDetails[] = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const disciplinaryDetails: IDisciplinaryDetails[] = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

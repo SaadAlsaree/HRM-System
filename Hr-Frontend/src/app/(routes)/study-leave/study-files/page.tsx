@@ -31,8 +31,8 @@ export default async function StudyFilesPage({ searchParams }: Props) {
    const pageSize = parseInt(searchParams.pageSize) || 10;
 
    const data = await studyFileService.getStudyFiles({ Page: page, PageSize: pageSize });
-   const studyLeavesData = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const studyLeavesData = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

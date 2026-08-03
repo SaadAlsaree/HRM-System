@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination';
 import { columnsEmployeeEvaluation } from './_components/columns';
 import EmployeeEvaluationToolbar from './_components/employee-evaluatio-toolbar';
 import EmployeeEvaluationTable from './_components/employee-evaluatio-table';
-import { valuationsService } from '@/services/valuations.service';
+import { fetchServer } from '@/lib/fetchServer';
 
 interface Props {
    searchParams: {
@@ -33,9 +33,9 @@ const EmployeeEvaluationPage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await valuationsService.getValuations({ Page, PageSize });
-   const employeeEvaluationData = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Valuation', 'GET', { params: { Page, PageSize } });
+   const employeeEvaluationData = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

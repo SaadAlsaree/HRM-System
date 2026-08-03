@@ -1,11 +1,11 @@
 import React from 'react';
-import { Separator } from '@/components/ui/separator';
 import Pagination from '@/components/Pagination';
 import { columnsAcademicAchievement } from './_components/columns';
 import AcademicAchievementToolbar from './_components/academic-achievement-toolbar';
 import AcademicAchievementTable from './_components/academic-achievement-table';
 import { correctingAcademicAchievementService } from '@/services/correcting-academic-achievement.service';
 import { academicCertificateTypeService } from '@/services/system-settings/academic-certificate-type.service';
+import { Separator } from '@/components/ui/separator';
 
 interface Props {
    searchParams: {
@@ -61,7 +61,7 @@ const AcademicAchievementPage = async ({ searchParams }: Props) => {
 
    const data = await correctingAcademicAchievementService.getCorrectingAcademicAchievement({ Page, PageSize });
    const academicAchievementData = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount;
+   const totalCount = data?.data?.totalCount ?? 0;
 
    const academicCertificate = await academicCertificateTypeService.getAcademicCertificateTypes();
    const academicCertificateData = academicCertificate?.data?.items ?? [];

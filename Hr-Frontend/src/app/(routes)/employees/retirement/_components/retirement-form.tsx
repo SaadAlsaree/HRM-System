@@ -16,6 +16,7 @@ import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/spinner';
 import EmployeeSearch, { IEmployeeSearch } from '@/app/_components/employee-search';
 import { IRetirement } from '../page';
+import { retirementService } from '@/services/retirement.service';
 
 const formSchema = z.object({
    employeeId: z.string().optional(),
@@ -30,7 +31,7 @@ const formSchema = z.object({
    employeePositionId: z.string().optional(),
    endDateOfService: z.string().optional(),
    birthdate: z.string().optional(),
-   retirementDate: z.number().optional(),
+   retirementDate: z.coerce.number().optional(),
    administrativeOrderNo: z.string().optional(),
    administrativeOrderDate: z.string().optional(),
    isPoliticallyDismissed: z.boolean().optional(),
@@ -64,11 +65,15 @@ const RetirementForm = ({ title, data, icon, variant }: Props) => {
       setSubmitting(true);
       try {
          if (data) {
-            console.log('payload update', {
+            // console.log('payload update', {
+            //    ...values,
+            //    employeeId: selectedUser?.employeeId ?? data.employeeId ?? ''
+            // });
+            const payload = {
                ...values,
                employeeId: selectedUser?.employeeId ?? data.employeeId ?? ''
-            });
-            // await employeeCourseService.putEmployeeCourseById(data.id as string, payload);
+            };
+            await retirementService.updateRetirement(data.id as string, payload);
 
             toast(
                <pre className=' w-[340px] rounded-md'>
@@ -91,7 +96,7 @@ const RetirementForm = ({ title, data, icon, variant }: Props) => {
                setSubmitting(false);
                return;
             }
-            // await employeeCourseService.createEmployeeCourse(payload);
+            await retirementService.createRetirement(payload);
             console.log('payload', payload);
             toast(
                <pre className=' w-[340px] rounded-md'>

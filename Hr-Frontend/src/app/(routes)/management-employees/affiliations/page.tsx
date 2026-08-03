@@ -51,8 +51,8 @@ const Affiliations = async ({ searchParams }: Props) => {
    const SearchTerm = searchParams.searchTerm || undefined;
 
    const data = await affiliationService.getAffiliations({ Page, PageSize, status: Status, searchTerm: SearchTerm });
-   const affiliationsData = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const affiliationsData = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

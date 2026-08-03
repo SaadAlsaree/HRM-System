@@ -34,13 +34,13 @@ const JobTitlePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const jobDegrees = await fetchServer<ApiResponse<any>>('/JobDegree');
-   const jobDegreeList = jobDegrees?.data?.items ?? [];
+   const jobDegrees = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/JobDegree');
+   const jobDegreeList = (jobDegrees?.items ?? jobDegrees?.data?.items) ?? [];
 
-   const data = await fetchServer<ApiResponse<any>>('/JobTitle', 'GET', { params: { Page, PageSize } });
-   const jobTitle = data?.data?.items ?? [];
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/JobTitle', 'GET', { params: { Page, PageSize } });
+   const jobTitle = (data?.items ?? data?.data?.items) ?? [];
 
-   const totalCount = data?.data?.totalCount ?? 0;
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

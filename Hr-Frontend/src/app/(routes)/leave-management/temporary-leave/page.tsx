@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination';
 
 import TemporaryLeaveTable from './_components/temporary-leave-table';
 import { columnsTemporaryLeave } from './_components/columns';
-import { leavesService } from '@/services/Leaves/leaves.service';
+import { fetchServer } from '@/lib/fetchServer';
 import TemporaryLeaveToolbar from './_components/temporary-leave-toolbar';
 
 interface Props {
@@ -34,8 +34,8 @@ const TemporaryLeavePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await leavesService.getLeaves({ Page, PageSize, TypeOfLeaveId: 2, status: 1 });
-   const temporaryLeaveData = data?.data?.items ?? [];
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Leave', 'GET', { params: { Page, PageSize, TypeOfLeaveId: 2, status: 1 } });
+   const temporaryLeaveData = (data?.items ?? data?.data?.items) ?? [];
    const totalCount = data?.totalCount ?? 0;
 
    return (

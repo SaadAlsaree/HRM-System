@@ -3,7 +3,7 @@ import { Separator } from '@/components/ui/separator';
 import Pagination from '@/components/Pagination';
 
 import { columnsMedicalLeave } from './_components/columns';
-import { leavesService } from '@/services/Leaves/leaves.service';
+import { fetchServer } from '@/lib/fetchServer';
 import MedicalLeaveToolbar from './_components/medical-leave-toolbar';
 import MedicalLeaveTable from './_components/medical-leave-table';
 import { sicknessTypeService } from '@/services/system-settings/sickness-type.service';
@@ -60,15 +60,15 @@ const MedicalLeavePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await leavesService.getLeaves({ Page, PageSize, TypeOfLeaveId: 3, status: 1 });
-   const medicalLeaveData = data?.data?.items ?? [];
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/Leave', 'GET', { params: { Page, PageSize, TypeOfLeaveId: 3, status: 1 } });
+   const medicalLeaveData = (data?.items ?? data?.data?.items) ?? [];
    const totalCount = data?.totalCount ?? 0;
 
    const siknesTypes = await sicknessTypeService.getSicknessTypes();
-   const siknesTypesData = siknesTypes?.data?.items ?? [];
+   const siknesTypesData = (data?.items ?? data?.data?.items) ?? [];
 
    const country = await countryService.getCountries();
-   const countryData = country?.data?.items ?? [];
+   const countryData = (data?.items ?? data?.data?.items) ?? [];
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

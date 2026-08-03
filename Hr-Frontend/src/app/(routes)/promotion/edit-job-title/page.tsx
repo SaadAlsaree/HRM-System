@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination';
 import { columnsEditJobTitle } from './_components/columns';
 import EditJobTitleToolbar from './_components/edit-jobTitle-toolbar';
 import EditJobTitleTable from './_components/edit-jobTitle-table';
-import { changeJobTitlesService } from '@/services/change-job-titles.service';
+import { fetchServer } from '@/lib/fetchServer';
 
 interface Props {
    searchParams: {
@@ -41,9 +41,9 @@ const EditJobTitlePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await changeJobTitlesService.getChangeJobTitles({ Page, PageSize });
-   const editJobTitleData = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/ChangeJobTitle', 'GET', { params: { Page, PageSize } });
+   const editJobTitleData = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

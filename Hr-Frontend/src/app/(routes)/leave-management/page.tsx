@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { fetchServer } from '@/lib/fetchServer';
 import { leavesService } from '@/services/Leaves/leaves.service';
 import { LeaveStatus } from '@/types/enums';
 
