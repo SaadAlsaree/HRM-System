@@ -9,6 +9,7 @@ import moment from 'moment';
 import AcademicAchievementAttachment from './academic-achievement-attachment';
 import { AlignJustify, Edit2 } from 'lucide-react';
 import AcademicAchievementForm from './academic-achievement-form';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 export interface IEducationInfo {
    id?: string;
@@ -38,45 +39,39 @@ export interface IEducationInfo {
 }
 
 type Props = {
-   employeeId: string;
+   employeeId?: string;
 };
+
 const AcademicAchievementTable = ({ employeeId }: Props) => {
    const [academicAchievements, setAcademicAchievements] = useState<IEducationInfo[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
-   const [totalPages, setTotalPages] = useState(0);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       const fetchAcademicAchievements = async () => {
+         if (!employeeId) {
+            setAcademicAchievements([]);
+            return;
+         }
          setLoading(true);
          try {
             const response = await educationInfoService.getEducationInfo({ employeeId });
             setAcademicAchievements(response?.data?.items || []);
-            setTotalPages(response?.data?.totalCount);
-         } catch (error) {
-            console.error('Error fetching promotions:', error);
-            setError('Failed to fetch promotions');
+            setError(null);
+         } catch (err) {
+            console.error('Error fetching academic achievements:', err);
+            setError('حدث خطأ أثناء تحميل البيانات !');
          } finally {
             setLoading(false);
          }
       };
       fetchAcademicAchievements();
-   }, [employeeId]);
-
-   if (totalPages === 0)
-      return (
-         <div>
-            <div>لايوجد بيانات !</div>
-         </div>
-      );
-
-   if (error) return <div>حدث خطأ أثناء تحميل البيانات !</div>;
-
-   if (loading) return <div>جاري التحميل...</div>;
+   }, [employeeId, refreshKey]);
 
    return (
       <div className='border rounded-lg p-2 bg-white dark:bg-gray-900'>
-         <ScrollArea className='w-[1380px] whitespace-nowrap '>
+         <ScrollArea className='w-full whitespace-nowrap'>
             <Table>
                <TableHeader>
                   <TableRow>
@@ -86,43 +81,60 @@ const AcademicAchievementTable = ({ employeeId }: Props) => {
                         </TableHead>
                      ))}
                      <TableHead className='w-[100px] text-center'>
-                       <AlignJustify className='justify-center' />
-                    </TableHead>
+                        <AlignJustify className='justify-center' />
+                     </TableHead>
                   </TableRow>
                </TableHeader>
                <TableBody>
-                  {academicAchievements?.map((item) => (
+                  {loading && (
+                     <TableRow>
+                        <TableCell colSpan={(columnsEducationInfo?.length || 0) + 1} className='text-center py-6 text-muted-foreground'>
+                           جاري التحميل...
+                        </TableCell>
+                     </TableRow>
+                  )}
+                  {!loading && error && (
+                     <TableRow>
+                        <TableCell colSpan={(columnsEducationInfo?.length || 0) + 1} className='text-center py-6 text-red-500'>
+                           {error}
+                        </TableCell>
+                     </TableRow>
+                  )}
+                  {!loading && !error && academicAchievements.length === 0 && (
+                     <TableRow>
+                        <TableCell colSpan={(columnsEducationInfo?.length || 0) + 1} className='text-center py-6 text-muted-foreground'>
+                           لا توجد بيانات مؤهلات علمية
+                        </TableCell>
+                     </TableRow>
+                  )}
+                  {!loading && !error && academicAchievements.map((item) => (
                      <TableRow key={item.id}>
                         <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
-
-                        <TableCell>{item?.countryName}</TableCell>
-                        <TableCell>{item?.originalDocument}</TableCell>
-                        <TableCell>{item?.documentNo}</TableCell>
-                        <TableCell>{moment(item?.documentDate).format('YYYY-MM-DD')}</TableCell>
-                        <TableCell>{item?.documentSender}</TableCell>
-                        <TableCell>{moment(item?.documentSendDate).format('YYYY-MM-DD')}</TableCell>
-                        <TableCell>{item?.academicAchievementName}</TableCell>
-                        <TableCell>{item?.academicFieldName}</TableCell>
-                        <TableCell>{item?.preciseAcademicFieldName}</TableCell>
-                        <TableCell>{item?.graduationYear}</TableCell>
-                        <TableCell>{item?.studyTypeName}</TableCell>
-                        <TableCell>{moment(item.startDate).format('YYYY-MM-DD')}</TableCell>
-                        <TableCell>{moment(item.endDate).format('YYYY-MM-DD')}</TableCell>
+                        <TableCell>{item?.countryName || '-'}</TableCell>
+                        <TableCell>{item?.originalDocument || '-'}</TableCell>
+                        <TableCell>{item?.documentNo || '-'}</TableCell>
+                        <TableCell>{item?.documentDate ? moment(item?.documentDate).format('YYYY-MM-DD') : '-'}</TableCell>
+                        <TableCell>{item?.documentSender || '-'}</TableCell>
+                        <TableCell>{item?.documentSendDate ? moment(item?.documentSendDate).format('YYYY-MM-DD') : '-'}</TableCell>
+                        <TableCell>{item?.academicAchievementName || '-'}</TableCell>
+                        <TableCell>{item?.academicFieldName || '-'}</TableCell>
+                        <TableCell>{item?.preciseAcademicFieldName || '-'}</TableCell>
+                        <TableCell>{item?.graduationYear || '-'}</TableCell>
+                        <TableCell>{item?.studyTypeName || '-'}</TableCell>
+                        <TableCell>{item?.startDate ? moment(item.startDate).format('YYYY-MM-DD') : '-'}</TableCell>
+                        <TableCell>{item?.endDate ? moment(item.endDate).format('YYYY-MM-DD') : '-'}</TableCell>
                         <TableCell>{item?.isDuringRecruitment ? 'نعم' : 'لا'}</TableCell>
                         <TableCell>{item?.isDocumentVerify ? 'نعم' : 'لا'}</TableCell>
-                        <TableCell>{item?.notes}</TableCell>
+                        <TableCell>{item?.notes || '-'}</TableCell>
                         <TableCell>
-                           
-                           <AcademicAchievementAttachment PrimaryTableId={item.id as string} employeeId={employeeId as string} />
+                           <AcademicAchievementAttachment PrimaryTableId={item.id as string} employeeId={(item.employeeId || employeeId) as string} />
                         </TableCell>
                         <TableCell>
-                           <AcademicAchievementForm title='' icon={<Edit2 className='h-4 w-4' />} data={item} variant='ghost' />
+                           <AcademicAchievementForm title='' icon={<Edit2 className='h-4 w-4' />} data={item} variant='ghost' employeeId={(item.employeeId || employeeId) as string} />
                         </TableCell>
                      </TableRow>
                   ))}
-               
                </TableBody>
-            
             </Table>
             <ScrollBar orientation='horizontal' />
          </ScrollArea>

@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogFooter } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,7 +15,6 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/spinner';
 import { IEducationInfo } from './academic-achievement-table';
-import { formatDate } from '@/utils/format-date';
 import { educationInfoService } from '@/services/education-info.service';
 import { Checkbox } from '@/components/ui/checkbox';
 //Services
@@ -24,24 +23,23 @@ import { studyTypeService } from '@/services/system-settings/study-type.service'
 import { countryService } from '@/services/system-settings/country.service';
 import { useQuery } from '@tanstack/react-query';
 import { AcademicCertificateType, Country, StudyType } from '@/types';
-
-
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 const formSchema = z.object({
-  countryId: z.coerce.number(),
-  originalDocument: z.string().min(3).max(250),
-  documentNo: z.string().min(3).max(100),
-  documentDate: z.coerce.string(),
-  documentSender: z.string().min(3).max(250),
-  documentSendDate: z.coerce.string(),
-  academicAchievementId: z.coerce.number(),
+  countryId: z.coerce.number().min(1, 'البلد مطلوب'),
+  originalDocument: z.string().min(1, 'عنوان الوثيقة مطلوب'),
+  documentNo: z.string().min(1, 'رقم الوثيقة مطلوب'),
+  documentDate: z.string().min(1, 'تاريخ الوثيقة مطلوب'),
+  documentSender: z.string().min(1, 'الجهة المرسلة مطلوبة'),
+  documentSendDate: z.string().min(1, 'تاريخ الإرسال مطلوب'),
+  academicAchievementId: z.coerce.number().min(1, 'التحصيل الدراسي مطلوب'),
   academicFieldId: z.coerce.number().optional(),
   preciseAcademicFieldId: z.coerce.number().optional(),
-  nameOfIssuingCertificate: z.string().min(3).max(250),
-  startDate: z.coerce.string(),
-  endDate: z.coerce.string(),
-  graduationYear: z.coerce.string(),
-  studyTypeId: z.coerce.number(),
+  nameOfIssuingCertificate: z.string().min(1, 'جهة منح الشهادة مطلوبة'),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  graduationYear: z.string().optional(),
+  studyTypeId: z.coerce.number().min(1, 'نوع الدراسة مطلوب'),
   isDuringRecruitment: z.boolean().default(false),
   isDocumentVerify: z.boolean().default(false),
   isInHiring: z.boolean().default(false),
@@ -54,132 +52,176 @@ const formSchema = z.object({
 type Props = {
   data?: IEducationInfo;
   icon?: React.ReactNode;
-  title: string;
+  title?: string;
   variant?: 'ghost' | 'outline' | 'default' | 'destructive' | 'link';
   employeeId?: string;
+};
+
+const formatDateForInput = (dateString?: string | null) => {
+  if (!dateString) return '';
+  const date = new Date(dateString);
+  if (Number.isNaN(date.getTime())) return dateString.split('T')[0] || dateString;
+  return date.toISOString().split('T')[0];
 };
 
 const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Props) => {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
-
+  const { triggerRefresh } = useEmployeeProfileRefresh();
   const router = useRouter();
 
-  // user react query to fetch options for academic achievement, country, study type
-  const { data: academicAchievement} = useQuery<AcademicCertificateType[]>({
+  const { data: academicAchievement } = useQuery<AcademicCertificateType[]>({
     queryKey: ['academic-achievement-options'],
-    queryFn: async () => (await academicCertificateTypeService.getAcademicCertificateTypes()).data.items
+    queryFn: async () => {
+      const res = await academicCertificateTypeService.getAcademicCertificateTypes();
+      return res?.data?.items || res?.items || [];
+    }
   });
+
   const { data: country } = useQuery<Country[]>({
     queryKey: ['country-options'],
-    queryFn: async () => (await countryService.getCountries()).data.items
+    queryFn: async () => {
+      const res = await countryService.getCountries();
+      return res?.data?.items || res?.items || [];
+    }
   });
+
   const { data: studyType } = useQuery<StudyType[]>({
     queryKey: ['study-type-options'],
-    queryFn: async () => (await studyTypeService.getStudyTypes()).data.items
+    queryFn: async () => {
+      const res = await studyTypeService.getStudyTypes();
+      return res?.data?.items || res?.items || [];
+    }
   });
 
+  const countryOptions = (country || []).map((c: Country) => ({
+    label: c.name,
+    value: c.id
+  }));
+  
+  const studyTypeOptions = (studyType || []).map((s: StudyType) => ({
+    label: s.name,
+    value: s.id
+  }));
+  
+  const academicAchievementOptions = (academicAchievement || []).map((a: AcademicCertificateType) => ({
+    label: a.name,
+    value: a.id
+  }));
 
-  const countryOptions = country?.map((country: Country) => ({
-     label:   country.name,
-     value: country.id
-  }))
-  
-  const studyTypeOptions = studyType?.map((studyType: StudyType) => ({
-     label: studyType.name,
-     value: studyType.id
-  }))
-  
-  const academicAchievementOptions = academicAchievement?.map((academicAchievement: AcademicCertificateType) => ({
-     label: academicAchievement.name,
-     value: academicAchievement.id
-  }))
-  
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      employeeId: data?.employeeId,
-      countryId: data?.countryName ? countryOptions?.find(c => c.label === data.countryName)?.value : undefined,
-      originalDocument: data?.originalDocument ?? '',
-      documentNo: data?.documentNo ?? '',
-      documentDate: data?.documentDate,
-      documentSender: data?.documentSender ?? '',
-      documentSendDate: data?.documentSendDate,
-      academicAchievementId: data?.academicAchievementName ? academicAchievementOptions?.find(a => a.label === data.academicAchievementName)?.value : undefined,
-      academicFieldId: 1, // This would need to be populated from real data
-      preciseAcademicFieldId: 1, // This would need to be populated from real data
-      nameOfIssuingCertificate: data?.nameOfIssuingCertificate ?? '',
-      startDate: data?.startDate,
-      endDate: data?.endDate,
-      graduationYear: data?.graduationYear ?? '',
-      studyTypeId: data?.studyTypeName ? studyTypeOptions?.find(s => s.label === data.studyTypeName)?.value : undefined,
-      isDuringRecruitment: data?.isDuringRecruitment ?? false,
-      isDocumentVerify: data?.isDocumentVerify ?? false,
-      isInHiring: false, // Default value for isInHiring
-      notes: data?.notes ?? '',
+      employeeId: employeeId || '',
+      countryId: undefined,
+      originalDocument: '',
+      documentNo: '',
+      documentDate: '',
+      documentSender: '',
+      documentSendDate: '',
+      academicAchievementId: undefined,
+      academicFieldId: 1,
+      preciseAcademicFieldId: 1,
+      nameOfIssuingCertificate: '',
+      startDate: '',
+      endDate: '',
+      graduationYear: '',
+      studyTypeId: undefined,
+      isDuringRecruitment: false,
+      isDocumentVerify: false,
+      isInHiring: false,
+      notes: '',
       createBy: '',
       lastUpdateBy: ''
     }
   });
 
+  useEffect(() => {
+    if (open && data) {
+      const matchedCountry = countryOptions.find(c => c.label === data.countryName)?.value;
+      const matchedAcademic = academicAchievementOptions.find(a => a.label === data.academicAchievementName)?.value;
+      const matchedStudyType = studyTypeOptions.find(s => s.label === data.studyTypeName)?.value;
+
+      form.reset({
+        employeeId: data.employeeId || employeeId || '',
+        countryId: (data as any).countryId || matchedCountry || undefined,
+        originalDocument: data.originalDocument || '',
+        documentNo: data.documentNo || '',
+        documentDate: formatDateForInput(data.documentDate),
+        documentSender: data.documentSender || '',
+        documentSendDate: formatDateForInput(data.documentSendDate),
+        academicAchievementId: (data as any).academicAchievementId || matchedAcademic || undefined,
+        academicFieldId: (data as any).academicFieldId || 1,
+        preciseAcademicFieldId: (data as any).preciseAcademicFieldId || 1,
+        nameOfIssuingCertificate: data.nameOfIssuingCertificate || '',
+        startDate: formatDateForInput(data.startDate),
+        endDate: formatDateForInput(data.endDate),
+        graduationYear: data.graduationYear ? String(data.graduationYear) : '',
+        studyTypeId: (data as any).studyTypeId || matchedStudyType || undefined,
+        isDuringRecruitment: data.isDuringRecruitment ?? false,
+        isDocumentVerify: data.isDocumentVerify ?? false,
+        isInHiring: (data as any).isInHiring ?? false,
+        notes: data.notes || '',
+        createBy: '',
+        lastUpdateBy: ''
+      });
+    } else if (open && !data) {
+      form.reset({
+        employeeId: employeeId || '',
+        countryId: undefined,
+        originalDocument: '',
+        documentNo: '',
+        documentDate: '',
+        documentSender: '',
+        documentSendDate: '',
+        academicAchievementId: undefined,
+        academicFieldId: 1,
+        preciseAcademicFieldId: 1,
+        nameOfIssuingCertificate: '',
+        startDate: '',
+        endDate: '',
+        graduationYear: '',
+        studyTypeId: undefined,
+        isDuringRecruitment: false,
+        isDocumentVerify: false,
+        isInHiring: false,
+        notes: '',
+        createBy: '',
+        lastUpdateBy: ''
+      });
+    }
+  }, [open, data, employeeId, country, academicAchievement, studyType, form]);
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true);
     try {
       if (data) {
-        // Update existing education info
         const dataToUpdate = {
-          countryId: values.countryId,
-          originalDocument: values.originalDocument,
-          documentNo: values.documentNo,
-          documentDate: values.documentDate,
-          documentSender: values.documentSender,
-          documentSendDate: values.documentSendDate,
-          academicAchievementId: values.academicAchievementId,
-          academicFieldId: values.academicFieldId,
-          preciseAcademicFieldId: values.preciseAcademicFieldId,
-          nameOfIssuingCertificate: values.nameOfIssuingCertificate,
-          startDate: values.startDate,
-          endDate: values.endDate,
-          graduationYear: values.graduationYear,
-          studyTypeId: values.studyTypeId,
-          isDuringRecruitment: values.isDuringRecruitment,
-          isDocumentVerify: values.isDocumentVerify,
-          isInHiring: values.isInHiring,
-          notes: values.notes,
-          lastUpdateBy: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
+          ...values,
+          employeeId: data.employeeId || employeeId,
+          lastUpdateBy: employeeId || ''
         };
         await educationInfoService.updateEducationInfo(data.id as string, dataToUpdate);
-        toast(
-          <pre className=' w-[340px] rounded-md'>
-            <h1 className='text-xl'>تم تعديل البيانات بنجاح .</h1>
-          </pre>
-        );
+        toast.success('تم تعديل البيانات بنجاح .');
       } else {
-        // Create new education info
-        values.employeeId = employeeId;
-        values.documentDate = formatDate(new Date(values.documentDate));
-        values.documentSendDate = formatDate(new Date(values.documentSendDate));
-        values.startDate = formatDate(new Date(values.startDate));
-        values.endDate = formatDate(new Date(values.endDate));
-        values.lastUpdateBy = undefined;
-        values.createBy = employeeId;
-        await educationInfoService.createEducationInfo(values);
-
-        toast(
-          <pre className=' w-[340px] rounded-md'>
-            <h1 className='text-xl'>تم حفظ البيانات بنجاح .</h1>
-          </pre>
-        );
+        const dataToCreate = {
+          ...values,
+          employeeId: employeeId || '',
+          createBy: employeeId || '',
+          lastUpdateBy: undefined
+        };
+        await educationInfoService.createEducationInfo(dataToCreate);
+        toast.success('تم حفظ البيانات بنجاح .');
       }
       form.reset();
       setSubmitting(false);
       setOpen(false);
+      triggerRefresh();
       router.refresh();
     } catch (error) {
       console.error('Form submission error', error);
-      toast.error('Failed to submit the form. Please try again.');
+      toast.error('حدث خطأ أثناء حفظ البيانات. يرجى المحاولة مرة أخرى.');
       setSubmitting(false);
-      setOpen(false);
     }
   }
 
@@ -188,19 +230,19 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogTrigger asChild>
           <Button variant={variant}>
-            <p>{title}</p>
+            {title && <p>{title}</p>}
             {icon ? icon : <Plus />}
           </Button>
         </DialogTrigger>
-        <DialogContent className='w-[700px] bg-gray-100 dark:bg-gray-800'>
+        <DialogContent className='w-[700px] max-w-[95vw] bg-gray-100 dark:bg-gray-800'>
           <DialogHeader>
             <div className='flex items-center justify-between'>
-              <DialogTitle>{title ? title : 'تعديل'}</DialogTitle>
+              <DialogTitle>{data ? 'تعديل التحصيل الدراسي' : (title ? title : 'إضافة تحصيل دراسي')}</DialogTitle>
             </div>
           </DialogHeader>
           <Separator />
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-2 p-4 overflow-y-auto max-h-[70vh]'>
+            <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-3 p-4 overflow-y-auto max-h-[70vh]'>
               <div className='grid grid-cols-12 gap-4'>
                 <div className='col-span-6'>
                   <FormField
@@ -209,7 +251,10 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>البلد</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field?.value?.toString()}>
+                        <Select
+                          value={field.value ? String(field.value) : ''}
+                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder='اختر البلد' />
@@ -318,7 +363,10 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>التحصيل الدراسي</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field?.value?.toString()}>
+                        <Select
+                          value={field.value ? String(field.value) : ''}
+                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder='اختر التحصيل الدراسي' />
@@ -394,7 +442,7 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
                       <FormItem>
                         <FormLabel>سنة التخرج</FormLabel>
                         <FormControl>
-                          <Input placeholder='سنة التخرج' type='date' {...field} />
+                          <Input placeholder='سنة التخرج' type='text' {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -409,7 +457,10 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>نوع الدراسة</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field?.value?.toString()}>
+                        <Select
+                          value={field.value ? String(field.value) : ''}
+                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                        >
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder='اختر نوع الدراسة' />
@@ -519,10 +570,10 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
                 </div>
               </div>
 
-              <Button disabled={isSubmitting}>
+              <Button disabled={isSubmitting} className='w-full'>
                 {isSubmitting ? (
                   <>
-                    <p className='ml-2'>حفظ البيانات</p> <Spinner />
+                    <p className='ml-2'>جاري الحفظ...</p> <Spinner />
                   </>
                 ) : (
                   'حفظ البيانات'
@@ -534,7 +585,7 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
           <DialogFooter>
             <DialogClose asChild>
               <Button variant='destructive' onClick={() => form.reset()}>
-                أغلاق
+                إغلاق
               </Button>
             </DialogClose>
           </DialogFooter>

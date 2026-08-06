@@ -24,6 +24,13 @@ const PersonalFileTable = ({ columns, data, employeeId }: Props) => {
             </TableRow>
          </TableHeader>
          <TableBody>
+            {(!data || data.length === 0) && (
+               <TableRow>
+                  <TableCell colSpan={columns.length} className='text-center py-6 text-muted-foreground'>
+                     لا توجد ملفات شخصية
+                  </TableCell>
+               </TableRow>
+            )}
             {data?.map((item) => (
                <TableRow key={item.id}>
                   <TableCell>{item?.tags?.BookTitle}</TableCell>

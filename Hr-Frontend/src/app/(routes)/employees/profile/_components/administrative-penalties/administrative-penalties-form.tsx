@@ -18,17 +18,18 @@ import { IPenalties } from './administrative-penalties-table';
 import { Checkbox } from '@/components/ui/checkbox';
 import { typeOfDisciplinaryService } from '@/services/system-settings/type-of-disciplinary.service';
 import { employeeDisciplinary } from '@/services/Employee/employee-disciplinary.service';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 const formSchema = z.object({
-   typeOfDisciplinaryId: z.number(),
-   countOfDayDelay: z.number().min(1),
-   titleOfBook: z.string().min(2).max(75),
-   bookNo: z.string().min(2).max(75),
-   bookDate: z.coerce.string(),
+   typeOfDisciplinaryId: z.coerce.number().min(1, 'نوع العقوبة مطلوبة'),
+   countOfDayDelay: z.coerce.number().min(0, 'عدد أيام التأخير مطلوبة'),
+   titleOfBook: z.string().min(1, 'عنوان الكتاب مطلوب'),
+   bookNo: z.string().min(1, 'رقم الكتاب مطلوب'),
+   bookDate: z.string().min(1, 'تاريخ الكتاب مطلوب'),
    stopPromotion: z.boolean().optional(),
-   disciplinaryLaw: z.string().min(3).max(250),
-   reason: z.string().min(3).max(500),
-   note: z.string().min(0).optional()
+   disciplinaryLaw: z.string().optional(),
+   reason: z.string().optional(),
+   note: z.string().optional()
 });
 
 interface IPenaltyType {
@@ -36,23 +37,34 @@ interface IPenaltyType {
    name: string;
    countOfDayDelay: number;
 }
+
 type Props = {
    data?: IPenalties;
    icon?: React.ReactNode;
-   title: string;
+   title?: string;
    variant?: 'ghost' | 'outline' | 'default' | 'destructive' | 'link';
    employeeId?: string;
 };
+
+const formatDateForInput = (dateString?: string | null) => {
+   if (!dateString) return '';
+   const date = new Date(dateString);
+   if (Number.isNaN(date.getTime())) return dateString.split('T')[0] || dateString;
+   return date.toISOString().split('T')[0];
+};
+
 const AdministrativePenaltiesForm = ({ title, data, variant, employeeId, icon }: Props) => {
    const [open, setOpen] = useState(false);
    const [isSubmitting, setSubmitting] = useState(false);
    const [penaltiesType, setPenaltiesType] = useState<IPenaltyType[]>([]);
+   const { triggerRefresh } = useEmployeeProfileRefresh();
+   const router = useRouter();
 
    useEffect(() => {
       const fetchPenaltiesType = async () => {
          try {
             const response = await typeOfDisciplinaryService.getTypeOfDisciplinary({ Page: 1, PageSize: 100 });
-            setPenaltiesType(response?.data?.items);
+            setPenaltiesType(response?.data?.items || response?.items || []);
          } catch (error) {
             console.error('Error fetching penalties type:', error);
          }
@@ -61,79 +73,89 @@ const AdministrativePenaltiesForm = ({ title, data, variant, employeeId, icon }:
       fetchPenaltiesType();
    }, []);
 
-   const router = useRouter();
-
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const penaltiesTypeOptions = penaltiesType?.map((item: any) => ({
+   const penaltiesTypeOptions = (penaltiesType || []).map((item: any) => ({
       value: item.id.toString(),
       label: item.name
    }));
 
-   //handel on change penaltiesType countOfDayDelay field
    const handelChangePenaltiesType = (id: string) => {
       const selectedPenaltiesType = penaltiesType.find((item: IPenaltyType) => item.id?.toString() === id);
       if (selectedPenaltiesType) {
-         form.setValue('countOfDayDelay', selectedPenaltiesType.countOfDayDelay);
+         form.setValue('countOfDayDelay', selectedPenaltiesType.countOfDayDelay || 0);
       }
    };
 
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         typeOfDisciplinaryId: data?.typeOfDisciplinaryId ? Number(data.typeOfDisciplinaryId) : undefined,
-         titleOfBook: data?.titleOfBook ?? '',
-         bookNo: data?.bookNo ?? '',
-         bookDate: data?.bookDate?.toString() ?? '',
-         countOfDayDelay: data?.countOfDayDelay,
-         stopPromotion: data?.stopPromotion,
-         disciplinaryLaw: data?.disciplinaryLaw ?? '',
-         reason: data?.reason ?? '',
-         note: data?.note ?? ''
+         typeOfDisciplinaryId: undefined,
+         titleOfBook: '',
+         bookNo: '',
+         bookDate: '',
+         countOfDayDelay: 0,
+         stopPromotion: false,
+         disciplinaryLaw: '',
+         reason: '',
+         note: ''
       }
    });
 
-   // Handel Submit
+   useEffect(() => {
+      if (open && data) {
+         form.reset({
+            typeOfDisciplinaryId: data?.typeOfDisciplinaryId ? Number(data.typeOfDisciplinaryId) : undefined,
+            titleOfBook: data?.titleOfBook ?? '',
+            bookNo: data?.bookNo ?? '',
+            bookDate: formatDateForInput(data?.bookDate),
+            countOfDayDelay: data?.countOfDayDelay ?? 0,
+            stopPromotion: data?.stopPromotion ?? false,
+            disciplinaryLaw: data?.disciplinaryLaw ?? '',
+            reason: data?.reason ?? '',
+            note: data?.note ?? ''
+         });
+      } else if (open && !data) {
+         form.reset({
+            typeOfDisciplinaryId: undefined,
+            titleOfBook: '',
+            bookNo: '',
+            bookDate: '',
+            countOfDayDelay: 0,
+            stopPromotion: false,
+            disciplinaryLaw: '',
+            reason: '',
+            note: ''
+         });
+      }
+   }, [open, data, form]);
+
    async function onSubmit(values: z.infer<typeof formSchema>) {
       setSubmitting(true);
       try {
+         const empId = employeeId || data?.employeeId || '';
          if (data) {
             const dataToUpdate = {
-               employeeId: employeeId ?? '',
+               employeeId: empId,
                ...values
             };
-            console.log(dataToUpdate);
             await employeeDisciplinary.putEmployeeDisciplinaryById(data.id as string, dataToUpdate);
-            toast(
-               <pre className=' w-[340px] rounded-md'>
-                  <h1 className='text-xl'>تم تعديل البيانات بنجاح .</h1>
-               </pre>
-            );
-            form.reset();
-            setSubmitting(false);
-            router.refresh();
-            setOpen(false);
+            toast.success('تم تعديل البيانات بنجاح .');
          } else {
             const dataToCreate = {
-               employeeId: employeeId ?? '',
+               employeeId: empId,
                ...values
             };
             await employeeDisciplinary.createEmployeeDisciplinary(dataToCreate);
-            toast(
-               <pre className=' w-[340px] rounded-md'>
-                  <h1 className='text-xl'>تم حفظ البيانات بنجاح .</h1>
-               </pre>
-            );
-            form.reset();
-            setSubmitting(false);
-            router.refresh();
-            setOpen(false);
+            toast.success('تم حفظ البيانات بنجاح .');
          }
-      } catch (error) {
-         console.error('Form submission error', error);
-         toast.error('Failed to submit the form. Please try again.');
          form.reset();
          setSubmitting(false);
          setOpen(false);
+         triggerRefresh();
+         router.refresh();
+      } catch (error) {
+         console.error('Form submission error', error);
+         toast.error('حدث خطأ أثناء حفظ البيانات. يرجى المحاولة مرة أخرى.');
+         setSubmitting(false);
       }
    }
 
@@ -142,24 +164,21 @@ const AdministrativePenaltiesForm = ({ title, data, variant, employeeId, icon }:
          <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
                <Button variant={variant}>
-                  <p>{title}</p>
+                  {title && <p>{title}</p>}
                   {icon ? icon : <Plus />}
                </Button>
             </DialogTrigger>
-            <DialogContent className='w-[580px] '>
+            <DialogContent className='w-[600px] max-w-[95vw]'>
                <DialogHeader>
                   <div className='flex items-center justify-between'>
-                     <DialogTitle>{title ? title : 'تعديل'}</DialogTitle>
-                     {/* <Button variant='ghost' size='icon' className='rounded-full' onClick={() => setOpen(false)}>
-                   <X className='h-4 w-4' />
-                </Button> */}
+                     <DialogTitle>{data ? 'تعديل العقوبة الإدارية' : (title ? title : 'إضافة عقوبة إدارية')}</DialogTitle>
                   </div>
                </DialogHeader>
                <Separator />
                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 py-2'>
+                  <form onSubmit={form.handleSubmit(onSubmit)} className='space-y-4 py-2' autoComplete='off'>
                      <div className='grid grid-cols-12 gap-4'>
-                        <div className='col-span-4'>
+                        <div className='col-span-12 md:col-span-6'>
                            <FormField
                               control={form.control}
                               name='typeOfDisciplinaryId'
@@ -167,13 +186,12 @@ const AdministrativePenaltiesForm = ({ title, data, variant, employeeId, icon }:
                                  <FormItem>
                                     <FormLabel>نوع العقوبة</FormLabel>
                                     <Select
+                                       value={field.value ? String(field.value) : ''}
                                        onValueChange={(value) => {
-                                          // Convert the value to a number before setting it in the form
                                           const numericValue = parseInt(value, 10);
                                           field.onChange(numericValue);
                                           handelChangePenaltiesType(value);
                                        }}
-                                       defaultValue={field.value?.toString()}
                                     >
                                        <FormControl>
                                           <SelectTrigger>
@@ -194,34 +212,21 @@ const AdministrativePenaltiesForm = ({ title, data, variant, employeeId, icon }:
                            />
                         </div>
 
-                        <div className='col-span-4'>
+                        <div className='col-span-12 md:col-span-6'>
                            <FormField
                               control={form.control}
                               name='countOfDayDelay'
                               render={({ field }) => (
                                  <FormItem>
-                                    <FormLabel>ايام التاخير</FormLabel>
+                                    <FormLabel>أيام التأخير</FormLabel>
                                     <FormControl>
-                                       <Input placeholder='' disabled type='text' {...field} />
+                                       <Input
+                                          placeholder='أيام التأخير'
+                                          type='number'
+                                          value={field.value ?? 0}
+                                          onChange={(e) => field.onChange(Number(e.target.value))}
+                                       />
                                     </FormControl>
-
-                                    <FormMessage />
-                                 </FormItem>
-                              )}
-                           />
-                        </div>
-
-                        <div className='col-span-4'>
-                           <FormField
-                              control={form.control}
-                              name='titleOfBook'
-                              render={({ field }) => (
-                                 <FormItem>
-                                    <FormLabel>عنوان الكتاب </FormLabel>
-                                    <FormControl>
-                                       <Input placeholder='' type='text' {...field} />
-                                    </FormControl>
-
                                     <FormMessage />
                                  </FormItem>
                               )}
@@ -230,7 +235,23 @@ const AdministrativePenaltiesForm = ({ title, data, variant, employeeId, icon }:
                      </div>
 
                      <div className='grid grid-cols-12 gap-4'>
-                        <div className='col-span-4'>
+                        <div className='col-span-12 md:col-span-4'>
+                           <FormField
+                              control={form.control}
+                              name='titleOfBook'
+                              render={({ field }) => (
+                                 <FormItem>
+                                    <FormLabel>عنوان الكتاب</FormLabel>
+                                    <FormControl>
+                                       <Input placeholder='عنوان الكتاب' type='text' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                 </FormItem>
+                              )}
+                           />
+                        </div>
+
+                        <div className='col-span-12 md:col-span-4'>
                            <FormField
                               control={form.control}
                               name='bookNo'
@@ -238,44 +259,61 @@ const AdministrativePenaltiesForm = ({ title, data, variant, employeeId, icon }:
                                  <FormItem>
                                     <FormLabel>رقم الكتاب</FormLabel>
                                     <FormControl>
-                                       <Input placeholder='' type='text' {...field} />
+                                       <Input placeholder='رقم الكتاب' type='text' {...field} />
                                     </FormControl>
-
                                     <FormMessage />
                                  </FormItem>
                               )}
                            />
                         </div>
 
-                        <div className='col-span-4'>
+                        <div className='col-span-12 md:col-span-4'>
                            <FormField
                               control={form.control}
                               name='bookDate'
                               render={({ field }) => (
-                                 <FormItem className='flex flex-col'>
+                                 <FormItem>
                                     <FormLabel>تاريخ الكتاب</FormLabel>
-                                    <Input placeholder='' type='date' {...field} className='mt-4' />
+                                    <FormControl>
+                                       <Input type='date' {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                 </FormItem>
+                              )}
+                           />
+                        </div>
+                     </div>
 
+                     <div className='grid grid-cols-12 gap-4'>
+                        <div className='col-span-12 md:col-span-6'>
+                           <FormField
+                              control={form.control}
+                              name='disciplinaryLaw'
+                              render={({ field }) => (
+                                 <FormItem>
+                                    <FormLabel>المادة القانونية</FormLabel>
+                                    <FormControl>
+                                       <Input placeholder='المادة القانونية' type='text' {...field} />
+                                    </FormControl>
                                     <FormMessage />
                                  </FormItem>
                               )}
                            />
                         </div>
 
-                        <div className='col-span-4'>
+                        <div className='col-span-12 md:col-span-6'>
                            <FormField
                               control={form.control}
                               name='stopPromotion'
                               render={({ field }) => (
-                                 <FormItem className='flex flex-row items-start space-x-3 space-y-0 rounded-md border p-4 mt-4 gap-2'>
+                                 <FormItem className='flex flex-row items-center space-x-3 space-y-0 rounded-md border p-3 mt-7 gap-2'>
                                     <FormControl>
                                        <Checkbox checked={field.value} onCheckedChange={field.onChange} />
                                     </FormControl>
                                     <div className='space-y-1 leading-none'>
-                                       <FormLabel>ايقاف العلاوة </FormLabel>
-
-                                       <FormMessage />
+                                       <FormLabel>إيقاف العلاوة</FormLabel>
                                     </div>
+                                    <FormMessage />
                                  </FormItem>
                               )}
                            />
@@ -284,29 +322,13 @@ const AdministrativePenaltiesForm = ({ title, data, variant, employeeId, icon }:
 
                      <FormField
                         control={form.control}
-                        name='disciplinaryLaw'
-                        render={({ field }) => (
-                           <FormItem>
-                              <FormLabel>المادة القانونية </FormLabel>
-                              <FormControl>
-                                 <Input placeholder='' type='text' {...field} />
-                              </FormControl>
-
-                              <FormMessage />
-                           </FormItem>
-                        )}
-                     />
-
-                     <FormField
-                        control={form.control}
                         name='reason'
                         render={({ field }) => (
                            <FormItem>
                               <FormLabel>سبب العقوبة</FormLabel>
                               <FormControl>
-                                 <Input placeholder='' type='text' {...field} />
+                                 <Input placeholder='سبب العقوبة' type='text' {...field} />
                               </FormControl>
-
                               <FormMessage />
                            </FormItem>
                         )}
@@ -317,19 +339,19 @@ const AdministrativePenaltiesForm = ({ title, data, variant, employeeId, icon }:
                         name='note'
                         render={({ field }) => (
                            <FormItem>
-                              <FormLabel>ملاحظة</FormLabel>
+                              <FormLabel>ملاحظات</FormLabel>
                               <FormControl>
-                                 <Input placeholder='' type='text' {...field} />
+                                 <Input placeholder='ملاحظات' type='text' {...field} />
                               </FormControl>
-
                               <FormMessage />
                            </FormItem>
                         )}
                      />
-                     <Button disabled={isSubmitting}>
+
+                     <Button disabled={isSubmitting} className='w-full'>
                         {isSubmitting ? (
                            <>
-                              <p className='ml-2'>حفظ البيانات</p> <Spinner />
+                              <p className='ml-2'>جاري الحفظ...</p> <Spinner />
                            </>
                         ) : (
                            'حفظ البيانات'
@@ -342,7 +364,7 @@ const AdministrativePenaltiesForm = ({ title, data, variant, employeeId, icon }:
                <DialogFooter>
                   <DialogClose asChild>
                      <Button variant='destructive' onClick={() => form.reset()}>
-                        أغلاق
+                        إغلاق
                      </Button>
                   </DialogClose>
                </DialogFooter>

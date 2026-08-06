@@ -28,6 +28,8 @@ type Props = {
 };
 
 const ProfileTabs = ({ AdministrativeOrder, EducationInfo, EmployeeInfo, ManagementInfo }: Props) => {
+   const empId = EmployeeInfo?.employeeId || (EmployeeInfo as any)?.id || '';
+
    return (
       <EmployeeProfileRefreshProvider>
       <div>
@@ -40,28 +42,28 @@ const ProfileTabs = ({ AdministrativeOrder, EducationInfo, EmployeeInfo, Managem
                   ملف الموظف
                </TabsTrigger>
                <TabsTrigger
-                  value='marital-status'
-                  className='active:bg-primary data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'
-               >
-                  الحالة الزوجية
-               </TabsTrigger>
-               <TabsTrigger
                   value='admin-portal'
                   className='active:bg-primary data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'
                >
                   الأوامر الإدارية
                </TabsTrigger>
                <TabsTrigger
+                  value='marital-status'
+                  className='active:bg-primary data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'
+               >
+                  الحالة الزوجية
+               </TabsTrigger>
+               <TabsTrigger
                   value='document'
                   className='active:bg-primary data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'
                >
-                  المستمسكات
+                  المستمسكات الثبوتية
                </TabsTrigger>
                <TabsTrigger
                   value='personal-additions'
                   className='active:bg-primary data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'
                >
-                  الأضبارة الشخصية
+                  المرفقات الشخصية
                </TabsTrigger>
                <TabsTrigger
                   value='residence'
@@ -73,25 +75,25 @@ const ProfileTabs = ({ AdministrativeOrder, EducationInfo, EmployeeInfo, Managem
                   value='contacts'
                   className='active:bg-primary data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'
                >
-                  جهات الاتصال
+                  معلومات الاتصال
                </TabsTrigger>
                <TabsTrigger
                   value='grades'
                   className='active:bg-primary data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'
                >
-                  الدرجات
+                  الدرجة
                </TabsTrigger>
                <TabsTrigger
                   value='categories'
                   className='active:bg-primary data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'
                >
-                  الفئات
+                  الفئة
                </TabsTrigger>
                <TabsTrigger
                   value='education'
                   className='active:bg-primary data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'
                >
-                  التحصيل الدراسي
+                  التحصيل العلمي
                </TabsTrigger>
                <TabsTrigger
                   value='penalties'
@@ -120,7 +122,7 @@ const ProfileTabs = ({ AdministrativeOrder, EducationInfo, EmployeeInfo, Managem
             </TabsList>
 
             {/* Employee File Tab Content */}
-            <TabsContent value='employee-file' className='mt-0 لال'>
+            <TabsContent value='employee-file' className='mt-0'>
                <div className='grid grid-cols-1 md:grid-cols-3 gap-6'>
                   {/* Basic Information */}
                   <BasicInformation
@@ -137,37 +139,37 @@ const ProfileTabs = ({ AdministrativeOrder, EducationInfo, EmployeeInfo, Managem
                </div>
             </TabsContent>
             <TabsContent value='admin-portal' className='mt-0'>
-               <AdministrativeOrderPage employeeId={EmployeeInfo?.employeeId} />
+               <AdministrativeOrderPage employeeId={empId} />
             </TabsContent>
             <TabsContent value='marital-status' className='mt-0'>
-               <MaritalStatusTable employeeId={EmployeeInfo?.employeeId} />
+               <MaritalStatusTable employeeId={empId} />
             </TabsContent>
             <TabsContent value='document' className='mt-0'>
-               <DocumentPage employeeId={EmployeeInfo?.employeeId} />
+               <DocumentPage employeeId={empId} />
             </TabsContent>
             <TabsContent value='personal-additions' className='mt-0'>
-               <PersonalFilePage employeeId={EmployeeInfo?.employeeId as string} />
+               <PersonalFilePage employeeId={empId} />
             </TabsContent>
             <TabsContent value='residence' className='mt-0'>
-               <HomeAddressPage employeeId={EmployeeInfo?.employeeId as string} />
+               <HomeAddressPage employeeId={empId} />
             </TabsContent>
             <TabsContent value='contacts' className='mt-0'>
-               <ContactInformationPage employeeId={EmployeeInfo?.employeeId as string} />
+               <ContactInformationPage employeeId={empId} />
             </TabsContent>
             <TabsContent value='grades' className='mt-0'>
-               <GradesTable employeeId={EmployeeInfo?.employeeId as string} />
+               <GradesTable employeeId={empId} />
             </TabsContent>
             <TabsContent value='categories' className='mt-0'>
-               <CategoriesTable employeeId={EmployeeInfo?.employeeId as string} />
+               <CategoriesTable employeeId={empId} />
             </TabsContent>
             <TabsContent value='education' className='mt-0'>
-               <AcademicAchievementPage employeeId={EmployeeInfo?.employeeId as string} />
+               <AcademicAchievementPage employeeId={empId} />
             </TabsContent>
             <TabsContent value='penalties' className='mt-0'>
-               <AdministrativePenaltiesTable employeeId={EmployeeInfo?.employeeId as string} />
+               <AdministrativePenaltiesTable employeeId={empId} />
             </TabsContent>
             <TabsContent value='training' className='mt-0'>
-               <TrainingCoursesTable employeeId={EmployeeInfo?.employeeId as string} />
+               <TrainingCoursesTable employeeId={empId} />
             </TabsContent>
             <TabsContent value='service-line' className='mt-0'>
                <ServiceLinePage
@@ -178,7 +180,7 @@ const ProfileTabs = ({ AdministrativeOrder, EducationInfo, EmployeeInfo, Managem
                />
             </TabsContent>
             <TabsContent value='vacation-balance' className='mt-0'>
-               <LeavesBalancesTable employeeId={EmployeeInfo?.employeeId as string} />
+               <LeavesBalancesTable employeeId={empId} />
             </TabsContent>
             {/* Placeholder content for other tabs */}
           </Tabs>

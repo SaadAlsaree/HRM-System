@@ -19,6 +19,8 @@ import DocumentToolbar from './document-toolbar';
 import DocumentTable from './document-table';
 import { documentService } from '@/services/document.service';
 
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
+
 export interface IEmployeeDocument {
    id: string;
    employeeId: string;
@@ -47,9 +49,15 @@ const DocumentPage = ({ initialPage = 1, pageSize = 10, employeeId, status }: Pr
    const [error, setError] = useState<string | undefined>();
    const [currentPage, setCurrentPage] = useState(initialPage);
    const [totalPages, setTotalPages] = useState(0);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       const fetchData = async () => {
+         if (!employeeId) {
+            setData(null);
+            setLoading(false);
+            return;
+         }
          setLoading(true);
          try {
             const response = await documentService.getDocument({
@@ -69,7 +77,7 @@ const DocumentPage = ({ initialPage = 1, pageSize = 10, employeeId, status }: Pr
          }
       };
       fetchData();
-   }, [currentPage, pageSize, employeeId, status]);
+   }, [currentPage, pageSize, employeeId, status, refreshKey]);
 
    const handlePageChange = (page: number) => {
       setCurrentPage(page);

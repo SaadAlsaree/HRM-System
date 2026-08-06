@@ -5,6 +5,7 @@ import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 
 import { columnsTrainingCourses } from './columns';
 import { employeeCourseService } from '@/services/Employee/employee-course.service';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 interface ITrainingCourses {
    id?: string;
@@ -36,43 +37,37 @@ interface ITrainingCourses {
 type Props = {
    employeeId: string;
 };
+
 const TrainingCoursesTable = ({ employeeId }: Props) => {
    const [courses, setCourses] = useState<ITrainingCourses[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
-   const [totalPages, setTotalPages] = useState(0);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       const fetchCourses = async () => {
+         if (!employeeId) {
+            setCourses([]);
+            return;
+         }
          setLoading(true);
          try {
             const response = await employeeCourseService.getEmployeeCourses({ EmployeeId: employeeId });
             setCourses(response?.data?.items || []);
-            setTotalPages(response?.data?.totalCount);
-         } catch (error) {
-            console.error('Error fetching promotions:', error);
-            setError('Failed to fetch promotions');
+            setError(null);
+         } catch (err) {
+            console.error('Error fetching training courses:', err);
+            setError('حدث خطأ أثناء تحميل البيانات !');
          } finally {
             setLoading(false);
          }
       };
       fetchCourses();
-   }, [employeeId]);
-
-   if (totalPages === 0)
-      return (
-         <div>
-            <div>لايوجد بيانات !</div>
-         </div>
-      );
-
-   if (error) return <div>حدث خطأ أثناء تحميل البيانات !</div>;
-
-   if (loading) return <div>جاري التحميل...</div>;
+   }, [employeeId, refreshKey]);
 
    return (
       <div className='border rounded-lg p-2 bg-white dark:bg-gray-900'>
-         <ScrollArea className='w-[1380px] whitespace-nowrap '>
+         <ScrollArea className='w-full whitespace-nowrap'>
             <Table>
                <TableHeader>
                   <TableRow>
@@ -81,16 +76,33 @@ const TrainingCoursesTable = ({ employeeId }: Props) => {
                            {column.label}
                         </TableHead>
                      ))}
-                     {/* <TableHead className='w-[100px] text-center'>
-                            <AlignJustify className='justify-center' />
-                         </TableHead> */}
                   </TableRow>
                </TableHeader>
                <TableBody>
-                  {courses?.map((item) => (
+                  {loading && (
+                     <TableRow>
+                        <TableCell colSpan={columnsTrainingCourses?.length || 1} className='text-center py-6 text-muted-foreground'>
+                           جاري التحميل...
+                        </TableCell>
+                     </TableRow>
+                  )}
+                  {!loading && error && (
+                     <TableRow>
+                        <TableCell colSpan={columnsTrainingCourses?.length || 1} className='text-center py-6 text-red-500'>
+                           {error}
+                        </TableCell>
+                     </TableRow>
+                  )}
+                  {!loading && !error && courses.length === 0 && (
+                     <TableRow>
+                        <TableCell colSpan={columnsTrainingCourses?.length || 1} className='text-center py-6 text-muted-foreground'>
+                           لا توجد بيانات دورات تدريبية
+                        </TableCell>
+                     </TableRow>
+                  )}
+                  {!loading && !error && courses.map((item) => (
                      <TableRow key={item.id}>
                         <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
-
                         <TableCell>{item?.title}</TableCell>
                         <TableCell>{item?.residentEntity}</TableCell>
                         <TableCell>{item?.courseOrderNo}</TableCell>

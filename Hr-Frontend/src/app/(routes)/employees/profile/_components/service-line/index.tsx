@@ -36,6 +36,8 @@ const formatDate = (value?: string | null) => {
 };
 
 const ServiceLinePage = ({ EducationInfo, EmployeeInfo, ManagementInfo, data }: Props) => {
+   const empId = EmployeeInfo?.employeeId || (EmployeeInfo as any)?.id || '';
+
    return (
       <div className='flex flex-col items-center gap-2 border rounded-lg p-2 bg-white dark:bg-gray-900'>
          <div className='w-full'>
@@ -147,26 +149,26 @@ const ServiceLinePage = ({ EducationInfo, EmployeeInfo, ManagementInfo, data }: 
          <Separator className='my-4' />
          <div className='w-full space-y-2'>
             <h1 className='text-2xl font-semibold'>الخدمة المضافة</h1>
-            <ServiceCalculationProfile employeeId={EmployeeInfo?.employeeId} />
+            <ServiceCalculationProfile employeeId={empId} />
          </div>
 
          <Separator className='my-4' />
 
          <div className='w-full space-y-2'>
             <h1 className='text-2xl font-semibold'>التشكرات</h1>
-            <ThanksAndSeniorityProfile employeeId={EmployeeInfo?.employeeId} />
+            <ThanksAndSeniorityProfile employeeId={empId} />
          </div>
          <Separator className='my-4' />
 
          <div className='w-full space-y-2'>
             <h1 className='text-2xl font-semibold'>العقوبات</h1>
-            <EmployeeDisciplinaryProfile employeeId={EmployeeInfo?.employeeId} />
+            <EmployeeDisciplinaryProfile employeeId={empId} />
          </div>
          <Separator className='my-4' />
 
          <div className='w-full space-y-2'>
             <h1 className='text-2xl font-semibold'>الغيابات</h1>
-            <AbsencesProfile employeeId={EmployeeInfo?.employeeId} />
+            <AbsencesProfile employeeId={empId} />
          </div>
       </div>
    );

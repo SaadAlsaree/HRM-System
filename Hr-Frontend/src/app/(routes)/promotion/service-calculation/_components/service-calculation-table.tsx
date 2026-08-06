@@ -8,7 +8,7 @@ import { useRouter } from 'next/navigation';
 
 import SelectStatus from '@/app/_components/select-status';
 import { IServiceCalculation } from '../page';
-import AffiliatesFromOrgForm from './service-calculation-form';
+import ServiceCalculationForm from './service-calculation-form';
 import { serviceCalculationService } from '@/services/service-calculation.service';
 import ServiceCalculationAttachment from './service-calculation-attachment';
 import { Button } from '@/components/ui/button';
@@ -51,6 +51,13 @@ const ServiceCalculationTable = ({ serviceCalculationData, columns, jobDegreesLi
             </TableRow>
          </TableHeader>
          <TableBody>
+            {(!serviceCalculationData || serviceCalculationData.length === 0) && (
+               <TableRow>
+                  <TableCell colSpan={columns.length + 1} className='text-center py-6 text-muted-foreground'>
+                     لا توجد بيانات احتساب خدمة
+                  </TableCell>
+               </TableRow>
+            )}
             {serviceCalculationData?.map((item) => (
                <TableRow key={item?.id}>
                   <TableCell>{item?.jobCode}</TableCell>
@@ -82,7 +89,7 @@ const ServiceCalculationTable = ({ serviceCalculationData, columns, jobDegreesLi
                      </div>
                   </TableCell>
                   <TableCell>
-                     <AffiliatesFromOrgForm
+                     <ServiceCalculationForm
                         title=''
                         icon={<Settings2 className='h-4 w-4' />}
                         data={item}

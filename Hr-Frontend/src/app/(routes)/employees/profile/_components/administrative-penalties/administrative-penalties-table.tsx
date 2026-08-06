@@ -24,6 +24,7 @@ import { AlignJustify, Settings2 } from 'lucide-react';
 import AdministrativePenaltiesAttachment from './administrative-penalties-attachment';
 import { Button } from '@/components/ui/button';
 import AdministrativePenaltiesForm from './administrative-penalties-form';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 export interface IPenalties {
    id?: string;
@@ -50,32 +51,34 @@ type Props = {
 };
 
 const AdministrativePenaltiesTable = ({ employeeId }: Props) => {
-   const [data, setData] = useState<IPenalties[] | null>([]);
+   const [data, setData] = useState<IPenalties[]>([]);
    const [currentPage, setCurrentPage] = useState(1);
    const [totalPages, setTotalPages] = useState(0);
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState<string | null>(null);
+   const { refreshKey } = useEmployeeProfileRefresh();
    const postsPerPage = 10;
 
    const router = useRouter();
-   //Handel Update status
+
    const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
       try {
          const response = await employeeDisciplinary.patchEmployeeDisciplinary({ id, statusId: value });
-
-         toast(
-            <pre className=' w-[340px] rounded-md'>
-               <h1 className='text-xl'>{response?.message}</h1>
-            </pre>
-         );
+         toast.success(response?.message || 'تم تحديث الحالة بنجاح.');
          router.refresh();
-      } catch (error) {
-         console.log('error', error);
+      } catch (err) {
+         console.error('error updating status:', err);
+         toast.error('حدث خطأ أثناء تحديث الحالة.');
       }
    };
 
    useEffect(() => {
       const fetchData = async () => {
+         if (!employeeId) {
+            setData([]);
+            setIsLoading(false);
+            return;
+         }
          setIsLoading(true);
          try {
             const response = await employeeDisciplinary.getEmployeeDisciplinary({
@@ -83,18 +86,18 @@ const AdministrativePenaltiesTable = ({ employeeId }: Props) => {
                PageSize: postsPerPage,
                EmployeeId: employeeId
             });
-            setData(response?.data?.items);
+            setData(response?.data?.items || []);
             setTotalPages(response?.data?.totalPages || 0);
             setError(null);
          } catch (err) {
-            setError('Failed to fetch data');
+            setError('فشل في تحميل البيانات');
             console.error(err);
          } finally {
             setIsLoading(false);
          }
       };
       fetchData();
-   }, [currentPage, employeeId]);
+   }, [currentPage, employeeId, refreshKey]);
 
    const handlePageChange = (page: number) => {
       setCurrentPage(page);
@@ -117,15 +120,13 @@ const AdministrativePenaltiesTable = ({ employeeId }: Props) => {
       return pageNumbers;
    };
 
-   if (error) return <div>حدث خطاء اثناء تحميل البيانات</div>;
-
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>
          <div className='w-full'>
             <AdministrativePenaltiesToolbar employeeId={employeeId} />
          </div>
          <Separator />
-         <ScrollArea className='w-[1380px] whitespace-nowrap '>
+         <ScrollArea className='w-full whitespace-nowrap'>
             <Table>
                <TableHeader>
                   <TableRow>
@@ -140,153 +141,129 @@ const AdministrativePenaltiesTable = ({ employeeId }: Props) => {
                   </TableRow>
                </TableHeader>
                <TableBody>
-                  {isLoading
-                     ? Array.from({ length: postsPerPage }).map((_, index) => (
-                          <TableRow key={index}>
-                             <TableCell>
-                                <Skeleton className='h-4 w-8' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                             <TableCell>
-                                <Skeleton className='h-4 w-full' />
-                             </TableCell>
-                          </TableRow>
-                       ))
-                     : data?.map((item) => (
-                          <TableRow key={item?.id}>
-                             <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
-                             <TableCell>{item?.fullName}</TableCell>
-                             <TableCell>{item?.titleOfBook}</TableCell>
-                             <TableCell>{item?.typeOfDisciplinaryName}</TableCell>
-                             <TableCell>{item?.countOfDayDelay}</TableCell>
-                             <TableCell>{item?.bookNo}</TableCell>
-                             <TableCell>{item?.bookDate}</TableCell>
-                             <TableCell>{item?.disciplinaryLaw}</TableCell>
-                             <TableCell>
-                                <SelectStatus id={item?.id as string} status={item?.status?.toString()} onChange={handleStatusChange} />
-                             </TableCell>
-                             <TableCell>{item?.stopPromotion ? 'جارية' : 'ملغاة'}</TableCell>
-                             <TableCell>{item?.reason || 'لا يوجد'}</TableCell>
-                             <TableCell>
-                                <AdministrativePenaltiesAttachment
-                                   PrimaryTableId={item?.id as string}
-                                   employeeId={item?.employeeId as string}
-                                />
-                             </TableCell>
-                             <TableCell>
-                                <Popover>
-                                   <PopoverTrigger asChild>
-                                      <Button variant='outline'>الملاحظات</Button>
-                                   </PopoverTrigger>
-                                   <PopoverContent>{item?.note}</PopoverContent>
-                                </Popover>
-                             </TableCell>
-                             <TableCell>
-                                <div className='flex items-center gap-2'>
-                                   <AdministrativePenaltiesForm
-                                      title=''
-                                      icon={<Settings2 className='h-4 w-4' />}
-                                      data={item}
-                                      variant='ghost'
-                                      employeeId={employeeId}
-                                   />
-                                </div>
-                             </TableCell>
-                          </TableRow>
-                       ))}
+                  {isLoading &&
+                     Array.from({ length: 3 }).map((_, index) => (
+                        <TableRow key={index}>
+                           <TableCell colSpan={columnsEmployeeDisciplinary.length + 1}>
+                              <Skeleton className='h-8 w-full' />
+                           </TableCell>
+                        </TableRow>
+                     ))}
+                  {!isLoading && error && (
+                     <TableRow>
+                        <TableCell colSpan={columnsEmployeeDisciplinary.length + 1} className='text-center py-6 text-red-500'>
+                           {error}
+                        </TableCell>
+                     </TableRow>
+                  )}
+                  {!isLoading && !error && data.length === 0 && (
+                     <TableRow>
+                        <TableCell colSpan={columnsEmployeeDisciplinary.length + 1} className='text-center py-6 text-muted-foreground'>
+                           لا توجد بيانات عقوبات إدارية
+                        </TableCell>
+                     </TableRow>
+                  )}
+                  {!isLoading &&
+                     !error &&
+                     data.map((item) => (
+                        <TableRow key={item?.id}>
+                           <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
+                           <TableCell>{item?.fullName}</TableCell>
+                           <TableCell>{item?.titleOfBook}</TableCell>
+                           <TableCell>{item?.typeOfDisciplinaryName}</TableCell>
+                           <TableCell>{item?.countOfDayDelay}</TableCell>
+                           <TableCell>{item?.bookNo}</TableCell>
+                           <TableCell>{item?.bookDate}</TableCell>
+                           <TableCell>{item?.disciplinaryLaw}</TableCell>
+                           <TableCell>
+                              <SelectStatus id={item?.id as string} status={item?.status?.toString()} onChange={handleStatusChange} />
+                           </TableCell>
+                           <TableCell>{item?.stopPromotion ? 'جارية' : 'ملغاة'}</TableCell>
+                           <TableCell>{item?.reason || 'لا يوجد'}</TableCell>
+                           <TableCell>
+                              <AdministrativePenaltiesAttachment
+                                 PrimaryTableId={item?.id as string}
+                                 employeeId={(item?.employeeId || employeeId) as string}
+                              />
+                           </TableCell>
+                           <TableCell>
+                              <Popover>
+                                 <PopoverTrigger asChild>
+                                    <Button variant='outline'>الملاحظات</Button>
+                                 </PopoverTrigger>
+                                 <PopoverContent>{item?.note}</PopoverContent>
+                              </Popover>
+                           </TableCell>
+                           <TableCell>
+                              <div className='flex items-center gap-2'>
+                                 <AdministrativePenaltiesForm
+                                    title=''
+                                    icon={<Settings2 className='h-4 w-4' />}
+                                    data={item}
+                                    variant='ghost'
+                                    employeeId={(item?.employeeId || employeeId) as string}
+                                 />
+                              </div>
+                           </TableCell>
+                        </TableRow>
+                     ))}
                </TableBody>
             </Table>
             <ScrollBar orientation='horizontal' />
          </ScrollArea>
          {/* Pagination Start */}
-         <div className='mt-4'>
-            <Pagination>
-               <PaginationContent>
-                  <PaginationItem>
-                     <PaginationPrevious
-                        href='#'
-                        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                        // disabled={isLoading || currentPage === 1}
-                     />
-                  </PaginationItem>
-                  {currentPage > 3 && (
-                     <>
-                        <PaginationItem>
-                           <PaginationLink href='#' onClick={() => handlePageChange(1)}>
-                              1
-                           </PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                           <PaginationEllipsis />
-                        </PaginationItem>
-                     </>
-                  )}
-                  {getPageNumbers().map((pageNumber) => (
-                     <PaginationItem key={pageNumber}>
-                        <PaginationLink
-                           href='#'
-                           isActive={currentPage === pageNumber}
-                           onClick={() => handlePageChange(pageNumber)}
-                           //    disabled={isLoading}
-                        >
-                           {pageNumber}
-                        </PaginationLink>
+         {totalPages > 1 && (
+            <div className='mt-4 p-2'>
+               <Pagination>
+                  <PaginationContent>
+                     <PaginationItem>
+                        <PaginationPrevious
+                           onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                        />
                      </PaginationItem>
-                  ))}
-                  {currentPage < totalPages - 2 && (
-                     <>
-                        <PaginationItem>
-                           <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                           <PaginationLink href='#' onClick={() => handlePageChange(totalPages)}>
-                              {totalPages}
+                     {currentPage > 3 && (
+                        <>
+                           <PaginationItem>
+                              <PaginationLink onClick={() => handlePageChange(1)}>
+                                 1
+                              </PaginationLink>
+                           </PaginationItem>
+                           <PaginationItem>
+                              <PaginationEllipsis />
+                           </PaginationItem>
+                        </>
+                     )}
+                     {getPageNumbers().map((pageNumber) => (
+                        <PaginationItem key={pageNumber}>
+                           <PaginationLink
+                              isActive={currentPage === pageNumber}
+                              onClick={() => handlePageChange(pageNumber)}
+                           >
+                              {pageNumber}
                            </PaginationLink>
                         </PaginationItem>
-                     </>
-                  )}
-                  <PaginationItem>
-                     <PaginationNext
-                        href='#'
-                        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                        // disabled={isLoading || currentPage === totalPages}
-                     />
-                  </PaginationItem>
-               </PaginationContent>
-            </Pagination>
-         </div>
+                     ))}
+                     {currentPage < totalPages - 2 && (
+                        <>
+                           <PaginationItem>
+                              <PaginationEllipsis />
+                           </PaginationItem>
+                           <PaginationItem>
+                              <PaginationLink onClick={() => handlePageChange(totalPages)}>
+                                 {totalPages}
+                              </PaginationLink>
+                           </PaginationItem>
+                        </>
+                     )}
+                     <PaginationItem>
+                        <PaginationNext
+                           onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                        />
+                     </PaginationItem>
+                  </PaginationContent>
+               </Pagination>
+            </div>
+         )}
       </div>
    );
 };

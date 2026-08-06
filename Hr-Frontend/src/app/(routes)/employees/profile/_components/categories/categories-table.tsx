@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { IChangeDegree } from '../grades/grades-table';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { columnsCategories } from './columns';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 type Props = {
    employeeId: string;
@@ -20,6 +21,7 @@ const CategoriesTable = ({ employeeId }: Props) => {
    const [changeDegrees, setChangeDegrees] = useState<IChangeDegree[]>([]);
    const [isLoading, setIsLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       if (!employeeId) return;
@@ -47,7 +49,7 @@ const CategoriesTable = ({ employeeId }: Props) => {
       };
 
       fetchChangeDegrees();
-   }, [employeeId, fetchClient]);
+   }, [employeeId, refreshKey, fetchClient]);
 
    if (error) return <div>حدث خطأ أثناء تحميل البيانات !</div>;
 

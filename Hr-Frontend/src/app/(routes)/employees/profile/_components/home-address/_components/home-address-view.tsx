@@ -11,75 +11,108 @@ type Props = {
 };
 
 const HomeAddressView = ({ employeeId, data }: Props) => {
-   // address information if isCurrent is true
-   const address: IAddressInformation = data?.find((item) => item.isCurrent === true) as IAddressInformation;
+   // address information if isCurrent is true or the latest address
+   const address: IAddressInformation | undefined =
+      data?.find((item) => item.isCurrent === true) || data?.[0];
 
-   // all address information if isCurrent is false
-   const allAddress: IAddressInformation[] = data?.filter((item) => item.isCurrent === false);
+   // all previous address information (excluding current)
+   const allAddress: IAddressInformation[] =
+      data?.filter((item) => item.id !== address?.id) || [];
 
    return (
-      <div className='justify-center  grid grid-cols-1 xl:grid-cols-2 gap-4'>
-         <Card className='p-2'>
-            <div className='flex justify-between items-center gap-2 my-2'>
+      <div className='justify-center grid grid-cols-1 xl:grid-cols-2 gap-4'>
+         <Card className='p-4'>
+            <div className='flex justify-between items-center gap-2 mb-3'>
                <div>
-                  <h1 className='text-xl text-muted-foreground'>السكن الحالي</h1>
+                  <h1 className='text-lg font-semibold'>السكن الحالي</h1>
                </div>
-               <div>
-                  <HomeAddressForm title='أضافة' employeeId={employeeId} />
-                  <HomeAddressForm title='تعديل' icon={<Settings2 />} data={address} employeeId={employeeId} />
+               <div className='flex items-center gap-2'>
+                  <HomeAddressForm title='إضافة' employeeId={employeeId} />
+                  {address && (
+                     <HomeAddressForm title='تعديل' icon={<Settings2 className='h-4 w-4' />} data={address} employeeId={employeeId} />
+                  )}
                </div>
             </div>
             <Separator />
             <div className='mt-4'>
-               <div className='flow-root rounded-lg  border-gray-100 py-3'>
-                  <dl className='-my-3 divide-y divide-gray-100 text-sm'>
-                     <div className='grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4'>
-                        <dt className='font-medium '>المحافظة :</dt>
-                        <dd className='sm:col-span-2 truncate hover:text-wrap cursor-pointer'>{address?.governorateName}</dd>
-                     </div>
-                     <div className='grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4 dark:bg-gray-800'>
-                        <dt className='font-medium '>القضاء :</dt>
-                        <dd className='sm:col-span-2 truncate hover:text-wrap cursor-pointer'>{address?.territoryName}</dd>
-                     </div>
-                     <div className='grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4 '>
-                        <dt className='font-medium '>المنطقة :</dt>
-                        <dd className='sm:col-span-2 truncate hover:text-wrap cursor-pointer'>{address?.area}</dd>
-                     </div>
-                     <div className='grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4 dark:bg-gray-800'>
-                        <dt className='font-medium '>المحلة :</dt>
-                        <dd className='sm:col-span-2 truncate hover:text-wrap cursor-pointer'>{address?.district}</dd>
-                     </div>
-                     <div className='grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4'>
-                        <dt className='font-medium '>الزقاق :</dt>
-                        <dd className='sm:col-span-2 truncate hover:text-wrap cursor-pointer'>{address?.streetNo}</dd>
-                     </div>
-                     <div className='grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4 dark:bg-gray-800'>
-                        <dt className='font-medium '>البيت :</dt>
-                        <dd className='sm:col-span-2 truncate hover:text-wrap cursor-pointer'>{address?.houseNo}</dd>
-                     </div>
-                  </dl>
-               </div>
+               {!address ? (
+                  <div className='text-center py-8 text-muted-foreground text-sm'>
+                     لا توجد بيانات سكن مسجلة لهذا الموظف
+                  </div>
+               ) : (
+                  <div className='flow-root rounded-lg border-gray-100 py-2'>
+                     <dl className='divide-y divide-gray-100 dark:divide-gray-800 text-sm'>
+                        <div className='grid grid-cols-1 gap-1 p-3 even:bg-muted/40 sm:grid-cols-3 sm:gap-4'>
+                           <dt className='font-medium text-muted-foreground'>المحافظة:</dt>
+                           <dd className='sm:col-span-2 font-medium'>{address?.governorateName || '----'}</dd>
+                        </div>
+                        <div className='grid grid-cols-1 gap-1 p-3 even:bg-muted/40 sm:grid-cols-3 sm:gap-4'>
+                           <dt className='font-medium text-muted-foreground'>القضاء:</dt>
+                           <dd className='sm:col-span-2 font-medium'>{address?.provinceName || '----'}</dd>
+                        </div>
+                        <div className='grid grid-cols-1 gap-1 p-3 even:bg-muted/40 sm:grid-cols-3 sm:gap-4'>
+                           <dt className='font-medium text-muted-foreground'>الناحية:</dt>
+                           <dd className='sm:col-span-2 font-medium'>{address?.territoryName || '----'}</dd>
+                        </div>
+                        <div className='grid grid-cols-1 gap-1 p-3 even:bg-muted/40 sm:grid-cols-3 sm:gap-4'>
+                           <dt className='font-medium text-muted-foreground'>المنطقة / الحي:</dt>
+                           <dd className='sm:col-span-2 font-medium'>{address?.area || '----'}</dd>
+                        </div>
+                        <div className='grid grid-cols-1 gap-1 p-3 even:bg-muted/40 sm:grid-cols-3 sm:gap-4'>
+                           <dt className='font-medium text-muted-foreground'>المحلة:</dt>
+                           <dd className='sm:col-span-2 font-medium'>{address?.district || '----'}</dd>
+                        </div>
+                        <div className='grid grid-cols-1 gap-1 p-3 even:bg-muted/40 sm:grid-cols-3 sm:gap-4'>
+                           <dt className='font-medium text-muted-foreground'>الزقاق:</dt>
+                           <dd className='sm:col-span-2 font-medium'>{address?.streetNo || '----'}</dd>
+                        </div>
+                        <div className='grid grid-cols-1 gap-1 p-3 even:bg-muted/40 sm:grid-cols-3 sm:gap-4'>
+                           <dt className='font-medium text-muted-foreground'>الدار:</dt>
+                           <dd className='sm:col-span-2 font-medium'>{address?.houseNo || '----'}</dd>
+                        </div>
+                        <div className='grid grid-cols-1 gap-1 p-3 even:bg-muted/40 sm:grid-cols-3 sm:gap-4'>
+                           <dt className='font-medium text-muted-foreground'>أقرب نقطة دالة:</dt>
+                           <dd className='sm:col-span-2 font-medium'>{address?.nearestPoint || '----'}</dd>
+                        </div>
+                        {address?.notes && (
+                           <div className='grid grid-cols-1 gap-1 p-3 even:bg-muted/40 sm:grid-cols-3 sm:gap-4'>
+                              <dt className='font-medium text-muted-foreground'>الملاحظات:</dt>
+                              <dd className='sm:col-span-2 font-medium'>{address.notes}</dd>
+                           </div>
+                        )}
+                     </dl>
+                  </div>
+               )}
             </div>
          </Card>
-         <Card>
+         <Card className='p-4'>
             <div>
-               <div className='flex justify-between items-center gap-2 p-3'>
+               <div className='flex justify-between items-center gap-2 mb-3'>
                   <div>
-                     <h1 className='text-xl text-muted-foreground mr-2'>السكن السابق</h1>
+                     <h1 className='text-lg font-semibold text-muted-foreground'>السكن السابق</h1>
                   </div>
-                  <div></div>
                </div>
                <Separator />
-               <div>
-                  <div className='flow-root rounded-lg  border-gray-100 py-3'>
-                     {allAddress?.length < 0 && <h1>لا يوجد بيانات !</h1>}
-                     {allAddress?.map((item, index) => (
-                        <div key={index} className='grid grid-cols-1 gap-1 p-3 even:bg-gray-50 sm:grid-cols-3 sm:gap-4'>
-                           <dt className='font-medium '>المحافظة :</dt>
-                           <dd className='sm:col-span-2 truncate hover:text-wrap cursor-pointer'>{item?.governorateName}</dd>
-                        </div>
-                     ))}
-                  </div>
+               <div className='mt-4'>
+                  {allAddress?.length === 0 ? (
+                     <div className='text-center py-8 text-muted-foreground text-sm'>
+                        لا يوجد سكن سابق مسجل
+                     </div>
+                  ) : (
+                     <div className='space-y-3'>
+                        {allAddress?.map((item, index) => (
+                           <div key={item.id || index} className='p-3 border rounded-lg bg-card text-sm space-y-1'>
+                              <div className='flex justify-between font-medium'>
+                                 <span>{item?.governorateName} - {item?.provinceName || item?.territoryName}</span>
+                                 <span className='text-xs text-muted-foreground'>{item?.area}</span>
+                              </div>
+                              <div className='text-xs text-muted-foreground'>
+                                 محلة {item?.district || '-'} / زقاق {item?.streetNo || '-'} / دار {item?.houseNo || '-'}
+                              </div>
+                           </div>
+                        ))}
+                     </div>
+                  )}
                </div>
             </div>
          </Card>

@@ -25,8 +25,10 @@ import { columnsMaritalStatus } from './columns';
 import MaritalStatusForm from './marital-status-form';
 import { IMarriageInformation } from './marital-status-form';
 
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
+
 type Props = {
-   employeeId: string;
+   employeeId?: string;
    data?: IMarriageInformation[] | null;
    columns?: { label: string; value: string; className?: string }[];
 };
@@ -36,17 +38,17 @@ const MaritalStatusTable = ({ employeeId, data, columns = columnsMaritalStatus }
    const [totalPages, setTotalPages] = useState(0);
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState<string | null>(null);
-   const [marriageData, setMarriageData] = useState<IMarriageInformation[] | null>(null);
+   const [marriageData, setMarriageData] = useState<IMarriageInformation[]>([]);
    const postsPerPage = 10;
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
-      if (data) {
-         setMarriageData(data);
-         setIsLoading(false);
-         return;
-      }
-
       const fetchData = async () => {
+         if (!employeeId) {
+            setMarriageData([]);
+            setIsLoading(false);
+            return;
+         }
          setIsLoading(true);
          try {
             const response = await marriageInformationService.getMarriageInformation({
@@ -54,18 +56,18 @@ const MaritalStatusTable = ({ employeeId, data, columns = columnsMaritalStatus }
                Page: currentPage,
                PageSize: postsPerPage
             });
-            setMarriageData(response?.data?.items);
+            setMarriageData(response?.data?.items || []);
             setTotalPages(response?.data?.totalPages || 0);
             setError(null);
          } catch (err) {
-            setError('Failed to fetch data');
+            setError('فشل في تحميل البيانات');
             console.error(err);
          } finally {
             setIsLoading(false);
          }
       };
       fetchData();
-   }, [currentPage, employeeId, data]);
+   }, [currentPage, employeeId, refreshKey]);
 
    const handlePageChange = (page: number) => {
       setCurrentPage(page);
@@ -88,8 +90,6 @@ const MaritalStatusTable = ({ employeeId, data, columns = columnsMaritalStatus }
       return pageNumbers;
    };
 
-   if (error) return <div>حدث خطاء اثناء تحميل البيانات</div>;
-
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>
          <div className='w-full'>
@@ -110,109 +110,109 @@ const MaritalStatusTable = ({ employeeId, data, columns = columnsMaritalStatus }
                </TableRow>
             </TableHeader>
             <TableBody>
-               {isLoading
-                  ? Array.from({ length: postsPerPage }).map((_, index) => (
-                       <TableRow key={index}>
-                          <TableCell>
-                             <Skeleton className='h-4 w-8' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                       </TableRow>
-                    ))
-                  : marriageData?.map((item) => (
-                       <TableRow key={item?.employeeId}>
-                          <TableCell>{item?.employeeId?.toString().toUpperCase().split('-', 1)}</TableCell>
-                          <TableCell>{item?.fullName}</TableCell>
-                          <TableCell>{item?.childrenCount}</TableCell>
-                          <TableCell>فعال</TableCell>
-                          <TableCell>
-                             <MaritalStatusAttachment PrimaryTableId={item?.employeeId as string} employeeId={item?.employeeId as string} />
-                          </TableCell>
-                          <TableCell>
-                             <Popover>
-                                <PopoverTrigger asChild>
-                                   <Button variant='outline'>الملاحظات</Button>
-                                </PopoverTrigger>
-                                <PopoverContent>{item?.notes}</PopoverContent>
-                             </Popover>
-                          </TableCell>
-                          <TableCell>
-                             <div className='flex items-center gap-2'>
-                                <MaritalStatusForm
-                                   title=''
-                                   icon={<Settings2 className='h-4 w-4' />}
-                                   data={item}
-                                   variant='ghost'
-                                   employeeId={employeeId}
-                                />
-                             </div>
-                          </TableCell>
-                       </TableRow>
-                    ))}
+               {isLoading &&
+                  Array.from({ length: 3 }).map((_, index) => (
+                     <TableRow key={index}>
+                        <TableCell colSpan={columns.length + 1}>
+                           <Skeleton className='h-8 w-full' />
+                        </TableCell>
+                     </TableRow>
+                  ))}
+               {!isLoading && error && (
+                  <TableRow>
+                     <TableCell colSpan={columns.length + 1} className='text-center py-6 text-red-500'>
+                        {error}
+                     </TableCell>
+                  </TableRow>
+               )}
+               {!isLoading && !error && marriageData.length === 0 && (
+                  <TableRow>
+                     <TableCell colSpan={columns.length + 1} className='text-center py-6 text-muted-foreground'>
+                        لا توجد بيانات الحالة الزوجية
+                     </TableCell>
+                  </TableRow>
+               )}
+               {!isLoading &&
+                  !error &&
+                  marriageData.map((item) => (
+                     <TableRow key={item?.id || item?.employeeId}>
+                        <TableCell>{(item?.id || item?.employeeId)?.toString().toUpperCase().split('-', 1)}</TableCell>
+                        <TableCell>{item?.fullName}</TableCell>
+                        <TableCell>{item?.childrenCount}</TableCell>
+                        <TableCell>فعال</TableCell>
+                        <TableCell>
+                           <MaritalStatusAttachment PrimaryTableId={(item?.id || item?.employeeId) as string} employeeId={(employeeId || item?.employeeId) as string} />
+                        </TableCell>
+                        <TableCell>
+                           <Popover>
+                              <PopoverTrigger asChild>
+                                 <Button variant='outline'>الملاحظات</Button>
+                              </PopoverTrigger>
+                              <PopoverContent>{item?.notes}</PopoverContent>
+                           </Popover>
+                        </TableCell>
+                        <TableCell>
+                           <div className='flex items-center gap-2'>
+                              <MaritalStatusForm
+                                 title=''
+                                 icon={<Settings2 className='h-4 w-4' />}
+                                 data={item}
+                                 variant='ghost'
+                                 employeeId={employeeId}
+                              />
+                           </div>
+                        </TableCell>
+                     </TableRow>
+                  ))}
             </TableBody>
          </Table>
 
          {/* Pagination Start */}
-         <div className='mt-4'>
-            <Pagination>
-               <PaginationContent>
-                  <PaginationItem>
-                     <PaginationPrevious href='#' onClick={() => handlePageChange(Math.max(1, currentPage - 1))} />
-                  </PaginationItem>
-                  {currentPage > 3 && (
-                     <>
-                        <PaginationItem>
-                           <PaginationLink href='#' onClick={() => handlePageChange(1)}>
-                              1
-                           </PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                           <PaginationEllipsis />
-                        </PaginationItem>
-                     </>
-                  )}
-                  {getPageNumbers().map((pageNumber) => (
-                     <PaginationItem key={pageNumber}>
-                        <PaginationLink href='#' isActive={currentPage === pageNumber} onClick={() => handlePageChange(pageNumber)}>
-                           {pageNumber}
-                        </PaginationLink>
+         {totalPages > 1 && (
+            <div className='mt-4 p-2'>
+               <Pagination>
+                  <PaginationContent>
+                     <PaginationItem>
+                        <PaginationPrevious onClick={() => handlePageChange(Math.max(1, currentPage - 1))} />
                      </PaginationItem>
-                  ))}
-                  {currentPage < totalPages - 2 && (
-                     <>
-                        <PaginationItem>
-                           <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                           <PaginationLink href='#' onClick={() => handlePageChange(totalPages)}>
-                              {totalPages}
+                     {currentPage > 3 && (
+                        <>
+                           <PaginationItem>
+                              <PaginationLink onClick={() => handlePageChange(1)}>
+                                 1
+                              </PaginationLink>
+                           </PaginationItem>
+                           <PaginationItem>
+                              <PaginationEllipsis />
+                           </PaginationItem>
+                        </>
+                     )}
+                     {getPageNumbers().map((pageNumber) => (
+                        <PaginationItem key={pageNumber}>
+                           <PaginationLink isActive={currentPage === pageNumber} onClick={() => handlePageChange(pageNumber)}>
+                              {pageNumber}
                            </PaginationLink>
                         </PaginationItem>
-                     </>
-                  )}
-                  <PaginationItem>
-                     <PaginationNext href='#' onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))} />
-                  </PaginationItem>
-               </PaginationContent>
-            </Pagination>
-         </div>
+                     ))}
+                     {currentPage < totalPages - 2 && (
+                        <>
+                           <PaginationItem>
+                              <PaginationEllipsis />
+                           </PaginationItem>
+                           <PaginationItem>
+                              <PaginationLink onClick={() => handlePageChange(totalPages)}>
+                                 {totalPages}
+                              </PaginationLink>
+                           </PaginationItem>
+                        </>
+                     )}
+                     <PaginationItem>
+                        <PaginationNext onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))} />
+                     </PaginationItem>
+                  </PaginationContent>
+               </Pagination>
+            </div>
+         )}
       </div>
    );
 };

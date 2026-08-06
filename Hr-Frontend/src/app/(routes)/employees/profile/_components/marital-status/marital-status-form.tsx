@@ -2,12 +2,13 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogFooter } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
@@ -50,20 +51,45 @@ type Props = {
 const MaritalStatusForm = ({ title, data, employeeId, icon, variant }: Props) => {
    const [open, setOpen] = useState(false);
    const [isSubmitting, setSubmitting] = useState(false);
+   const { refresh } = useEmployeeProfileRefresh();
 
    const router = useRouter();
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         firstName: data?.firstName,
-         secondName: data?.secondName,
-         thirdName: data?.thirdName,
-         surName: data?.surName,
-         childrenCount: data?.childrenCount,
-         marriageDate: data?.marriageDate,
+         firstName: data?.firstName || '',
+         secondName: data?.secondName || '',
+         thirdName: data?.thirdName || '',
+         surName: data?.surName || '',
+         childrenCount: data?.childrenCount ?? 0,
+         marriageDate: data?.marriageDate || '',
          notes: data?.notes || ''
       }
    });
+
+   useEffect(() => {
+      if (data && open) {
+         form.reset({
+            firstName: data?.firstName || '',
+            secondName: data?.secondName || '',
+            thirdName: data?.thirdName || '',
+            surName: data?.surName || '',
+            childrenCount: data?.childrenCount ?? 0,
+            marriageDate: data?.marriageDate ? data.marriageDate.split('T')[0] : '',
+            notes: data?.notes || ''
+         });
+      } else if (!data && open) {
+         form.reset({
+            firstName: '',
+            secondName: '',
+            thirdName: '',
+            surName: '',
+            childrenCount: 0,
+            marriageDate: '',
+            notes: ''
+         });
+      }
+   }, [data, open, form]);
 
    // Handle Submit
    async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -77,13 +103,10 @@ const MaritalStatusForm = ({ title, data, employeeId, icon, variant }: Props) =>
                ...values
             };
             await marriageInformationService.updateMarriageInformation(data.id as string, dataToUpdate);
-            toast(
-               <pre className=' w-[340px] rounded-md'>
-                  <h1 className='text-xl'>تم تعديل البيانات بنجاح .</h1>
-               </pre>
-            );
+            toast.success('تم تعديل البيانات بنجاح.');
             form.reset();
             setSubmitting(false);
+            refresh();
             router.refresh();
             setOpen(false);
          } else {
@@ -93,13 +116,10 @@ const MaritalStatusForm = ({ title, data, employeeId, icon, variant }: Props) =>
                ...values
             };
             await marriageInformationService.createMarriageInformation(dataToCreate);
-            toast(
-               <pre className=' w-[340px] rounded-md'>
-                  <h1 className='text-xl'>تم حفظ البيانات بنجاح .</h1>
-               </pre>
-            );
+            toast.success('تم حفظ البيانات بنجاح.');
             form.reset();
             setSubmitting(false);
+            refresh();
             router.refresh();
             setOpen(false);
          }

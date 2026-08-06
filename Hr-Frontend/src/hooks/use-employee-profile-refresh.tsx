@@ -4,11 +4,13 @@ import React, { createContext, useCallback, useContext, useMemo, useState } from
 interface EmployeeProfileRefreshContextValue {
    refreshKey: number;
    refresh: () => void;
+   triggerRefresh: () => void;
 }
 
 const EmployeeProfileRefreshContext = createContext<EmployeeProfileRefreshContextValue>({
    refreshKey: 0,
-   refresh: () => {}
+   refresh: () => {},
+   triggerRefresh: () => {}
 });
 
 export function EmployeeProfileRefreshProvider({ children }: { children: React.ReactNode }) {
@@ -18,7 +20,7 @@ export function EmployeeProfileRefreshProvider({ children }: { children: React.R
       setRefreshKey((prev) => prev + 1);
    }, []);
 
-   const value = useMemo(() => ({ refreshKey, refresh }), [refreshKey, refresh]);
+   const value = useMemo(() => ({ refreshKey, refresh, triggerRefresh: refresh }), [refreshKey, refresh]);
 
    return (
       <EmployeeProfileRefreshContext.Provider value={value}>

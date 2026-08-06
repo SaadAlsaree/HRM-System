@@ -93,7 +93,7 @@ const AdministrativeOrderPage = ({ initialPage = 1, pageSize = 10, employeeId, s
                   <Skeleton className='h-12 w-full mb-2' />
                </div>
             )}
-            <AdministrativeOrderTable data={data?.items} columns={columnsAdministrativeOrder} />
+            <AdministrativeOrderTable data={data?.items} columns={columnsAdministrativeOrder} employeeId={employeeId} />
             <Separator />
             {/* Pagination */}
             <div className='p-4'>

@@ -15,6 +15,8 @@ import { Skeleton } from '@/components/ui/skeleton';
 import ContactInformationTable from './contact-information-table';
 import { columnsContactInformation } from './columns';
 
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
+
 export interface IContactInformation {
    id?: string;
    employeeId?: string;
@@ -39,23 +41,29 @@ const ContactInformationPage = ({ employeeId }: Props) => {
    const [error, setError] = useState<string | undefined>();
    const [currentPage, setCurrentPage] = useState(1);
    const [totalPages, setTotalPages] = useState(0);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
+      if (!employeeId) {
+         setData([]);
+         setLoading(false);
+         return;
+      }
+      setLoading(true);
       contactInformationService
          .getContactInformation({ employeeId, Page: currentPage, PageSize: 20 })
          .then((response) => {
-            setData(response?.data?.items);
+            setData(response?.data?.items || []);
             setTotalPages(response?.data?.totalPages || 0);
             setError(undefined);
          })
-
-         .catch((error) => {
-            setError(error);
+         .catch((err) => {
+            setError(err instanceof Error ? err.message : String(err));
          })
          .finally(() => {
             setLoading(false);
          });
-   }, [currentPage, employeeId]);
+   }, [currentPage, employeeId, refreshKey]);
 
    const handlePageChange = (page: number) => {
       setCurrentPage(page);
@@ -75,7 +83,7 @@ const ContactInformationPage = ({ employeeId }: Props) => {
                   <Skeleton className='h-12 w-full mb-2' />
                </div>
             )}
-            <ContactInformationTable data={data as IContactInformation[]} columns={columnsContactInformation} />
+            <ContactInformationTable data={(data || []) as IContactInformation[]} columns={columnsContactInformation} employeeId={employeeId} />
             <Separator />
             {/* Pagination */}
             <div className='p-4'>

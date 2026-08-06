@@ -3,6 +3,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { columnsGrades } from './columns';
 import React, { useEffect, useState } from 'react';
 import { useFetchClient } from '@/lib/fetchClient';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 export interface IChangeDegree {
    id?: string;
@@ -43,6 +44,7 @@ const GradesTable = ({ employeeId }: Props) => {
    const fetchClient = useFetchClient();
    const [changeDegrees, setChangeDegrees] = useState<IChangeDegree[]>([]);
    const [isLoading, setIsLoading] = useState(false);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       if (!employeeId) return;
@@ -68,7 +70,7 @@ const GradesTable = ({ employeeId }: Props) => {
       };
 
       fetchChangeDegrees();
-   }, [employeeId, fetchClient]);
+   }, [employeeId, refreshKey, fetchClient]);
 
    return (
       <div className='border rounded-lg p-2 bg-white dark:bg-gray-900'>

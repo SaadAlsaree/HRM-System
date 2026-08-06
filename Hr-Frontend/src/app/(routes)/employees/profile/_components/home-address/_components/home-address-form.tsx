@@ -89,6 +89,60 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
       }
    });
 
+   useEffect(() => {
+      if (open && data) {
+         const initForm = async () => {
+            const govId = data.governorateId ? data.governorateId.toString() : '';
+            const provId = data.provinceId ? data.provinceId.toString() : '';
+            const terrId = data.territoryId ? data.territoryId.toString() : '';
+
+            if (govId) {
+               try {
+                  const provRes = await provinceService.getProvinces({ GovernorateId: Number(govId) });
+                  setProvinces(provRes?.data?.items || []);
+               } catch (e) {
+                  console.error(e);
+               }
+            }
+            if (provId) {
+               try {
+                  const terrRes = await territoryService.getTerritories({ ProvinceId: Number(provId) });
+                  setTerritories(terrRes?.data?.items || []);
+               } catch (e) {
+                  console.error(e);
+               }
+            }
+
+            form.reset({
+               governorateId: govId,
+               provinceId: provId,
+               territoryId: terrId,
+               area: data?.area || '',
+               district: data?.district || '',
+               streetNo: data?.streetNo || '',
+               houseNo: data?.houseNo || '',
+               nearestPoint: data?.nearestPoint || '',
+               notes: data?.notes || ''
+            });
+         };
+         initForm();
+      } else if (open && !data) {
+         form.reset({
+            governorateId: '',
+            provinceId: '',
+            territoryId: '',
+            area: '',
+            district: '',
+            streetNo: '',
+            houseNo: '',
+            nearestPoint: '',
+            notes: ''
+         });
+         setProvinces([]);
+         setTerritories([]);
+      }
+   }, [open, data, form]);
+
    const watchGovernorateId = form.watch('governorateId');
    const watchProvinceId = form.watch('provinceId');
 
@@ -98,10 +152,16 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
             setProvinces([]);
             return;
          }
-         const response = await provinceService.getProvinces({ GovernorateId: Number(watchGovernorateId) });
-         setProvinces(response?.data?.items || []);
+         try {
+            const response = await provinceService.getProvinces({ GovernorateId: Number(watchGovernorateId) });
+            setProvinces(response?.data?.items || []);
+         } catch (e) {
+            console.error(e);
+         }
       };
-      fetchProvinces();
+      if (watchGovernorateId) {
+         fetchProvinces();
+      }
    }, [watchGovernorateId]);
 
    useEffect(() => {
@@ -110,10 +170,16 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
             setTerritories([]);
             return;
          }
-         const response = await territoryService.getTerritories({ ProvinceId: Number(watchProvinceId) });
-         setTerritories(response?.data?.items || []);
+         try {
+            const response = await territoryService.getTerritories({ ProvinceId: Number(watchProvinceId) });
+            setTerritories(response?.data?.items || []);
+         } catch (e) {
+            console.error(e);
+         }
       };
-      fetchTerritories();
+      if (watchProvinceId) {
+         fetchTerritories();
+      }
    }, [watchProvinceId]);
 
    async function onSubmit(values: z.infer<typeof formSchema>) {
@@ -121,11 +187,7 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
       try {
          if (data) {
             await addressInformationService.updateAddressInformation(data.id as string, values);
-            toast(
-               <pre className=' w-[340px] rounded-md'>
-                  <h1 className='text-xl'>تم تعديل البيانات بنجاح .</h1>
-               </pre>
-            );
+            toast.success('تم تعديل البيانات بنجاح.');
             setSubmitting(false);
             refresh();
             router.refresh();
@@ -137,11 +199,7 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
                employeeId
             };
             await addressInformationService.createAddressInformation(dataToSave);
-            toast(
-               <pre className=' w-[340px] rounded-md'>
-                  <h1 className='text-xl'>تم حفظ البيانات بنجاح .</h1>
-               </pre>
-            );
+            toast.success('تم حفظ البيانات بنجاح.');
             setSubmitting(false);
             refresh();
             router.refresh();
@@ -150,7 +208,7 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
          }
       } catch (error) {
          console.error('Form submission error', error);
-         toast.error('Failed to submit the form. Please try again.');
+         toast.error('حدث خطأ أثناء الحفظ. يرجى المحاولة مرة أخرى.');
          setSubmitting(false);
          setOpen(false);
          form.reset();
@@ -181,27 +239,27 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
                            name='governorateId'
                            render={({ field }) => (
                               <FormItem>
-                                  <FormLabel>المحافظة</FormLabel>
-                                  <Select
-                                     onValueChange={(value) => {
-                                        field.onChange(value);
-                                        form.setValue('provinceId', '');
-                                        form.setValue('territoryId', '');
-                                     }}
-                                     defaultValue={field.value?.toString()}>
-                                     <FormControl>
-                                        <SelectTrigger>
-                                           <SelectValue placeholder='المحافظة' />
-                                        </SelectTrigger>
-                                     </FormControl>
-                                     <SelectContent>
-                                        {governorateOptions.map((item) => (
-                                           <SelectItem key={item.value} value={item.value.toString()}>
-                                              {item.label}
-                                           </SelectItem>
-                                        ))}
-                                     </SelectContent>
-                                  </Select>
+                                 <FormLabel>المحافظة</FormLabel>
+                                 <Select
+                                    onValueChange={(value) => {
+                                       field.onChange(value);
+                                       form.setValue('provinceId', '');
+                                       form.setValue('territoryId', '');
+                                    }}
+                                    value={field.value ? field.value.toString() : ''}>
+                                    <FormControl>
+                                       <SelectTrigger>
+                                          <SelectValue placeholder='المحافظة' />
+                                       </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                       {governorateOptions?.map((item: any) => (
+                                          <SelectItem key={item.value} value={item.value.toString()}>
+                                             {item.label}
+                                          </SelectItem>
+                                       ))}
+                                    </SelectContent>
+                                 </Select>
 
                                  <FormMessage />
                               </FormItem>
@@ -215,26 +273,26 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
                            name='provinceId'
                            render={({ field }) => (
                               <FormItem>
-                                  <FormLabel>القضاء</FormLabel>
-                                  <Select
-                                     onValueChange={(value) => {
-                                        field.onChange(value);
-                                        form.setValue('territoryId', '');
-                                     }}
-                                     defaultValue={field.value?.toString()}>
-                                     <FormControl>
-                                        <SelectTrigger>
-                                           <SelectValue placeholder='القضاء' />
-                                        </SelectTrigger>
-                                     </FormControl>
-                                     <SelectContent>
-                                        {provinceOptions.map((item) => (
-                                           <SelectItem key={item.value} value={item.value.toString()}>
-                                              {item.label}
-                                           </SelectItem>
-                                        ))}
-                                     </SelectContent>
-                                  </Select>
+                                 <FormLabel>القضاء</FormLabel>
+                                 <Select
+                                    onValueChange={(value) => {
+                                       field.onChange(value);
+                                       form.setValue('territoryId', '');
+                                    }}
+                                    value={field.value ? field.value.toString() : ''}>
+                                    <FormControl>
+                                       <SelectTrigger>
+                                          <SelectValue placeholder='القضاء' />
+                                       </SelectTrigger>
+                                    </FormControl>
+                                    <SelectContent>
+                                       {provinceOptions?.map((item: any) => (
+                                          <SelectItem key={item.value} value={item.value.toString()}>
+                                             {item.label}
+                                          </SelectItem>
+                                       ))}
+                                    </SelectContent>
+                                 </Select>
 
                                  <FormMessage />
                               </FormItem>
@@ -249,14 +307,14 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
                            render={({ field }) => (
                               <FormItem>
                                  <FormLabel>الناحية</FormLabel>
-                                 <Select onValueChange={field.onChange} defaultValue={field.value?.toString()}>
+                                 <Select onValueChange={field.onChange} value={field.value ? field.value.toString() : ''}>
                                     <FormControl>
                                        <SelectTrigger>
                                           <SelectValue placeholder='الناحية' />
                                        </SelectTrigger>
                                     </FormControl>
                                     <SelectContent>
-                                       {territoryOptions.map((item) => (
+                                       {territoryOptions?.map((item: any) => (
                                           <SelectItem key={item.value} value={item.value.toString()}>
                                              {item.label}
                                           </SelectItem>

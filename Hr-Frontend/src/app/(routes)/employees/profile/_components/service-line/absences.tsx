@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { absencesService } from '@/services/Employee/absences.service';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 interface AbsenceDetails {
    id?: string;
@@ -26,6 +27,7 @@ const AbsencesProfile = ({ employeeId }: Props) => {
    const [data, setData] = useState<AbsenceDetails[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       const fetchAbsences = async () => {
@@ -40,14 +42,14 @@ const AbsencesProfile = ({ employeeId }: Props) => {
             const response = await absencesService.getAbsences({ EmployeeId: employeeId, Page: 1, PageSize: 100 });
             setData(response?.data?.items || []);
          } catch (error) {
-            console.error('Error fetching promotions:', error);
-            setError('Failed to fetch promotions');
+            console.error('Error fetching absences:', error);
+            setError('Failed to fetch absences');
          } finally {
             setLoading(false);
          }
       };
       fetchAbsences();
-   }, [employeeId]);
+   }, [employeeId, refreshKey]);
 
    if (loading)
       return (

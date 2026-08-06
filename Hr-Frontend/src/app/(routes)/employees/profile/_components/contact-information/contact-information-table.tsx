@@ -14,32 +14,23 @@ import ContactInformationForm from './contact-information-form';
 type Props = {
    data: IContactInformation[] | [];
    columns: { label: string; value: string; className?: string }[];
+   employeeId?: string;
 };
-const ContactInformationTable = ({ columns, data }: Props) => {
+
+const ContactInformationTable = ({ columns, data, employeeId }: Props) => {
    const router = useRouter();
-   //Handel Update status
+
    const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
       try {
          const response = await contactInformationService.patchContactInformation({ id, statusId: value });
-
-         toast(
-            <pre className=' w-[340px] rounded-md'>
-               <h1 className='text-xl'>{response?.message}</h1>
-            </pre>
-         );
+         toast.success(response?.message || 'تم تحديث الحالة بنجاح.');
          router.refresh();
       } catch (error) {
-         console.log('error', error);
+         console.error('error updating status:', error);
+         toast.error('حدث خطأ أثناء تحديث الحالة.');
       }
    };
 
-   // if (data.length < 0) {
-   //    return (
-   //       <div className='flex flex-col'>
-   //          <h1>لا يوجد بيانات !</h1>
-   //       </div>
-   //    );
-   // }
    return (
       <Table>
          <TableHeader>
@@ -55,18 +46,22 @@ const ContactInformationTable = ({ columns, data }: Props) => {
             </TableRow>
          </TableHeader>
          <TableBody>
+            {(!data || data.length === 0) && (
+               <TableRow>
+                  <TableCell colSpan={columns.length + 1} className='text-center py-6 text-muted-foreground'>
+                     لا توجد بيانات معلومات اتصال
+                  </TableCell>
+               </TableRow>
+            )}
             {data?.map((item) => (
                <TableRow key={item.id}>
                   <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
-
-                  <TableCell>{item?.fullName}</TableCell>
+                  <TableCell>{item?.fullName || item?.contactName}</TableCell>
                   <TableCell>{item?.levelOfRelationshipName}</TableCell>
                   <TableCell>{item?.phoneNumber}</TableCell>
-
                   <TableCell>
                      <SelectStatus id={item?.id as string} status={item?.status?.toString()} onChange={handleStatusChange} />
                   </TableCell>
-
                   <TableCell>
                      <Popover>
                         <PopoverTrigger asChild>
@@ -87,7 +82,7 @@ const ContactInformationTable = ({ columns, data }: Props) => {
                      <ContactInformationForm
                         title=''
                         data={item}
-                        employeeId={item.employeeId}
+                        employeeId={(item.employeeId || employeeId) as string}
                         icon={<Settings2 className='h-4 w-4' />}
                         variant='ghost'
                      />

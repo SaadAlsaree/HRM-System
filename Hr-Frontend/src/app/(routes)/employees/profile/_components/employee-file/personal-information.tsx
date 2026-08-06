@@ -20,11 +20,17 @@ const PersonalInformation = ({ data }: Props) => {
    }, [data?.socialStatus]);
 
    const handleUpdateSocialStatus = async (value: string) => {
-      if (!data?.employeeId) return;
+      const empId = data?.employeeId ?? data?.id;
+      if (!empId) return;
 
       const statusId = parseInt(value, 10);
-      await employeeService.updateEmployeeSocialStatus(data.employeeId, { socialStatus: statusId });
-      toast.success('تم تعديل الحالة الزوجية بنجاح');
+      try {
+         await employeeService.updateEmployeeSocialStatus(empId, { socialStatus: statusId });
+         toast.success('تم تعديل الحالة الزوجية بنجاح');
+      } catch (error) {
+         console.error('Failed to update social status:', error);
+         toast.error('حدث خطأ أثناء تعديل الحالة الزوجية');
+      }
    };
 
    const MaritalStatus = () => {

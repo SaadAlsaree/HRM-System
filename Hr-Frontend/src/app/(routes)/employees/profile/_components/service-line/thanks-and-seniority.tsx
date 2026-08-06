@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { thanksSeniorityService } from '@/services/thanks-seniority.service';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 interface IThanksAndSeniority {
    id?: string;
@@ -31,6 +32,7 @@ const ThanksAndSeniorityProfile = ({ employeeId }: Props) => {
    const [data, setData] = useState<IThanksAndSeniority[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       const fetchThanksAndSeniority = async () => {
@@ -45,14 +47,14 @@ const ThanksAndSeniorityProfile = ({ employeeId }: Props) => {
             const response = await thanksSeniorityService.getThanksSeniorities({ EmployeeId: employeeId, Page: 1, PageSize: 100 });
             setData(response?.data?.items || []);
          } catch (error) {
-            console.error('Error fetching promotions:', error);
-            setError('Failed to fetch promotions');
+            console.error('Error fetching thanks and seniority:', error);
+            setError('Failed to fetch thanks and seniority');
          } finally {
             setLoading(false);
          }
       };
       fetchThanksAndSeniority();
-   }, [employeeId]);
+   }, [employeeId, refreshKey]);
 
    if (loading)
       return (

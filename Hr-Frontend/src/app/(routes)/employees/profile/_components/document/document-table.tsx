@@ -16,21 +16,18 @@ type Props = {
    data?: IEmployeeDocument[];
    columns: { label: string; value: string; className?: string }[];
 };
+
 const DocumentTable = ({ columns, data }: Props) => {
    const router = useRouter();
-   //Handel Update status
+
    const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
       try {
          const response = await documentService.patchDocument({ id, statusId: value });
-
-         toast(
-            <pre className=' w-[340px] rounded-md'>
-               <h1 className='text-xl'>{response?.message}</h1>
-            </pre>
-         );
+         toast.success(response?.message || 'تم تحديث الحالة بنجاح.');
          router.refresh();
       } catch (error) {
-         console.log('error', error);
+         console.error('error updating status', error);
+         toast.error('حدث خطأ أثناء تحديث الحالة.');
       }
    };
 
@@ -43,18 +40,21 @@ const DocumentTable = ({ columns, data }: Props) => {
                      {column.label}
                   </TableHead>
                ))}
-               {/* <TableHead className='w-[100px] text-center'>
-                  <AlignJustify className='justify-center' />
-               </TableHead> */}
             </TableRow>
          </TableHeader>
          <TableBody>
+            {(!data || data.length === 0) && (
+               <TableRow>
+                  <TableCell colSpan={columns.length} className='text-center py-6 text-muted-foreground'>
+                     لا توجد مستمسكات مسجلة
+                  </TableCell>
+               </TableRow>
+            )}
             {data?.map((item) => (
                <TableRow key={item.id}>
                   <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
-
                   <TableCell>{item?.employeeDocumentTypeName}</TableCell>
-                  <TableCell>{moment(item?.createdAt).format('YYYY-MM-DD')}</TableCell>
+                  <TableCell>{item?.createdAt ? moment(item?.createdAt).format('YYYY-MM-DD') : '----'}</TableCell>
 
                   <TableCell>
                      <SelectStatus id={item?.id} status={item?.status?.toString()} onChange={handleStatusChange} />
@@ -63,20 +63,22 @@ const DocumentTable = ({ columns, data }: Props) => {
                      <Popover>
                         <PopoverTrigger asChild>
                            <Button variant='outline' className='text-muted-foreground hover:text-primary text-xl font-bold'>
-                              <Eye />
+                              <Eye className='h-4 w-4' />
                            </Button>
                         </PopoverTrigger>
-                        <PopoverContent>
+                        <PopoverContent className='w-80'>
                            <div className='space-y-1'>
                               <h4 className='text-sm font-medium leading-none'>المعلومات النصية</h4>
                            </div>
                            <Separator className='my-4' />
+                           {(!item?.documentAttribute || item.documentAttribute.length === 0) && (
+                              <p className='text-xs text-muted-foreground'>لا توجد معلومات إضافية</p>
+                           )}
                            {item?.documentAttribute?.map((x: { Key: string; Value: string }) => (
-                              <div key={x.Key} className='p-4 space-y-4'>
-                                 <div className='flex justify-between h-5 items-center space-x-4 text-sm'>
-                                    <div>{x?.Key}</div>
-                                    <Separator orientation='vertical' />
-                                    <div>{x?.Value}</div>
+                              <div key={x.Key} className='py-1 space-y-1'>
+                                 <div className='flex justify-between items-center text-sm'>
+                                    <span className='font-medium text-muted-foreground'>{x?.Key}:</span>
+                                    <span>{x?.Value}</span>
                                  </div>
                               </div>
                            ))}
@@ -90,10 +92,10 @@ const DocumentTable = ({ columns, data }: Props) => {
                      <Popover>
                         <PopoverTrigger asChild>
                            <Button variant='outline' className='text-muted-foreground hover:text-primary text-xl font-bold'>
-                              <NotepadText />
+                              <NotepadText className='h-4 w-4' />
                            </Button>
                         </PopoverTrigger>
-                        <PopoverContent>{item?.note ?? 'لا يوجد ملاحظات'}</PopoverContent>
+                        <PopoverContent>{item?.note ?? 'لا توجد ملاحظات'}</PopoverContent>
                      </Popover>
                   </TableCell>
                </TableRow>

@@ -23,6 +23,7 @@ import LeavesBalancesToolbar from './leaves-balances-toolbar';
 import LeavesBalancesAttachment from './leaves-balances-attachment';
 import { columnsLongLeaveBalances } from './columns';
 import LeavesBalancesForm from './leaves-balances-form';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 export interface ILogLeavesBalances {
    id?: string;
@@ -42,18 +43,23 @@ export interface ILogLeavesBalances {
 type Props = {
    employeeId: string;
 };
+
 const LeavesBalancesTable = ({ employeeId }: Props) => {
-   const [data, setData] = useState<ILogLeavesBalances[] | null>([]);
+   const [data, setData] = useState<ILogLeavesBalances[]>([]);
    const [currentPage, setCurrentPage] = useState(1);
    const [totalPages, setTotalPages] = useState(0);
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState<string | null>(null);
+   const { refreshKey } = useEmployeeProfileRefresh();
    const postsPerPage = 10;
-
-   // const router = useRouter();
 
    useEffect(() => {
       const fetchData = async () => {
+         if (!employeeId) {
+            setData([]);
+            setIsLoading(false);
+            return;
+         }
          setIsLoading(true);
          try {
             const response = await logLeavesBalancesService.getLogLeavesBalances({
@@ -61,18 +67,18 @@ const LeavesBalancesTable = ({ employeeId }: Props) => {
                Page: currentPage,
                PageSize: postsPerPage
             });
-            setData(response?.data?.items);
+            setData(response?.data?.items || []);
             setTotalPages(response?.data?.totalPages || 0);
             setError(null);
          } catch (err) {
-            setError('Failed to fetch data');
+            setError('فشل في تحميل البيانات');
             console.error(err);
          } finally {
             setIsLoading(false);
          }
       };
       fetchData();
-   }, [currentPage, employeeId]);
+   }, [currentPage, employeeId, refreshKey]);
 
    const handlePageChange = (page: number) => {
       setCurrentPage(page);
@@ -95,8 +101,6 @@ const LeavesBalancesTable = ({ employeeId }: Props) => {
       return pageNumbers;
    };
 
-   if (error) return <div>حدث خطاء اثناء تحميل البيانات</div>;
-
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>
          <div className='w-full'>
@@ -117,126 +121,119 @@ const LeavesBalancesTable = ({ employeeId }: Props) => {
                </TableRow>
             </TableHeader>
             <TableBody>
-               {isLoading
-                  ? Array.from({ length: postsPerPage }).map((_, index) => (
-                       <TableRow key={index}>
-                          <TableCell>
-                             <Skeleton className='h-4 w-8' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                          <TableCell>
-                             <Skeleton className='h-4 w-full' />
-                          </TableCell>
-                       </TableRow>
-                    ))
-                  : data?.map((item) => (
-                       <TableRow key={item?.id}>
-                          <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
-                          <TableCell>{item?.nameOfIssuing}</TableCell>
-                          <TableCell>{item?.countOfDay}</TableCell>
-                          <TableCell>{item?.bookNo}</TableCell>
-                          <TableCell>{item?.bookDate}</TableCell>
-                          <TableCell>
-                             <LeavesBalancesAttachment PrimaryTableId={item?.id as string} employeeId={item?.employeeId as string} />
-                          </TableCell>
-                          <TableCell>
-                             <Popover>
-                                <PopoverTrigger asChild>
-                                   <Button variant='outline'>الملاحظات</Button>
-                                </PopoverTrigger>
-                                <PopoverContent>{item?.note}</PopoverContent>
-                             </Popover>
-                          </TableCell>
-                          <TableCell>
-                             <div className='flex items-center gap-2'>
-                                <LeavesBalancesForm
-                                   title=''
-                                   icon={<Settings2 className='h-4 w-4' />}
-                                   data={item}
-                                   variant='ghost'
-                                   employeeId={employeeId}
-                                />
-                             </div>
-                          </TableCell>
-                       </TableRow>
-                    ))}
+               {isLoading &&
+                  Array.from({ length: 3 }).map((_, index) => (
+                     <TableRow key={index}>
+                        <TableCell colSpan={columnsLongLeaveBalances.length + 1}>
+                           <Skeleton className='h-8 w-full' />
+                        </TableCell>
+                     </TableRow>
+                  ))}
+               {!isLoading && error && (
+                  <TableRow>
+                     <TableCell colSpan={columnsLongLeaveBalances.length + 1} className='text-center py-6 text-red-500'>
+                        {error}
+                     </TableCell>
+                  </TableRow>
+               )}
+               {!isLoading && !error && data.length === 0 && (
+                  <TableRow>
+                     <TableCell colSpan={columnsLongLeaveBalances.length + 1} className='text-center py-6 text-muted-foreground'>
+                        لا توجد بيانات رصيد إجازات
+                     </TableCell>
+                  </TableRow>
+               )}
+               {!isLoading &&
+                  !error &&
+                  data.map((item) => (
+                     <TableRow key={item?.id}>
+                        <TableCell>{item?.nameOfIssuing}</TableCell>
+                        <TableCell>{item?.countOfDay}</TableCell>
+                        <TableCell>{item?.bookNo}</TableCell>
+                        <TableCell>{item?.bookDate}</TableCell>
+                        <TableCell>
+                           <LeavesBalancesAttachment
+                              PrimaryTableId={item?.id as string}
+                              employeeId={(item?.employeeId || employeeId) as string}
+                           />
+                        </TableCell>
+                        <TableCell>
+                           <Popover>
+                              <PopoverTrigger asChild>
+                                 <Button variant='outline'>الملاحظات</Button>
+                              </PopoverTrigger>
+                              <PopoverContent>{item?.note}</PopoverContent>
+                           </Popover>
+                        </TableCell>
+                        <TableCell>
+                           <div className='flex items-center gap-2'>
+                              <LeavesBalancesForm
+                                 title=''
+                                 icon={<Settings2 className='h-4 w-4' />}
+                                 data={item}
+                                 variant='ghost'
+                                 employeeId={(item?.employeeId || employeeId) as string}
+                              />
+                           </div>
+                        </TableCell>
+                     </TableRow>
+                  ))}
             </TableBody>
          </Table>
 
          {/* Pagination Start */}
-         <div className='mt-4'>
-            <Pagination>
-               <PaginationContent>
-                  <PaginationItem>
-                     <PaginationPrevious
-                        href='#'
-                        onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
-                        // disabled={isLoading || currentPage === 1}
-                     />
-                  </PaginationItem>
-                  {currentPage > 3 && (
-                     <>
-                        <PaginationItem>
-                           <PaginationLink href='#' onClick={() => handlePageChange(1)}>
-                              1
-                           </PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                           <PaginationEllipsis />
-                        </PaginationItem>
-                     </>
-                  )}
-                  {getPageNumbers().map((pageNumber) => (
-                     <PaginationItem key={pageNumber}>
-                        <PaginationLink
-                           href='#'
-                           isActive={currentPage === pageNumber}
-                           onClick={() => handlePageChange(pageNumber)}
-                           //    disabled={isLoading}
-                        >
-                           {pageNumber}
-                        </PaginationLink>
+         {totalPages > 1 && (
+            <div className='mt-4 p-2'>
+               <Pagination>
+                  <PaginationContent>
+                     <PaginationItem>
+                        <PaginationPrevious
+                           onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
+                        />
                      </PaginationItem>
-                  ))}
-                  {currentPage < totalPages - 2 && (
-                     <>
-                        <PaginationItem>
-                           <PaginationEllipsis />
-                        </PaginationItem>
-                        <PaginationItem>
-                           <PaginationLink href='#' onClick={() => handlePageChange(totalPages)}>
-                              {totalPages}
+                     {currentPage > 3 && (
+                        <>
+                           <PaginationItem>
+                              <PaginationLink onClick={() => handlePageChange(1)}>
+                                 1
+                              </PaginationLink>
+                           </PaginationItem>
+                           <PaginationItem>
+                              <PaginationEllipsis />
+                           </PaginationItem>
+                        </>
+                     )}
+                     {getPageNumbers().map((pageNumber) => (
+                        <PaginationItem key={pageNumber}>
+                           <PaginationLink
+                              isActive={currentPage === pageNumber}
+                              onClick={() => handlePageChange(pageNumber)}
+                           >
+                              {pageNumber}
                            </PaginationLink>
                         </PaginationItem>
-                     </>
-                  )}
-                  <PaginationItem>
-                     <PaginationNext
-                        href='#'
-                        onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
-                        // disabled={isLoading || currentPage === totalPages}
-                     />
-                  </PaginationItem>
-               </PaginationContent>
-            </Pagination>
-         </div>
+                     ))}
+                     {currentPage < totalPages - 2 && (
+                        <>
+                           <PaginationItem>
+                              <PaginationEllipsis />
+                           </PaginationItem>
+                           <PaginationItem>
+                              <PaginationLink onClick={() => handlePageChange(totalPages)}>
+                                 {totalPages}
+                              </PaginationLink>
+                           </PaginationItem>
+                        </>
+                     )}
+                     <PaginationItem>
+                        <PaginationNext
+                           onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
+                        />
+                     </PaginationItem>
+                  </PaginationContent>
+               </Pagination>
+            </div>
+         )}
       </div>
    );
 };

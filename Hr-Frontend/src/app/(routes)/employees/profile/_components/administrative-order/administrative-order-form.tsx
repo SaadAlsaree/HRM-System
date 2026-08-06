@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose, DialogFooter } from '@/components/ui/dialog';
 import { Plus } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -54,7 +54,7 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
       defaultValues: {
-         employeeId: data?.employeeId,
+         employeeId: data?.employeeId || employeeId,
          administrativeOrderType: data?.administrativeOrderType,
          bookTitle: data?.bookTitle ?? '',
          orderNo: data?.orderNo ?? '',
@@ -64,28 +64,44 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
       }
    });
 
+   useEffect(() => {
+      if (data && open) {
+         form.reset({
+            employeeId: data?.employeeId || employeeId,
+            administrativeOrderType: data?.administrativeOrderType,
+            bookTitle: data?.bookTitle ?? '',
+            orderNo: data?.orderNo ?? '',
+            orderDate: data?.orderDate ? data.orderDate.split('T')[0] : '',
+            CreateBy: data?.CreateBy ?? '',
+            lastUpdateBy: data?.lastUpdateBy ?? ''
+         });
+      } else if (!data && open) {
+         form.reset({
+            employeeId: employeeId,
+            administrativeOrderType: undefined,
+            bookTitle: '',
+            orderNo: '',
+            orderDate: '',
+            CreateBy: '',
+            lastUpdateBy: ''
+         });
+      }
+   }, [data, open, employeeId, form]);
+
    async function onSubmit(values: z.infer<typeof formSchema>) {
       setSubmitting(true);
       try {
+         const formattedDate = formatDate(new Date(values.orderDate));
          if (data) {
-            // values.orderDate = formatDate(new Date(values.orderDate));
-            // values.lastUpdateBy = '3fa85f64-5717-4562-b3fc-2c963f66afa6';
-            // values.CreateBy = undefined;
-            // values.employeeId = undefined;
-            // console.log(values);
             const dataToUpdate = {
                orderNo: values.orderNo,
                bookTitle: values.bookTitle,
-               orderDate: values.orderDate,
+               orderDate: formattedDate,
                administrativeOrderType: values.administrativeOrderType,
                lastUpdateBy: '3fa85f64-5717-4562-b3fc-2c963f66afa6'
             };
             await administrativeOrderService.updateAdministrativeOrder(data.id as string, dataToUpdate);
-            toast(
-               <pre className=' w-[340px] rounded-md'>
-                  <h1 className='text-xl'>تم تعديل البيانات بنجاح .</h1>
-               </pre>
-            );
+            toast.success('تم تعديل البيانات بنجاح.');
             form.reset();
             setSubmitting(false);
             setOpen(false);
@@ -93,17 +109,12 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
             router.refresh();
          } else {
             values.employeeId = employeeId;
-            values.orderDate = formatDate(new Date(values.orderDate));
+            values.orderDate = formattedDate;
             values.lastUpdateBy = undefined;
             values.CreateBy = employeeId;
             await administrativeOrderService.createAdministrativeOrder(values);
 
-            console.log(values);
-            toast(
-               <pre className=' w-[340px] rounded-md'>
-                  <h1 className='text-xl'>تم حفظ البيانات بنجاح .</h1>
-               </pre>
-            );
+            toast.success('تم حفظ البيانات بنجاح.');
             form.reset();
             setSubmitting(false);
             setOpen(false);
@@ -112,7 +123,7 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
          }
       } catch (error) {
          console.error('Form submission error', error);
-         toast.error('Failed to submit the form. Please try again.');
+         toast.error('حدث خطأ أثناء الحفظ. يرجى المحاولة مرة أخرى.');
          form.reset();
          setSubmitting(false);
          setOpen(false);

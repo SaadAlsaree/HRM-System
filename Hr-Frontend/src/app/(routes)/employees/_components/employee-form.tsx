@@ -340,7 +340,9 @@ export default function EmployeeForm({
             // Update existing employee. Note: UpdateEmployeeCommand in the backend only updates
             // personal data — job fields (degree/category/title) are changed via dedicated endpoints
             // (ChangeDegree / ChangeJobTitles). Those are handled on the employee profile page.
-            const employeeId = (data as EmployeePayload & { id?: string }).id;
+            const employeeId =
+               (data as EmployeePayload & { id?: string; employeeId?: string }).employeeId ||
+               (data as EmployeePayload & { id?: string; employeeId?: string }).id;
             if (!employeeId) {
                toast.error('تعذر تحديد الموظف للتعديل');
                setSubmitting(false);

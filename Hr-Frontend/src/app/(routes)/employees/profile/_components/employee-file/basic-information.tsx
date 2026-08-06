@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
 import { IEmployeeAdministrativeOrder, IEmployeeEducationInfo, IEmployeeInfo, IEmployeeManagementInfo } from '../../[id]/page';
+import ApplicableLawsDialog from './applicable-laws-dialog';
 
 type Props = {
    data: IEmployeeAdministrativeOrder;
@@ -10,6 +10,8 @@ type Props = {
    EmployeeInfo: IEmployeeInfo;
 };
 const BasicInformation = ({ data, EducationInfo, ManagementInfo, EmployeeInfo }: Props) => {
+   const employeeId = EmployeeInfo?.employeeId ?? EmployeeInfo?.id ?? '';
+
    return (
       <div>
          <Card>
@@ -34,7 +36,7 @@ const BasicInformation = ({ data, EducationInfo, ManagementInfo, EmployeeInfo }:
                      { label: 'إعادة تعيين', value: EmployeeInfo?.isReEmployed ? 'نعم' : 'كلا' },
                      { label: 'خاضع للفحص الطبي', value: EmployeeInfo?.medicalTest ? 'نعم' : 'كلا' },
                      { label: 'لائحة السنوات', value: EmployeeInfo?.isBehaviorCode ? 'نعم' : 'كلا' },
-                     { label: 'القوانين المشمول بها', value: <Button>عرض</Button> }
+                     { label: 'القوانين المشمول بها', value: <ApplicableLawsDialog employeeId={employeeId} /> }
                   ].map((item) => (
                      <div key={item.label} className='flex justify-between border-dashed border px-4 py-2'>
                         <span className='text-gray-600'>{item.label}</span>

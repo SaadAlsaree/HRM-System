@@ -9,6 +9,9 @@ import { Separator } from '@/components/ui/separator';
 import { IEmployeeInfo } from '../[id]/page';
 import { employeeService } from '@/services/Employee/employee.service';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Button } from '@/components/ui/button';
+import Link from 'next/link';
+import { Pencil } from 'lucide-react';
 
 type Props = {
    data: IEmployeeInfo;
@@ -101,7 +104,16 @@ const ProfileHeader = ({ data, onAvatarChange }: Props) => {
                <p className='font-medium'>{data?.fullName}</p>
             </div>
 
-            <div className='mt-6'>
+            <div className='mt-2'>
+               <Link href={`/employees/edit/${data?.employeeId ?? data?.id}`}>
+                  <Button variant='outline' size='sm' className='flex items-center gap-1 hover:bg-primary/10'>
+                     <Pencil className='w-3.5 h-3.5' />
+                     <span>تعديل البيانات</span>
+                  </Button>
+               </Link>
+            </div>
+
+            <div className='mt-3'>
                <p className='text-sm text-gray-600 '>مثبت على الملاك</p>
                <Checkbox checked={data?.isPinned} onCheckedChange={handelPinned} />
             </div>

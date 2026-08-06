@@ -14,6 +14,7 @@ import AdministrativeOrderNote from './administrative-order-note';
 type Props = {
    columns: { label: string; value: string; className?: string }[];
    data?: IAdministrativeOrder[];
+   employeeId?: string;
 };
 
 const AdministrativeOrderType = (type: number | undefined) => {
@@ -31,7 +32,7 @@ const AdministrativeOrderType = (type: number | undefined) => {
    }
 };
 
-const AdministrativeOrderTable = ({ data, columns }: Props) => {
+const AdministrativeOrderTable = ({ data, columns, employeeId }: Props) => {
    const router = useRouter();
    //Handel Update status
    const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
@@ -64,30 +65,46 @@ const AdministrativeOrderTable = ({ data, columns }: Props) => {
             </TableRow>
          </TableHeader>
          <TableBody>
-            {data?.map((item) => (
-               <TableRow key={item.id}>
-                  <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
-                  <TableCell>{AdministrativeOrderType(item?.administrativeOrderType)}</TableCell>
-
-                  <TableCell>{item?.bookTitle}</TableCell>
-                  <TableCell>{item?.orderNo}</TableCell>
-                  <TableCell>{item?.orderDate}</TableCell>
-                  <TableCell>
-                     <SelectStatus id={item?.id} status={item?.status?.toString()} onChange={handleStatusChange} />
-                  </TableCell>
-                  <TableCell>
-                     <AdministrativeOrderAttachment PrimaryTableId={item?.id as string} employeeId={item?.employeeId as string} />
-                  </TableCell>
-                  <TableCell>
-                     <AdministrativeOrderNote note={item?.fullName as string} />
-                  </TableCell>
-                  <TableCell>
-                     <div className='flex items-center gap-2'>
-                        <AdministrativeOrderForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
-                     </div>
+            {(!data || data.length === 0) && (
+               <TableRow>
+                  <TableCell colSpan={columns.length + 1} className='text-center py-6 text-muted-foreground'>
+                     لا توجد بيانات أوامر إدارية
                   </TableCell>
                </TableRow>
-            ))}
+            )}
+            {data?.map((item) => {
+               const resolvedEmpId = (item?.employeeId || employeeId) as string;
+               return (
+                  <TableRow key={item.id}>
+                     <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
+                     <TableCell>{AdministrativeOrderType(item?.administrativeOrderType)}</TableCell>
+
+                     <TableCell>{item?.bookTitle}</TableCell>
+                     <TableCell>{item?.orderNo}</TableCell>
+                     <TableCell>{item?.orderDate}</TableCell>
+                     <TableCell>
+                        <SelectStatus id={item?.id} status={item?.status?.toString()} onChange={handleStatusChange} />
+                     </TableCell>
+                     <TableCell>
+                        <AdministrativeOrderAttachment PrimaryTableId={item?.id as string} employeeId={resolvedEmpId} />
+                     </TableCell>
+                     <TableCell>
+                        <AdministrativeOrderNote note={item?.fullName as string} />
+                     </TableCell>
+                     <TableCell>
+                        <div className='flex items-center gap-2'>
+                           <AdministrativeOrderForm
+                              title=''
+                              icon={<Settings2 className='h-4 w-4' />}
+                              data={item}
+                              variant='ghost'
+                              employeeId={resolvedEmpId}
+                           />
+                        </div>
+                     </TableCell>
+                  </TableRow>
+               );
+            })}
          </TableBody>
       </Table>
    );

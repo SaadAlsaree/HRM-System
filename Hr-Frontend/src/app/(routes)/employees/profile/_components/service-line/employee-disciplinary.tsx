@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { employeeDisciplinary } from '@/services/Employee/employee-disciplinary.service';
+import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 interface DisciplinaryDetails {
    id?: string;
@@ -30,6 +31,7 @@ const EmployeeDisciplinaryProfile = ({ employeeId }: Props) => {
    const [data, setData] = useState<DisciplinaryDetails[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
+   const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
       const fetchDisciplinary = async () => {
@@ -44,14 +46,14 @@ const EmployeeDisciplinaryProfile = ({ employeeId }: Props) => {
             const response = await employeeDisciplinary.getEmployeeDisciplinary({ EmployeeId: employeeId, Page: 1, PageSize: 100 });
             setData(response?.data?.items || []);
          } catch (error) {
-            console.error('Error fetching promotions:', error);
-            setError('Failed to fetch promotions');
+            console.error('Error fetching disciplinary:', error);
+            setError('Failed to fetch disciplinary records');
          } finally {
             setLoading(false);
          }
       };
       fetchDisciplinary();
-   }, [employeeId]);
+   }, [employeeId, refreshKey]);
 
    if (loading)
       return (
