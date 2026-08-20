@@ -1,4 +1,3 @@
-
 export const columnsPromotions = [
     { label: 'رمز الوظيفة', value: 'jobCode', className: 'text-center' },
     { label: 'اسم الموظف', value: 'fullName', className: 'text-center min-w-[200px]' },
@@ -9,4 +8,5 @@ export const columnsPromotions = [
     { label: 'رقم الكتاب', value: 'bookNo', className: 'text-center' },
     { label: 'تاريخ الكتاب', value: 'bookDate', className: 'text-center' },
     { label: 'الحالة', value: 'statusName', className: 'text-center' },
+    { label: 'الملاحظات', value: 'note', className: 'text-center' },
 ];

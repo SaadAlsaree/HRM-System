@@ -13,8 +13,10 @@ const SelectStatus = ({ status, onChange, id }: Props) => {
    const handleChange = (value: string) => {
       onChange(value, id);
    };
+   const currentStatus = status !== undefined && status !== null ? String(status) : undefined;
+
    return (
-      <Select defaultValue={status ? String(status) : undefined} onValueChange={handleChange}>
+      <Select value={currentStatus} onValueChange={handleChange}>
          <SelectTrigger className='w-[180px]'>
             <SelectValue placeholder='الحالة' />
          </SelectTrigger>

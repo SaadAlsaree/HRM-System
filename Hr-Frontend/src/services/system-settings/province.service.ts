@@ -6,6 +6,7 @@ import { Status } from '@/types/enums';
 
 export interface ProvincePayload {
     name?: string;
+    governorateId?: number | string;
 }
 
 interface patchProvincePayload {

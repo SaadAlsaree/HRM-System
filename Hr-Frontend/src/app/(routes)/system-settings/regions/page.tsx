@@ -1,5 +1,4 @@
 import { fetchServer } from '@/lib/fetchServer';
-import { provinceService } from '@/services/system-settings/province.service';
 import React from 'react';
 import RegionToolbar from './_components/region-toolbar';
 import { Separator } from '@/components/ui/separator';
@@ -17,6 +16,8 @@ export interface ApiResponse<T = Record<string, unknown>> {
 export interface IRegion {
    id: number;
    name?: string;
+   governorateId?: number;
+   governorateName?: string;
    status?: string;
 }
 

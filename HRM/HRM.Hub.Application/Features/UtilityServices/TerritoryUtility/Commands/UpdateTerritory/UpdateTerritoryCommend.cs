@@ -7,4 +7,5 @@ public class UpdateTerritoryCommend : IRequest<Response<bool>>
     [SwaggerIgnore]
     public int Id { get; set; }
     public string Name { get; set; }
+    public int? ProvinceId { get; set; }
 }

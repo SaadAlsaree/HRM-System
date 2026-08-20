@@ -16,6 +16,8 @@ public class UpdateMarriageInformationCommend : IRequest<Response<bool>>
     public string ThirdName { get; set; }
 
     public string SurName { get; set; }
+    [SwaggerIgnore]
+    public string FullName { get; set; }
 
     public DateOnly? MarriageDate { get; set; }
 

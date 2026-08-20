@@ -4,6 +4,11 @@ import ApiClient from '@/services/axios.service';
 import { TableNames } from '@/types/enums';
 import { IPagination } from '@/types';
 
+export interface TerritoryPayload {
+    name?: string;
+    provinceId?: number | string;
+}
+
 interface patchTerritoryPayload {
     id: number | string | null,
     statusId: number | string | null,
@@ -20,7 +25,7 @@ class TerritoryService extends ApiClient {
         });
     }
 
-    public async createTerritory(payload: { name: string }): Promise<any> {
+    public async createTerritory(payload: TerritoryPayload): Promise<any> {
         return this.request<any>({
             method: 'POST',
             url: '/Territory',
@@ -44,7 +49,7 @@ class TerritoryService extends ApiClient {
     }
 
     // updateTerritory
-    public async updateTerritory(territoryId: number, payload: { name: string }): Promise<any> {
+    public async updateTerritory(territoryId: number, payload: TerritoryPayload): Promise<any> {
         return this.request<any>({
             method: 'PUT',
             url: `/Territory/${territoryId}`,

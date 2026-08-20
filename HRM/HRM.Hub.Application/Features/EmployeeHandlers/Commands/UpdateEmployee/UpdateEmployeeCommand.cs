@@ -1,4 +1,4 @@
-﻿using HRM.Hub.Application.Helper;
+using HRM.Hub.Application.Helper;
 
 namespace HRM.Hub.Application.Features.EmployeeHandlers.Commands.UpdateEmployee;
 public class UpdateEmployeeCommand : IRequest<Response<bool>>
@@ -20,6 +20,8 @@ public class UpdateEmployeeCommand : IRequest<Response<bool>>
     public string WifeName { get; set; }
     public int ChildrenCount { get; set; }
     public int GenderId { get; set; }
+    [SwaggerIgnore]
+    public GenderEnum Gender { get => (GenderEnum)GenderId; set => GenderId = (int)value; }
     public string BirthPlace { get; set; }
     public DateOnly BirthDate { get; set; }
     public SocialStatusEnum SocialStatus { get; set; }

@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { toast } from 'sonner';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -77,19 +77,15 @@ const workingStatusOptions = [
 //  - business failure (Response<T>):        { succeeded: false, message: "..." }
 //  - validation failure (ProblemDetails):   { title, errors: { DomainValidations: ["..."] } }
 //  - generic 500 (JsonErrorResponse):       { messages: ["..."] }
-// These helpers normalize them into a single Arabic message + failure flag.
 function extractApiMessage(result: Record<string, unknown> | undefined | null): string | null {
    if (!result) return null;
-   // 1) Response<T>: { message } or { Message }
    const msg = (result.message ?? result.Message) as string | undefined;
    if (typeof msg === 'string' && msg.trim()) return msg;
-   // 2) ProblemDetails: { errors: { DomainValidations: ["..."] } }
    const errors = result.errors as Record<string, string[]> | undefined;
    if (errors) {
       const first = Object.values(errors).flat()[0];
       if (first) return first;
    }
-   // 3) JsonErrorResponse: { messages: ["..."] } or { Messages: ["..."] }
    const messages = (result.messages ?? result.Messages) as string[] | undefined;
    if (Array.isArray(messages) && messages[0]) return messages[0];
    return null;
@@ -97,11 +93,8 @@ function extractApiMessage(result: Record<string, unknown> | undefined | null): 
 
 function isApiFailure(result: Record<string, unknown> | undefined | null): boolean {
    if (!result || typeof result !== 'object') return true;
-   // An empty object means the request was swallowed by ApiClient (treated as failure).
    if (Object.keys(result).length === 0) return true;
-   // ProblemDetails / generic error wrappers are always failures.
    if (result.errors || result.messages || result.Messages) return true;
-   // Response<T> with an explicit succeeded flag.
    const succeeded = (result.succeeded ?? result.Succeeded) as boolean | undefined;
    if (typeof succeeded === 'boolean') return !succeeded;
    return false;
@@ -153,8 +146,6 @@ const formSchema = z.object({
 
 type FormValues = z.infer<typeof formSchema>;
 
-// Per-step validation: only the fields belonging to the current step are validated
-// before allowing navigation to the next one (handled via the Stepper onValidate prop).
 const stepFields: Record<string, (keyof FormValues)[]> = {
    '1': ['statisticalIndex', 'jobCode', 'lotNumber', 'firstName', 'secondName', 'thirdName', 'fourthName', 'surName', 'motherFirstName', 'motherSecondName', 'motherThirdName', 'motherSurName'],
    '2': ['genderId', 'birthPlace', 'birthDate', 'socialStatus', 'positionId', 'nationalism', 'religion', 'countryId', 'medicalTest', 'isBehaviorCode'],
@@ -172,6 +163,7 @@ const STEP_META = [
 ];
 
 type Props = {
+   employeeId?: string;
    data?: EmployeePayload;
    jobDegreesList: unknown[];
    jobTitlesList: unknown[];
@@ -187,7 +179,46 @@ type Props = {
    positionsList: unknown[];
 };
 
+const buildDefaultValues = (empData?: EmployeePayload): FormValues => ({
+   statisticalIndex: empData?.statisticalIndex?.toString() || '',
+   jobCode: empData?.jobCode?.toString() || '',
+   lotNumber: empData?.lotNumber?.toString() || '',
+   firstName: empData?.firstName || '',
+   secondName: empData?.secondName || '',
+   thirdName: empData?.thirdName || '',
+   fourthName: empData?.fourthName || '',
+   surName: empData?.surName || '',
+   motherFirstName: empData?.motherFirstName || '',
+   motherSecondName: empData?.motherSecondName || '',
+   motherThirdName: empData?.motherThirdName || '',
+   motherSurName: empData?.motherSurName || '',
+   genderId: empData?.genderId !== undefined && empData?.genderId !== null ? Number(empData.genderId) : (undefined as unknown as number),
+   birthPlace: empData?.birthPlace || '',
+   birthDate: empData?.birthDate ? String(empData.birthDate).split('T')[0] : '',
+   socialStatus: empData?.socialStatus !== undefined && empData?.socialStatus !== null ? Number(empData.socialStatus) : (undefined as unknown as number),
+   medicalTest: empData?.medicalTest !== undefined && empData?.medicalTest !== null ? Boolean(empData.medicalTest) : (undefined as unknown as boolean),
+   statusWorkingId: empData?.statusWorkingId !== undefined && empData?.statusWorkingId !== null ? Number(empData.statusWorkingId) : (undefined as unknown as number),
+   typeOfJobId: empData?.typeOfJobId !== undefined && empData?.typeOfJobId !== null ? Number(empData.typeOfJobId) : (undefined as unknown as number),
+   countryId: empData?.countryId !== undefined && empData?.countryId !== null ? Number(empData.countryId) : (undefined as unknown as number),
+   nationalism: empData?.nationalism || '',
+   religion: empData?.religion || '',
+   hireDate: empData?.hireDate ? String(empData.hireDate).split('T')[0] : '',
+   isMovedFromOutside: empData?.isMovedFromOutside !== undefined && empData?.isMovedFromOutside !== null ? Boolean(empData.isMovedFromOutside) : (undefined as unknown as boolean),
+   isReEmployed: empData?.isReEmployed !== undefined && empData?.isReEmployed !== null ? Boolean(empData.isReEmployed) : (undefined as unknown as boolean),
+   directorateId: empData?.directorateId !== undefined && empData?.directorateId !== null ? Number(empData.directorateId) : (undefined as unknown as number),
+   subDirectorateId: empData?.subDirectorateId !== undefined && empData?.subDirectorateId !== null ? Number(empData.subDirectorateId) : (undefined as unknown as number),
+   departmentId: empData?.departmentId !== undefined && empData?.departmentId !== null ? Number(empData.departmentId) : (undefined as unknown as number),
+   jobDegreeId: empData?.jobDegreeId !== undefined && empData?.jobDegreeId !== null ? Number(empData.jobDegreeId) : (undefined as unknown as number),
+   jobCategoryId: empData?.jobCategoryId !== undefined && empData?.jobCategoryId !== null ? Number(empData.jobCategoryId) : (undefined as unknown as number),
+   jobTitleId: empData?.jobTitleId !== undefined && empData?.jobTitleId !== null ? Number(empData.jobTitleId) : (undefined as unknown as number),
+   jobDescriptionId: empData?.jobDescriptionId !== undefined && empData?.jobDescriptionId !== null ? Number(empData.jobDescriptionId) : (undefined as unknown as number),
+   notes: empData?.notes || '',
+   isBehaviorCode: empData?.isBehaviorCode !== undefined && empData?.isBehaviorCode !== null ? Boolean(empData.isBehaviorCode) : (undefined as unknown as boolean),
+   positionId: empData?.positionId !== undefined && empData?.positionId !== null ? Number(empData.positionId) : (undefined as unknown as number)
+});
+
 export default function EmployeeForm({
+   employeeId: propEmployeeId,
    data,
    departmentsList,
    directoratesList,
@@ -206,124 +237,124 @@ export default function EmployeeForm({
    const router = useRouter();
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const jobDegreeOptions = jobDegreesList?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const jobTitleOptions = jobTitlesList?.map((item: any) => {
-      return { value: item.id, degreeId: item.degreeId, label: item.name };
-   });
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const jobCategoryOptions = jobCategoriesList?.map((item: any) => {
-      return { value: item.id, degreeId: item.degreeId, label: item.name };
-   });
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const jobDescriptionOptions = jobDescriptionsList?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const directorateOptions = directoratesList?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const subDirectorateOptions = subDirectoratesList?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const departmentOptions = departmentsList?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const typeOfJobOptions = typeOfJobsList?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const countryOptions = countriesList?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
+   const jobDegreeOptions = useMemo(() => jobDegreesList?.map((item: any) => ({
+      value: item.id ?? item.Id,
+      label: item.name ?? item.Name
+   })) ?? [], [jobDegreesList]);
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const positionOptions = positionsList?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
+   const jobTitleOptions = useMemo(() => jobTitlesList?.map((item: any) => ({
+      value: item.id ?? item.Id,
+      degreeId: item.degreeId ?? item.DegreeId,
+      label: item.name ?? item.Name
+   })) ?? [], [jobTitlesList]);
+
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const jobCategoryOptions = useMemo(() => jobCategoriesList?.map((item: any) => ({
+      value: item.id ?? item.Id,
+      degreeId: item.degreeId ?? item.DegreeId,
+      label: item.name ?? item.Name
+   })) ?? [], [jobCategoriesList]);
+
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const jobDescriptionOptions = useMemo(() => jobDescriptionsList?.map((item: any) => ({
+      value: item.id ?? item.Id,
+      label: item.name ?? item.Name
+   })) ?? [], [jobDescriptionsList]);
+
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const directorateOptions = useMemo(() => directoratesList?.map((item: any) => ({
+      value: item.id ?? item.Id,
+      label: item.name ?? item.Name
+   })) ?? [], [directoratesList]);
+
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const subDirectorateOptions = useMemo(() => subDirectoratesList?.map((item: any) => ({
+      value: item.id ?? item.Id,
+      label: item.name ?? item.Name
+   })) ?? [], [subDirectoratesList]);
+
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const departmentOptions = useMemo(() => departmentsList?.map((item: any) => ({
+      value: item.id ?? item.Id,
+      label: item.name ?? item.Name
+   })) ?? [], [departmentsList]);
+
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const typeOfJobOptions = useMemo(() => typeOfJobsList?.map((item: any) => ({
+      value: item.id ?? item.Id,
+      label: item.name ?? item.Name
+   })) ?? [], [typeOfJobsList]);
+
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const countryOptions = useMemo(() => countriesList?.map((item: any) => ({
+      value: item.id ?? item.Id,
+      label: item.name ?? item.Name
+   })) ?? [], [countriesList]);
+
+   // eslint-disable-next-line @typescript-eslint/no-explicit-any
+   const positionOptions = useMemo(() => positionsList?.map((item: any) => ({
+      value: item.id ?? item.Id,
+      label: item.name ?? item.Name
+   })) ?? [], [positionsList]);
 
    const form = useForm<FormValues>({
       resolver: zodResolver(formSchema),
-      defaultValues: {
-         statisticalIndex: data?.statisticalIndex?.toString() || '',
-         jobCode: data?.jobCode,
-         lotNumber: data?.lotNumber,
-         firstName: data?.firstName,
-         secondName: data?.secondName,
-         thirdName: data?.thirdName,
-         fourthName: data?.fourthName,
-         surName: data?.surName,
-         motherFirstName: data?.motherFirstName,
-         motherSecondName: data?.motherSecondName,
-         motherThirdName: data?.motherThirdName,
-         motherSurName: data?.motherSurName,
-         genderId: data?.genderId,
-         birthPlace: data?.birthPlace,
-         birthDate: data?.birthDate,
-         socialStatus: data?.socialStatus,
-         medicalTest: data?.medicalTest,
-         statusWorkingId: data?.statusWorkingId,
-         typeOfJobId: data?.typeOfJobId,
-         countryId: data?.countryId,
-         nationalism: data?.nationalism,
-         religion: data?.religion,
-         hireDate: data?.hireDate,
-         isMovedFromOutside: data?.isMovedFromOutside,
-         isReEmployed: data?.isReEmployed,
-         directorateId: data?.directorateId,
-         subDirectorateId: data?.subDirectorateId,
-         departmentId: data?.departmentId,
-         jobDegreeId: data?.jobDegreeId,
-         jobCategoryId: data?.jobCategoryId,
-         jobTitleId: data?.jobTitleId,
-         jobDescriptionId: data?.jobDescriptionId,
-         notes: data?.notes,
-         isBehaviorCode: data?.isBehaviorCode,
-         positionId: data?.positionId
-      }
+      defaultValues: buildDefaultValues(data)
    });
+
+   useEffect(() => {
+      if (data) {
+         form.reset(buildDefaultValues(data));
+      }
+   }, [data, form]);
 
    // Cascading selects: JobCategory and JobTitle belong to a specific JobDegree (DegreeId).
    // Filter them to match the chosen degree so the user cannot pick an incompatible pair.
    const watchedDegreeIdRaw = form.watch('jobDegreeId');
    const watchedDegreeId = watchedDegreeIdRaw ? Number(watchedDegreeIdRaw) : 0;
 
-   const filteredCategoryOptions = jobCategoryOptions.filter(
-      (option) => !watchedDegreeId || option.degreeId === watchedDegreeId
-   );
-   const filteredTitleOptions = jobTitleOptions.filter(
-      (option) => !watchedDegreeId || option.degreeId === watchedDegreeId
-   );
-   // When the degree changes, clear any previously chosen category/title that no longer belongs to it.
-   useEffect(() => {
-      const catVal = form.getValues('jobCategoryId');
-      const selectedCategoryId = catVal ? Number(catVal) : 0;
-      
-      const titleVal = form.getValues('jobTitleId');
-      const selectedTitleId = titleVal ? Number(titleVal) : 0;
+   const filteredCategoryOptions = useMemo(() => {
+      return jobCategoryOptions.filter(
+         (option) => !watchedDegreeId || option.degreeId === watchedDegreeId
+      );
+   }, [jobCategoryOptions, watchedDegreeId]);
 
-      if (
-         selectedCategoryId &&
-         !jobCategoryOptions.find((o) => o.value === selectedCategoryId && o.degreeId === watchedDegreeId)
-      ) {
-         form.setValue('jobCategoryId', 0 as unknown as number);
+   const filteredTitleOptions = useMemo(() => {
+      return jobTitleOptions.filter(
+         (option) => !watchedDegreeId || option.degreeId === watchedDegreeId
+      );
+   }, [jobTitleOptions, watchedDegreeId]);
+
+   // Track previous degree to only reset category/title on intentional user degree change
+   const [prevDegreeId, setPrevDegreeId] = useState<number>(data?.jobDegreeId ? Number(data.jobDegreeId) : 0);
+
+   useEffect(() => {
+      if (prevDegreeId !== watchedDegreeId) {
+         setPrevDegreeId(watchedDegreeId);
+         if (watchedDegreeId) {
+            const catVal = form.getValues('jobCategoryId');
+            const selectedCategoryId = catVal ? Number(catVal) : 0;
+            const titleVal = form.getValues('jobTitleId');
+            const selectedTitleId = titleVal ? Number(titleVal) : 0;
+
+            if (
+               selectedCategoryId &&
+               !jobCategoryOptions.find((o) => o.value === selectedCategoryId && o.degreeId === watchedDegreeId)
+            ) {
+               form.setValue('jobCategoryId', undefined as unknown as number);
+            }
+            if (
+               selectedTitleId &&
+               !jobTitleOptions.find((o) => o.value === selectedTitleId && o.degreeId === watchedDegreeId)
+            ) {
+               form.setValue('jobTitleId', undefined as unknown as number);
+            }
+         }
       }
-      if (
-         selectedTitleId &&
-         !jobTitleOptions.find((o) => o.value === selectedTitleId && o.degreeId === watchedDegreeId)
-      ) {
-         form.setValue('jobTitleId', 0 as unknown as number);
-      }
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-   }, [watchedDegreeIdRaw]);
+   }, [watchedDegreeId, prevDegreeId, jobCategoryOptions, jobTitleOptions, form]);
 
    // Validate the current step's fields before allowing navigation to the next one.
-   // StepperPrev skips validation automatically (diceui default), so going back is always allowed.
    const handleValidate = async (value: string, direction?: 'next' | 'prev'): Promise<boolean> => {
       if (direction === 'prev') return true;
       const fields = stepFields[currentStep];
@@ -336,20 +367,23 @@ export default function EmployeeForm({
       try {
          values.birthDate = formatDate(new Date(values.birthDate));
          values.hireDate = formatDate(new Date(values.hireDate));
-         if (data) {
-            // Update existing employee. Note: UpdateEmployeeCommand in the backend only updates
-            // personal data — job fields (degree/category/title) are changed via dedicated endpoints
-            // (ChangeDegree / ChangeJobTitles). Those are handled on the employee profile page.
-            const employeeId =
-               (data as EmployeePayload & { id?: string; employeeId?: string }).employeeId ||
-               (data as EmployeePayload & { id?: string; employeeId?: string }).id;
-            if (!employeeId) {
+         if (data || propEmployeeId) {
+            const rawData = data as (EmployeePayload & { id?: string; employeeId?: string }) | undefined;
+            const isValidGuid = (id?: string | null): id is string =>
+               typeof id === 'string' && id.trim().length > 0 && id !== '00000000-0000-0000-0000-000000000000';
+
+            const resolvedEmployeeId =
+               (isValidGuid(propEmployeeId) ? propEmployeeId : null) ||
+               (isValidGuid(rawData?.id) ? rawData?.id : null) ||
+               (isValidGuid(rawData?.employeeId) ? rawData?.employeeId : null);
+
+            if (!resolvedEmployeeId) {
                toast.error('تعذر تحديد الموظف للتعديل');
                setSubmitting(false);
                return;
             }
             const result = (await employeeService.updateEmployee(
-               employeeId,
+               resolvedEmployeeId,
                values as unknown as UpdateEmployeePayload
             )) as Record<string, unknown> | undefined;
 
@@ -371,15 +405,11 @@ export default function EmployeeForm({
             }
             toast.success('تم حفظ البيانات بنجاح.');
          }
-         form.reset();
          router.refresh();
       } catch (error) {
-         // Network/transport errors (e.g. 401 redirect). API business errors don't throw here
-         // because ApiClient returns the response body instead — handled above via isApiFailure.
          const message = extractErrorMessage(error);
          console.error('Form submission error', error);
          toast.error(message);
-         form.reset();
       }
       setSubmitting(false);
    }
@@ -428,7 +458,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>الرقم الاحصائي</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='الرقم الاحصائي' type='text' {...field} defaultValue={data?.statisticalIndex?.toString()} />
+                                          <Input placeholder='الرقم الاحصائي' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -443,7 +473,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>الرقم الوظيفي</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='الرقم الوظيفي' type='text' {...field} defaultValue={data?.jobCode?.toString()} />
+                                          <Input placeholder='الرقم الوظيفي' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -458,7 +488,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>رقم الاضبارة</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='رقم الاضبارة' type='text' {...field} defaultValue={data?.lotNumber?.toString()} />
+                                          <Input placeholder='رقم الاضبارة' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -476,7 +506,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>الاسم الاول</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='الاسم الاول' type='text' {...field} defaultValue={data?.firstName?.toString()} />
+                                          <Input placeholder='الاسم الاول' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -491,7 +521,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>الاسم الثاني</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='الاسم الثاني' type='text' {...field} defaultValue={data?.secondName?.toString()} />
+                                          <Input placeholder='الاسم الثاني' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -506,7 +536,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>الاسم الثالث</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='الاسم الثالث' type='text' {...field} defaultValue={data?.thirdName?.toString()} />
+                                          <Input placeholder='الاسم الثالث' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -521,7 +551,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>الاسم الرابع</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='الاسم الرابع' type='text' {...field} defaultValue={data?.fourthName?.toString()} />
+                                          <Input placeholder='الاسم الرابع' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -536,7 +566,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>اللقب</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='اللقب' type='text' {...field} defaultValue={data?.surName?.toString()} />
+                                          <Input placeholder='اللقب' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -554,7 +584,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>اسم الام الاول</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='اسم الام الاول' type='text' {...field} defaultValue={data?.motherFirstName?.toString()} />
+                                          <Input placeholder='اسم الام الاول' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -569,7 +599,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>اسم الام الثاني</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='اسم الام الثاني' type='text' {...field} defaultValue={data?.motherSecondName?.toString()} />
+                                          <Input placeholder='اسم الام الثاني' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -584,7 +614,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>اسم الام الثالث</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='اسم الام الثالث' type='text' {...field} defaultValue={data?.motherThirdName?.toString()} />
+                                          <Input placeholder='اسم الام الثالث' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -599,7 +629,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>لقب الام</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='لقب الام' type='text' {...field} defaultValue={data?.motherSurName?.toString()} />
+                                          <Input placeholder='لقب الام' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -619,15 +649,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>الجنس</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='الجنس' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.genderId?.toString()}>
-                                             {genderOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {genderOptions.map((option) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -646,7 +679,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>محل الولادة</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='محل الولادة' type='text' {...field} defaultValue={data?.birthPlace?.toString()} />
+                                          <Input placeholder='محل الولادة' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -660,7 +693,11 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem className='flex flex-col'>
                                        <FormLabel>تاريخ الميلاد</FormLabel>
-                                       <Input type='date' {...field} defaultValue={field.value} />
+                                       <Input
+                                          type='date'
+                                          {...field}
+                                          value={field.value ? String(field.value).split('T')[0] : ''}
+                                       />
                                        <FormMessage />
                                     </FormItem>
                                  )}
@@ -673,15 +710,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>الحالة الاجتماعية</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val !== '' ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='الحالة الاجتماعية' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.socialStatus?.toString()}>
-                                             {socialStatusOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {socialStatusOptions.map((option) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -702,15 +742,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>المنصب</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='المنصب' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.positionId?.toString()}>
-                                             {positionOptions?.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {positionOptions?.map((option: { value: number | string; label: string }) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -729,7 +772,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>القومية</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='القومية' type='text' {...field} defaultValue={data?.nationalism?.toString()} />
+                                          <Input placeholder='القومية' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -744,7 +787,7 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>الديانة</FormLabel>
                                        <FormControl>
-                                          <Input placeholder='الديانة' type='text' {...field} defaultValue={data?.religion?.toString()} />
+                                          <Input placeholder='الديانة' type='text' {...field} />
                                        </FormControl>
                                        <FormMessage />
                                     </FormItem>
@@ -761,15 +804,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>البلد</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='البلد' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.countryId?.toString()}>
-                                             {countryOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {countryOptions.map((option: { value: number | string; label: string }) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -787,15 +833,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>هل الموظف خاضع للفحص الطبي؟</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val === 'true')}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='للفحص الطبي' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.medicalTest?.toString()}>
-                                             {medicalTestOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {medicalTestOptions.map((option) => (
+                                                <SelectItem key={String(option.value)} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -813,15 +862,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>هل الموظف لديه لائحة سلوك؟</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val === 'true')}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='هل الموظف لديه لائحة سلوك؟' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.statusWorkingId?.toString()}>
-                                             {isBehaviorCodeOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {isBehaviorCodeOptions.map((option) => (
+                                                <SelectItem key={String(option.value)} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -845,15 +897,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>حالة الموظف</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val !== '' ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='حالة الموظف' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.statusWorkingId?.toString()}>
-                                             {workingStatusOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {workingStatusOptions.map((option) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -871,15 +926,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>نوع الوظيفة</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='نوع الوظيفة' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.typeOfJobId?.toString()}>
-                                             {typeOfJobOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {typeOfJobOptions.map((option: { value: number | string; label: string }) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -897,7 +955,11 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem className='flex flex-col'>
                                        <FormLabel>تاريخ التعين</FormLabel>
-                                       <Input type='date' {...field} defaultValue={field.value} />
+                                       <Input
+                                          type='date'
+                                          {...field}
+                                          value={field.value ? String(field.value).split('T')[0] : ''}
+                                       />
                                        <FormMessage />
                                     </FormItem>
                                  )}
@@ -913,15 +975,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>هل الموظف منقول من خارج الجهاز؟</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val === 'true')}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='هل الموظف منقول من خارج الجهاز؟' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.isMovedFromOutside?.toString()}>
-                                             {isMovedFromOutsideOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {isMovedFromOutsideOptions.map((option) => (
+                                                <SelectItem key={String(option.value)} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -939,15 +1004,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>هل الموظف تم اعادة تعيينه؟</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val === 'true')}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='هل الموظف تم اعادة تعيينه؟' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.isReEmployed?.toString()}>
-                                             {isReEmployedOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {isReEmployedOptions.map((option) => (
+                                                <SelectItem key={String(option.value)} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -971,15 +1039,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>الدائرة</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='الدائرة' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.directorateId?.toString()}>
-                                             {directorateOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {directorateOptions.map((option: { value: number | string; label: string }) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -997,15 +1068,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>المديرية</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='المديرية' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.subDirectorateId?.toString()}>
-                                             {subDirectorateOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {subDirectorateOptions.map((option: { value: number | string; label: string }) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -1023,15 +1097,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>القسم</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='القسم' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.departmentId?.toString()}>
-                                             {departmentOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {departmentOptions.map((option: { value: number | string; label: string }) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -1055,15 +1132,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>الدرجة الوظيفية</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='الدرجة الوظيفية' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.jobDegreeId?.toString()}>
-                                             {jobDegreeOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {jobDegreeOptions.map((option: { value: number | string; label: string }) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -1081,15 +1161,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>الفئة الوظيفية</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='الفئة الوظيفية' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.jobCategoryId?.toString()}>
-                                             {filteredCategoryOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {filteredCategoryOptions.map((option: { value: number | string; label: string }) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -1107,15 +1190,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>العنوان الوظيفي</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='العنوان الوظيفي' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.jobTitleId?.toString()}>
-                                             {filteredTitleOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {filteredTitleOptions.map((option: { value: number | string; label: string }) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -1133,15 +1219,18 @@ export default function EmployeeForm({
                                  render={({ field }) => (
                                     <FormItem>
                                        <FormLabel>الوصف الوظيفي</FormLabel>
-                                       <Select onValueChange={field.onChange}>
+                                       <Select
+                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
+                                       >
                                           <FormControl>
                                              <SelectTrigger>
                                                 <SelectValue placeholder='الوصف الوظيفي' />
                                              </SelectTrigger>
                                           </FormControl>
-                                          <SelectContent defaultValue={data?.jobDescriptionId?.toString()}>
-                                             {jobDescriptionOptions.map((option, index) => (
-                                                <SelectItem key={index} value={option.value.toString()}>
+                                          <SelectContent>
+                                             {jobDescriptionOptions.map((option: { value: number | string; label: string }) => (
+                                                <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
                                              ))}
@@ -1161,7 +1250,7 @@ export default function EmployeeForm({
                               <FormItem>
                                  <FormLabel>الملاحظة</FormLabel>
                                  <FormControl>
-                                    <Textarea placeholder='الملاحظة' className='resize-none' {...field} defaultValue={data?.notes?.toString()} />
+                                    <Textarea placeholder='الملاحظة' className='resize-none' {...field} />
                                  </FormControl>
                                  <FormMessage />
                               </FormItem>
@@ -1179,25 +1268,25 @@ export default function EmployeeForm({
             </CardContent>
 
             <CardFooter className='flex flex-row-reverse items-center justify-between gap-2'>
-            {currentStep !== '5' ? (
-               <StepperNext asChild>
-                  <Button>التالي</Button>
-               </StepperNext>
-            ) : (
-               <Button type='submit' form='employee-form' disabled={isSubmitting}>
-                  {isSubmitting ? (
-                     <>
-                        <span className='me-2'>حفظ البيانات</span> <Spinner />
-                     </>
-                  ) : (
-                     'حفظ البيانات'
-                  )}
-               </Button>
-            )}
-            <StepperPrev asChild>
-               <Button variant='outline'>السابق</Button>
-            </StepperPrev>
-         </CardFooter>
+               {currentStep !== '5' ? (
+                  <StepperNext asChild>
+                     <Button>التالي</Button>
+                  </StepperNext>
+               ) : (
+                  <Button type='submit' form='employee-form' disabled={isSubmitting}>
+                     {isSubmitting ? (
+                        <>
+                           <span className='me-2'>حفظ البيانات</span> <Spinner />
+                        </>
+                     ) : (
+                        'حفظ البيانات'
+                     )}
+                  </Button>
+               )}
+               <StepperPrev asChild>
+                  <Button variant='outline'>السابق</Button>
+               </StepperPrev>
+            </CardFooter>
          </Stepper>
       </Card>
    );

@@ -96,13 +96,29 @@ const MaritalStatusForm = ({ title, data, employeeId, icon, variant }: Props) =>
       setSubmitting(true);
 
       try {
+         const payload = {
+            ...values,
+            marriageDate: values.marriageDate ? values.marriageDate.split('T')[0] : undefined
+         };
+
          if (data) {
+            const recordId = (data.id || (data as any).marriageInformationId || (data as any).Id) as string;
+            if (!recordId) {
+               toast.error('تعذر تحديد معرف القيد للتعديل');
+               setSubmitting(false);
+               return;
+            }
             const dataToUpdate = {
-               employeeId: employeeId ?? '',
+               employeeId: employeeId ?? (data.employeeId as string) ?? '',
                lastUpdateBy: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-               ...values
+               ...payload
             };
-            await marriageInformationService.updateMarriageInformation(data.id as string, dataToUpdate);
+            const result = await marriageInformationService.updateMarriageInformation(recordId, dataToUpdate);
+            if (result && (result.succeeded === false || result.Succeeded === false)) {
+               toast.error(result.message || result.Message || 'تعذر تعديل البيانات');
+               setSubmitting(false);
+               return;
+            }
             toast.success('تم تعديل البيانات بنجاح.');
             form.reset();
             setSubmitting(false);
@@ -113,9 +129,14 @@ const MaritalStatusForm = ({ title, data, employeeId, icon, variant }: Props) =>
             const dataToCreate = {
                employeeId: employeeId ?? '',
                createBy: '3fa85f64-5717-4562-b3fc-2c963f66afa6',
-               ...values
+               ...payload
             };
-            await marriageInformationService.createMarriageInformation(dataToCreate);
+            const result = await marriageInformationService.createMarriageInformation(dataToCreate);
+            if (result && (result.succeeded === false || result.Succeeded === false)) {
+               toast.error(result.message || result.Message || 'تعذر حفظ البيانات');
+               setSubmitting(false);
+               return;
+            }
             toast.success('تم حفظ البيانات بنجاح.');
             form.reset();
             setSubmitting(false);
@@ -125,10 +146,8 @@ const MaritalStatusForm = ({ title, data, employeeId, icon, variant }: Props) =>
          }
       } catch (error) {
          console.error('Form submission error', error);
-         toast.error('Failed to submit the form. Please try again.');
-         form.reset();
+         toast.error('حدث خطأ أثناء حفظ البيانات، يرجى المحاولة لاحقاً');
          setSubmitting(false);
-         setOpen(false);
       }
    }
 

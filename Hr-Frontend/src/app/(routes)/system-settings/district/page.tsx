@@ -1,5 +1,4 @@
 import { fetchServer } from '@/lib/fetchServer';
-import { territoryService } from '@/services/system-settings/territory.service';
 import React from 'react';
 import { columnsDistrict } from './_components/columns';
 import Pagination from '@/components/Pagination';
@@ -17,6 +16,8 @@ export interface ApiResponse<T = Record<string, unknown>> {
 export interface IDistrict {
    id: number;
    name?: string;
+   provinceId?: number;
+   provinceName?: string;
    status?: string;
 }
 

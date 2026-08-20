@@ -143,41 +143,42 @@ const LeavesBalancesTable = ({ employeeId }: Props) => {
                      </TableCell>
                   </TableRow>
                )}
-               {!isLoading &&
-                  !error &&
-                  data.map((item) => (
-                     <TableRow key={item?.id}>
-                        <TableCell>{item?.nameOfIssuing}</TableCell>
-                        <TableCell>{item?.countOfDay}</TableCell>
-                        <TableCell>{item?.bookNo}</TableCell>
-                        <TableCell>{item?.bookDate}</TableCell>
-                        <TableCell>
-                           <LeavesBalancesAttachment
-                              PrimaryTableId={item?.id as string}
-                              employeeId={(item?.employeeId || employeeId) as string}
-                           />
-                        </TableCell>
-                        <TableCell>
-                           <Popover>
-                              <PopoverTrigger asChild>
-                                 <Button variant='outline'>الملاحظات</Button>
-                              </PopoverTrigger>
-                              <PopoverContent>{item?.note}</PopoverContent>
-                           </Popover>
-                        </TableCell>
-                        <TableCell>
-                           <div className='flex items-center gap-2'>
-                              <LeavesBalancesForm
-                                 title=''
-                                 icon={<Settings2 className='h-4 w-4' />}
-                                 data={item}
-                                 variant='ghost'
-                                 employeeId={(item?.employeeId || employeeId) as string}
-                              />
-                           </div>
-                        </TableCell>
-                     </TableRow>
-                  ))}
+                {!isLoading &&
+                   !error &&
+                   data.map((item, index) => (
+                      <TableRow key={item?.id || index}>
+                         <TableCell>{(item?.id || item?.employeeId)?.toString().toUpperCase().split('-', 1)}</TableCell>
+                         <TableCell>{item?.nameOfIssuing}</TableCell>
+                         <TableCell>{item?.countOfDay}</TableCell>
+                         <TableCell>{item?.bookNo}</TableCell>
+                         <TableCell>{item?.bookDate ? item.bookDate.split('T')[0] : ''}</TableCell>
+                         <TableCell>
+                            <LeavesBalancesAttachment
+                               PrimaryTableId={item?.id as string}
+                               employeeId={(item?.employeeId || employeeId) as string}
+                            />
+                         </TableCell>
+                         <TableCell>
+                            <Popover>
+                               <PopoverTrigger asChild>
+                                  <Button variant='outline'>الملاحظات</Button>
+                               </PopoverTrigger>
+                               <PopoverContent>{item?.note || 'لا توجد ملاحظات'}</PopoverContent>
+                            </Popover>
+                         </TableCell>
+                         <TableCell>
+                            <div className='flex items-center gap-2'>
+                               <LeavesBalancesForm
+                                  title=''
+                                  icon={<Settings2 className='h-4 w-4' />}
+                                  data={item}
+                                  variant='ghost'
+                                  employeeId={(item?.employeeId || employeeId) as string}
+                               />
+                            </div>
+                         </TableCell>
+                      </TableRow>
+                   ))}
             </TableBody>
          </Table>
 

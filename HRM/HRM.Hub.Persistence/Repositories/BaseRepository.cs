@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore;
@@ -316,6 +316,14 @@ public class BaseRepository<TEntity> : IDisposable, IBaseRepository<TEntity> whe
                 if (entityProperty != null && entityProperty.CanWrite)
                 {
                     var newValue = propertyInfo.GetValue(updatedProperties, null);
+                    if (newValue != null)
+                    {
+                        var targetType = Nullable.GetUnderlyingType(entityProperty.PropertyType) ?? entityProperty.PropertyType;
+                        if (targetType.IsEnum)
+                        {
+                            newValue = Enum.ToObject(targetType, newValue);
+                        }
+                    }
                     entityProperty.SetValue(entityToUpdate, newValue);
                 }
             }

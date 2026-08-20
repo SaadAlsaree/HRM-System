@@ -42,37 +42,25 @@ type Props = {
    variant?: 'ghost' | 'outline' | 'default' | 'destructive' | 'link';
    employeeId: string;
 };
+const extractItems = (res: any): any[] => {
+   if (!res) return [];
+   if (Array.isArray(res)) return res;
+   if (Array.isArray(res.items)) return res.items;
+   if (Array.isArray(res.data?.items)) return res.data.items;
+   if (Array.isArray(res.data)) return res.data;
+   if (Array.isArray(res.data?.data?.items)) return res.data.data.items;
+   if (Array.isArray(res.data?.data)) return res.data.data;
+   return [];
+};
+
 const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
    const [open, setOpen] = useState(false);
    const [isSubmitting, setSubmitting] = useState(false);
-   const [governorate, setGovernorate] = useState([]);
-   const [provinces, setProvinces] = useState([]);
-   const [territories, setTerritories] = useState([]);
+   const [governorate, setGovernorate] = useState<any[]>([]);
+   const [allProvinces, setAllProvinces] = useState<any[]>([]);
+   const [allTerritories, setAllTerritories] = useState<any[]>([]);
    const router = useRouter();
    const { refresh } = useEmployeeProfileRefresh();
-
-   useEffect(() => {
-      const fetchGovernorate = async () => {
-         const response = await governorateService.getGovernorate();
-         setGovernorate(response?.data?.items);
-      };
-      fetchGovernorate();
-   }, []);
-
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const governorateOptions = governorate?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
-
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const provinceOptions = provinces?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
-
-   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-   const territoryOptions = territories?.map((item: any) => {
-      return { value: item.id, label: item.name };
-   });
 
    const form = useForm<z.infer<typeof formSchema>>({
       resolver: zodResolver(formSchema),
@@ -90,42 +78,40 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
    });
 
    useEffect(() => {
+      const loadAllLocations = async () => {
+         try {
+            const [govRes, provRes, terrRes] = await Promise.allSettled([
+               governorateService.getGovernorate({ PageSize: 500, Page: 1 } as any),
+               provinceService.getProvinces({ PageSize: 500, Page: 1 } as any),
+               territoryService.getTerritories({ PageSize: 500, Page: 1 } as any)
+            ]);
+
+            if (govRes.status === 'fulfilled') setGovernorate(extractItems(govRes.value));
+            if (provRes.status === 'fulfilled') setAllProvinces(extractItems(provRes.value));
+            if (terrRes.status === 'fulfilled') setAllTerritories(extractItems(terrRes.value));
+         } catch (err) {
+            console.error('Error loading locations', err);
+         }
+      };
+
+      if (open) {
+         loadAllLocations();
+      }
+   }, [open]);
+
+   useEffect(() => {
       if (open && data) {
-         const initForm = async () => {
-            const govId = data.governorateId ? data.governorateId.toString() : '';
-            const provId = data.provinceId ? data.provinceId.toString() : '';
-            const terrId = data.territoryId ? data.territoryId.toString() : '';
-
-            if (govId) {
-               try {
-                  const provRes = await provinceService.getProvinces({ GovernorateId: Number(govId) });
-                  setProvinces(provRes?.data?.items || []);
-               } catch (e) {
-                  console.error(e);
-               }
-            }
-            if (provId) {
-               try {
-                  const terrRes = await territoryService.getTerritories({ ProvinceId: Number(provId) });
-                  setTerritories(terrRes?.data?.items || []);
-               } catch (e) {
-                  console.error(e);
-               }
-            }
-
-            form.reset({
-               governorateId: govId,
-               provinceId: provId,
-               territoryId: terrId,
-               area: data?.area || '',
-               district: data?.district || '',
-               streetNo: data?.streetNo || '',
-               houseNo: data?.houseNo || '',
-               nearestPoint: data?.nearestPoint || '',
-               notes: data?.notes || ''
-            });
-         };
-         initForm();
+         form.reset({
+            governorateId: data.governorateId ? data.governorateId.toString() : '',
+            provinceId: data.provinceId ? data.provinceId.toString() : '',
+            territoryId: data.territoryId ? data.territoryId.toString() : '',
+            area: data?.area || '',
+            district: data?.district || '',
+            streetNo: data?.streetNo || '',
+            houseNo: data?.houseNo || '',
+            nearestPoint: data?.nearestPoint || '',
+            notes: data?.notes || ''
+         });
       } else if (open && !data) {
          form.reset({
             governorateId: '',
@@ -138,55 +124,61 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
             nearestPoint: '',
             notes: ''
          });
-         setProvinces([]);
-         setTerritories([]);
       }
    }, [open, data, form]);
 
    const watchGovernorateId = form.watch('governorateId');
    const watchProvinceId = form.watch('provinceId');
 
-   useEffect(() => {
-      const fetchProvinces = async () => {
-         if (!watchGovernorateId) {
-            setProvinces([]);
-            return;
-         }
-         try {
-            const response = await provinceService.getProvinces({ GovernorateId: Number(watchGovernorateId) });
-            setProvinces(response?.data?.items || []);
-         } catch (e) {
-            console.error(e);
-         }
-      };
-      if (watchGovernorateId) {
-         fetchProvinces();
-      }
-   }, [watchGovernorateId]);
+   const governorateOptions = governorate.map((item: any) => ({
+      value: String(item.id),
+      label: item.name
+   }));
 
-   useEffect(() => {
-      const fetchTerritories = async () => {
-         if (!watchProvinceId) {
-            setTerritories([]);
-            return;
-         }
-         try {
-            const response = await territoryService.getTerritories({ ProvinceId: Number(watchProvinceId) });
-            setTerritories(response?.data?.items || []);
-         } catch (e) {
-            console.error(e);
-         }
-      };
-      if (watchProvinceId) {
-         fetchTerritories();
-      }
-   }, [watchProvinceId]);
+   const filteredProvinces = watchGovernorateId
+      ? allProvinces.filter((p: any) => p.governorateId && String(p.governorateId) === String(watchGovernorateId))
+      : allProvinces;
+
+   const provinceDisplayList = (watchGovernorateId && filteredProvinces.length > 0)
+      ? filteredProvinces
+      : allProvinces;
+
+   const provinceOptions = provinceDisplayList.map((item: any) => ({
+      value: String(item.id),
+      label: item.name
+   }));
+
+   const filteredTerritories = watchProvinceId
+      ? allTerritories.filter((t: any) => t.provinceId && String(t.provinceId) === String(watchProvinceId))
+      : allTerritories;
+
+   const territoryDisplayList = (watchProvinceId && filteredTerritories.length > 0)
+      ? filteredTerritories
+      : allTerritories;
+
+   const territoryOptions = territoryDisplayList.map((item: any) => ({
+      value: String(item.id),
+      label: item.name
+   }));
 
    async function onSubmit(values: z.infer<typeof formSchema>) {
       setSubmitting(true);
       try {
+         const payload = {
+            ...values,
+            governorateId: Number(values.governorateId) || 0,
+            provinceId: Number(values.provinceId) || 0,
+            territoryId: Number(values.territoryId) || 0
+         };
+
          if (data) {
-            await addressInformationService.updateAddressInformation(data.id as string, values);
+            const recordId = (data.id || (data as any).Id) as string;
+            const res = await addressInformationService.updateAddressInformation(recordId, payload);
+            if (res && (res.succeeded === false || res.Succeeded === false)) {
+               toast.error(res.message || res.Message || 'تعذر تعديل جهة السكن');
+               setSubmitting(false);
+               return;
+            }
             toast.success('تم تعديل البيانات بنجاح.');
             setSubmitting(false);
             refresh();
@@ -195,10 +187,15 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
             form.reset();
          } else {
             const dataToSave = {
-               ...values,
+               ...payload,
                employeeId
             };
-            await addressInformationService.createAddressInformation(dataToSave);
+            const res = await addressInformationService.createAddressInformation(dataToSave);
+            if (res && (res.succeeded === false || res.Succeeded === false)) {
+               toast.error(res.message || res.Message || 'تعذر حفظ جهة السكن');
+               setSubmitting(false);
+               return;
+            }
             toast.success('تم حفظ البيانات بنجاح.');
             setSubmitting(false);
             refresh();
@@ -210,8 +207,6 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
          console.error('Form submission error', error);
          toast.error('حدث خطأ أثناء الحفظ. يرجى المحاولة مرة أخرى.');
          setSubmitting(false);
-         setOpen(false);
-         form.reset();
       }
    }
 
@@ -278,6 +273,10 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
                                     onValueChange={(value) => {
                                        field.onChange(value);
                                        form.setValue('territoryId', '');
+                                       const selectedProv = allProvinces.find((p: any) => String(p.id) === String(value));
+                                       if (selectedProv?.governorateId && !form.getValues('governorateId')) {
+                                          form.setValue('governorateId', String(selectedProv.governorateId));
+                                       }
                                     }}
                                     value={field.value ? field.value.toString() : ''}>
                                     <FormControl>
@@ -307,7 +306,19 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
                            render={({ field }) => (
                               <FormItem>
                                  <FormLabel>الناحية</FormLabel>
-                                 <Select onValueChange={field.onChange} value={field.value ? field.value.toString() : ''}>
+                                 <Select
+                                    onValueChange={(value) => {
+                                       field.onChange(value);
+                                       const selectedTerr = allTerritories.find((t: any) => String(t.id) === String(value));
+                                       if (selectedTerr?.provinceId && !form.getValues('provinceId')) {
+                                          form.setValue('provinceId', String(selectedTerr.provinceId));
+                                          const selectedProv = allProvinces.find((p: any) => String(p.id) === String(selectedTerr.provinceId));
+                                          if (selectedProv?.governorateId && !form.getValues('governorateId')) {
+                                             form.setValue('governorateId', String(selectedProv.governorateId));
+                                          }
+                                       }
+                                    }}
+                                    value={field.value ? field.value.toString() : ''}>
                                     <FormControl>
                                        <SelectTrigger>
                                           <SelectValue placeholder='الناحية' />

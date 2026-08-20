@@ -55,7 +55,7 @@ public class PromotionAllowanceAffectedEmployeeResolver : IPromotionAllowanceAff
             TableNames.StudyLeave => (await _studyLeaveRepository.Find(x => x.Id == recordId, cancellationToken: cancellationToken))?.EmployeeId,
             TableNames.ThanksAndSeniority => (await _thanksRepository.Find(x => x.Id == recordId, cancellationToken: cancellationToken))?.EmployeeId,
             TableNames.EducationInformation => (await _educationInformationRepository.Find(x => x.Id == recordId, cancellationToken: cancellationToken))?.EmployeeId,
-            TableNames.Promotion => (await _promotionRepository.Find(x => x.Id == recordId, cancellationToken: cancellationToken))?.Id,
+            TableNames.Promotion => null,
             TableNames.JobInformation => (await _jobInformationRepository.Find(x => x.Id == recordId, cancellationToken: cancellationToken))?.Id,
             TableNames.JobDegree => null,
             TableNames.JobCategory => null,

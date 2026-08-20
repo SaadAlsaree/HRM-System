@@ -23,7 +23,7 @@ const DistrictTable = ({ columns, data }: Props) => {
 
          toast(
             <pre className=' w-[340px] rounded-md'>
-               <h1 className='text-xl'>{response?.message}</h1>
+               <h1 className='text-xl'>{response?.message || 'تم تحديث الحالة بنجاح'}</h1>
             </pre>
          );
          router.refresh();
@@ -51,6 +51,7 @@ const DistrictTable = ({ columns, data }: Props) => {
                <TableRow key={item.id}>
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.provinceName || '----'}</TableCell>
 
                   <TableCell>{<SelectStatus id={item?.id} status={item?.status?.toString()} onChange={handleStatusChange} />}</TableCell>
                   <TableCell>

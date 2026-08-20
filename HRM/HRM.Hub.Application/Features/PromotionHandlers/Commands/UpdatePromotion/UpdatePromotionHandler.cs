@@ -27,6 +27,8 @@ namespace HRM.Hub.Application.Features.PromotionHandlers.Commands.UpdatePromotio
             entity.SentPromotionGroupId = request.SentPromotionGroupId;
             entity.JobDegreeId = request.DegreeToId ?? request.DegreeFromId ?? entity.JobDegreeId;
             entity.JobCategoryId = request.JobCategoryToId ?? request.JobCategoryFromId ?? entity.JobCategoryId;
+            if (request.DueDateDegree.HasValue) entity.DueDateDegree = request.DueDateDegree;
+            if (request.DueDateCategory.HasValue) entity.DueDateCategory = request.DueDateCategory;
             entity.ServiceRecycle = request.ServiceRecycle;
             entity.Note = request.Note;
             entity.LastUpdateAt = DateTime.UtcNow;

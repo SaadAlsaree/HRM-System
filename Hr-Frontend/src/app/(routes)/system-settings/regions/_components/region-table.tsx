@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { AlignJustify, Settings2 } from 'lucide-react';
 
 import { IRegion } from '../page';
-import { positionService } from '@/services/system-settings/position.service';
+import { provinceService } from '@/services/system-settings/province.service';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import SelectStatus from '@/app/_components/select-status';
@@ -20,11 +20,11 @@ const RegionTable = ({ columns, data }: Props) => {
    //Handel Update status
    const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
       try {
-         const response = await positionService.patchPosition({ id, statusId: value });
+         const response = await provinceService.patchProvince({ id, statusId: value });
 
          toast(
             <pre className=' w-[340px] rounded-md'>
-               <h1 className='text-xl'>{response?.message}</h1>
+               <h1 className='text-xl'>{response?.message || 'تم تحديث الحالة بنجاح'}</h1>
             </pre>
          );
          router.refresh();
@@ -52,6 +52,7 @@ const RegionTable = ({ columns, data }: Props) => {
                <TableRow key={item.id}>
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{item.name}</TableCell>
+                  <TableCell>{item.governorateName || '----'}</TableCell>
 
                   <TableCell>{<SelectStatus id={item?.id} status={item?.status?.toString()} onChange={handleStatusChange} />}</TableCell>
                   <TableCell>

@@ -1,4 +1,4 @@
-﻿using HRM.Hub.Domain.Entities;
+using HRM.Hub.Domain.Entities;
 
 namespace HRM.Hub.Application.Features.EmployeeHandlers.Queries.GetEmployeeById;
 public class GetEmployeeByIdViewModel : BaseViewModel<Guid>
@@ -42,6 +42,11 @@ public class GetEmployeeByIdViewModel : BaseViewModel<Guid>
     public int? JobTitleId { get; set; }
 
     public int? JobDescriptionId { get; set; }
+    public int? PositionId { get; set; }
+    public bool? MedicalTest { get; set; }
+    public bool? IsMovedFromOutside { get; set; }
+    public bool? IsReEmployed { get; set; }
+    public bool? IsBehaviorCode { get; set; }
     public string MotherFullName { get; set; }
 
     public DateOnly? HireDate { get; set; }

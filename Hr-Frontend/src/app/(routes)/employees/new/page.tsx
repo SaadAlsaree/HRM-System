@@ -31,18 +31,27 @@ const NewEmployeeForm = async () => {
       fetchServer<{ data?: { items?: unknown[] } }>('/Position')
    ]);
 
-   const jobDegreesList = jobDegrees?.data?.items ?? [];
-   const jobTitlesList = jobTitles?.data?.items ?? [];
-   const jobCategoriesList = jobCategories?.data?.items ?? [];
-   const jobDescriptionsList = jobDescriptions?.data?.items ?? [];
-   const directoratesList = directorates?.data?.items ?? [];
-   const subDirectoratesList = subDirectorates?.data?.items ?? [];
-   const departmentsList = departments?.data?.items ?? [];
-   const sectionsList = sections?.data?.items ?? [];
-   const unitsList = units?.data?.items ?? [];
-   const typeOfJobsList = typeOfJobs?.data?.items ?? [];
-   const countriesList = countries?.data?.items ?? [];
-   const positionsList = positions?.data?.items ?? [];
+   const extractItems = (res: any): unknown[] => {
+      if (!res) return [];
+      if (Array.isArray(res)) return res;
+      if (Array.isArray(res.data)) return res.data;
+      if (Array.isArray(res.data?.items)) return res.data.items;
+      if (Array.isArray(res.items)) return res.items;
+      return [];
+   };
+
+   const jobDegreesList = extractItems(jobDegrees);
+   const jobTitlesList = extractItems(jobTitles);
+   const jobCategoriesList = extractItems(jobCategories);
+   const jobDescriptionsList = extractItems(jobDescriptions);
+   const directoratesList = extractItems(directorates);
+   const subDirectoratesList = extractItems(subDirectorates);
+   const departmentsList = extractItems(departments);
+   const sectionsList = extractItems(sections);
+   const unitsList = extractItems(units);
+   const typeOfJobsList = extractItems(typeOfJobs);
+   const countriesList = extractItems(countries);
+   const positionsList = extractItems(positions);
 
    return (
       <div className='flex flex-col gap-4 p-2'>

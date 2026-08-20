@@ -4,7 +4,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 
 //service
 import { utiliesService } from '@/services/system-settings/utilies.service';
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export interface IEmployeeSearch {
    id?: string;
@@ -51,18 +51,34 @@ const SearchByOptions = [
    { value: '2', label: 'الرقم الوظيفي' },
    { value: '3', label: 'الرقم الأضبارة' }
 ];
+
 const EmployeeSearch = ({ onSelectUser }: Props) => {
    const [searchBy, setSearchBy] = useState('0');
-   const searchUsers = async (query: string): Promise<IEmployeeSearch[]> => {
-      if (!query) return [];
 
-      const response = await utiliesService.getTypeOfService({ Search: query, SearchBy: parseInt(searchBy) });
-      if (!response.succeeded) {
-         throw new Error('Failed to fetch users');
+   const searchUsers = useCallback(async (query: string): Promise<IEmployeeSearch[]> => {
+      const trimmed = query?.trim();
+      if (!trimmed) return [];
+
+      try {
+         const response = await utiliesService.getTypeOfService({
+            Search: trimmed,
+            SearchBy: parseInt(searchBy, 10)
+         });
+
+         const data = Array.isArray(response?.data)
+            ? response.data
+            : Array.isArray(response?.data?.items)
+            ? response.data.items
+            : Array.isArray(response)
+            ? response
+            : [];
+
+         return data;
+      } catch (error) {
+         console.error('Failed to fetch employees:', error);
+         return [];
       }
-
-      return response.data;
-   };
+   }, [searchBy]);
 
    // Call the parent callback when a user is selected
    const handleSelect = (user: IEmployeeSearch | null) => {
@@ -73,7 +89,7 @@ const EmployeeSearch = ({ onSelectUser }: Props) => {
       <div className='w-full flex flex-row items-center gap-4'>
          <Select value={searchBy} onValueChange={setSearchBy}>
             <SelectTrigger className='w-[180px]'>
-               <SelectValue placeholder='Theme' />
+               <SelectValue placeholder='نوع البحث' />
             </SelectTrigger>
             <SelectContent>
                {SearchByOptions.map((option) => (
@@ -84,14 +100,17 @@ const EmployeeSearch = ({ onSelectUser }: Props) => {
             </SelectContent>
          </Select>
          <Autocomplete
-            // items={[]}
             className='w-full'
             onSearch={searchUsers}
             getItemValue={(user) => user?.fullName || ''}
             renderItem={(user, isHighlighted) => (
-               <div className={isHighlighted ? 'font-bold' : ''}>
-                  <div>{user.fullName}</div>
-                  <div className='text-sm text-gray-500'>{user.jobCode}</div>
+               <div className={`flex flex-col py-1 ${isHighlighted ? 'font-bold' : ''}`}>
+                  <div className='text-sm text-foreground'>{user.fullName}</div>
+                  <div className='text-xs text-muted-foreground flex gap-2 items-center'>
+                     <span>الرقم: {user.jobCode || '-'}</span>
+                     {user.jobDegreeName && <span>| {user.jobDegreeName}</span>}
+                     {user.jobTitleName && <span>| {user.jobTitleName}</span>}
+                  </div>
                </div>
             )}
             onSelect={handleSelect}
@@ -102,3 +121,4 @@ const EmployeeSearch = ({ onSelectUser }: Props) => {
 };
 
 export default EmployeeSearch;
+

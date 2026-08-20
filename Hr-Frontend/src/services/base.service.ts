@@ -1,20 +1,8 @@
-import { AxiosInstance, AxiosRequestConfig, AxiosResponse } from 'axios';
+import ApiClient from '@/services/axios.service';
 
-
-export class BaseService {
-    protected axiosInstance: AxiosInstance;
-
-    constructor(instance: AxiosInstance) {
-        this.axiosInstance = instance;
-    }
-
-    protected async request<T>(config: AxiosRequestConfig): Promise<T> {
-        try {
-            const response: AxiosResponse<T> = await this.axiosInstance.request(config);
-            return response.data;
-        } catch (error: unknown) {
-            console.error('API Request Error:', error);
-            throw error;
-        }
+export class BaseService extends ApiClient {
+    constructor(_arg?: unknown) {
+        super();
     }
 }
+

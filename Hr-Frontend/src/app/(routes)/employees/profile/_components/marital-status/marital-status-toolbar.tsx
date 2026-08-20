@@ -3,7 +3,7 @@ import React from 'react';
 import MaritalStatusForm from './marital-status-form';
 
 type Props = {
-   employeeId: string;
+   employeeId?: string;
 };
 
 const MaritalStatusToolbar = ({ employeeId }: Props) => {

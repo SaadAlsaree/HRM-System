@@ -16,18 +16,7 @@ namespace HRM.Hub.Application.Features.MarriageInformationHandlers.Commands.Upda
         public async Task<Response<bool>> Handle(UpdateMarriageInformationCommend request,
             CancellationToken cancellationToken)
         {
-            var DataToUpdate = new MarriageInformation
-            {
-                EmployeeId = request.EmployeeId,
-                FirstName = request.FirstName,
-                SecondName = request.SecondName,
-                ThirdName = request.ThirdName,
-                SurName = request.SurName,
-                FullName = request.FirstName + " " + request.SecondName + " " + request.ThirdName + " " + request.SurName,
-                MarriageDate = request.MarriageDate,
-                ChildrenCount = request.ChildrenCount,
-                Notes = request.Notes
-            };
+            request.FullName = $"{request.FirstName} {request.SecondName} {request.ThirdName} {request.SurName}".Trim();
             return await HandleBase(request, cancellationToken);
         }
     }

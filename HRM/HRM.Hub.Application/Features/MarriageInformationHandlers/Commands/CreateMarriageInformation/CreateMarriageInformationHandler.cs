@@ -50,10 +50,11 @@ namespace HRM.Hub.Application.Features.MarriageInformationHandlers.Commands.Crea
                 SecondName = request.SecondName,
                 ThirdName = request.ThirdName,
                 SurName = request.SurName,
-                FullName = request.FirstName + ' ' + request.SecondName + ' ' + request.ThirdName + ' ' + request.SurName,
+                FullName = $"{request.FirstName} {request.SecondName} {request.ThirdName} {request.SurName}".Trim(),
                 MarriageDate = request.MarriageDate,
                 ChildrenCount = request.ChildrenCount,
                 Notes = request.Notes,
+                IsCurrent = true
             };
         }
 

@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.EmployeeHandlers.Queries.GetEmployeeById;
+namespace HRM.Hub.Application.Features.EmployeeHandlers.Queries.GetEmployeeById;
 
 using HRM.Hub.Application.Features.Services.ServiceDuration;
 
@@ -22,6 +22,7 @@ public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, Resp
                 .Include(z => z.JobInformation)
                 .Include(z => z.Promotion)
                 .Include(z => z.Country)
+                .Include(z => z.MarriageInformation)
                 .Include(z => z.ServiceCalculations)
                 .Include(z => z.Interruptions))
             .AsNoTracking()
@@ -31,11 +32,13 @@ public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, Resp
             return ErrorsMessage.NotFoundData.ToErrorMessage(new GetEmployeeByIdViewModel());
 
         var duration = _serviceDurationService.Compute(employee);
+        var currentMarriage = employee.MarriageInformation?.FirstOrDefault(m => m.IsCurrent) ?? employee.MarriageInformation?.FirstOrDefault();
 
         var view = new GetEmployeeByIdViewModel
         {
 
             Id = employee.Id,
+            EmployeeId = employee.Id,
             JobCode = employee.JobCode,
             LotNumber = employee.LotNumber,
             FirstName = employee.FirstName,
@@ -48,6 +51,8 @@ public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, Resp
             MotherSecondName = employee.MotherSecondName,
             MotherThirdName = employee.MotherThirdName,
             MotherSurName = employee.MotherSurName,
+            WifeName = currentMarriage?.FullName,
+            ChildrenCount = currentMarriage?.ChildrenCount ?? 0,
             GenderId = employee.Gender,
             BirthPlace = employee.BirthPlace,
             StatisticalIndex = employee.StatisticalIndex,
@@ -65,6 +70,10 @@ public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, Resp
             IsPinned = employee.IsPinned,
             HireDate = employee.JobInformation?.HireDate,
             EndOfServiceDate = employee.JobInformation?.EndOfServiceDate,
+            MedicalTest = employee.JobInformation?.MedicalTest,
+            IsMovedFromOutside = employee.JobInformation?.IsMovedFromOutside,
+            IsReEmployed = employee.JobInformation?.IsReEmployed,
+            IsBehaviorCode = employee.JobInformation?.IsBehaviorCode,
             ServiceYears = duration.Years,
             ServiceMonths = duration.Months,
             ServiceDays = duration.Days,
@@ -75,6 +84,7 @@ public class GetEmployeeByIdHandler : IRequestHandler<GetEmployeeByIdQuery, Resp
 
         if (employee.ManagementInformation != null)
         {
+            view.PositionId = employee.ManagementInformation.PositionId;
             view.SubDirectorateId = employee.ManagementInformation.SubDirectorateId;
             view.JobTitleId = employee.ManagementInformation.JobTitleId;
             view.JobDescriptionId = employee.ManagementInformation.JobDescriptionId;
