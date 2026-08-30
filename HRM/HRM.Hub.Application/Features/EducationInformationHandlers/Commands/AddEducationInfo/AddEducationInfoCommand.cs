@@ -1,4 +1,4 @@
-﻿using HRM.Hub.Application.Helper;
+using HRM.Hub.Application.Helper;
 
 namespace HRM.Hub.Application.Features.EducationInformationHandlers.Commands.AddEducationInfo;
 public class AddEducationInfoCommand : IRequest<Response<bool>>
@@ -12,9 +12,9 @@ public class AddEducationInfoCommand : IRequest<Response<bool>>
     public int AcademicAchievementId { get; set; }
     public int AcademicFieldId { get; set; }
     public int PreciseAcademicFieldId { get; set; }
-    public string NameOfIssuingCertificate { get; set; }
-    public DateOnly StartDate { get; set; }
-    public DateOnly EndDate { get; set; }
+    public string? NameOfIssuingCertificate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public string GraduationYear { get; set; }
     public bool IsDuringRecruitment { get; set; }
     public bool IsDocumentVerify { get; set; }

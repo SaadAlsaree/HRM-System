@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.EducationInformationHandlers.Queries.GetEducationInformationById;
+namespace HRM.Hub.Application.Features.EducationInformationHandlers.Queries.GetEducationInformationById;
 public class GetEducationInfoByIdViewModel : BaseViewModel<Guid>
 {
     public string OriginalDocument { get; set; }
@@ -9,9 +9,9 @@ public class GetEducationInfoByIdViewModel : BaseViewModel<Guid>
     public string AcademicAchievementName { get; set; }
     public string AcademicFieldName { get; set; }
     public string PreciseAcademicFieldName { get; set; }
-    public string NameOfIssuingCertificate { get; set; }
-    public DateOnly StartDate { get; set; }
-    public DateOnly EndDate { get; set; }
+    public string? NameOfIssuingCertificate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public string GraduationYear { get; set; }
     public bool IsDuringRecruitment { get; set; }
     public bool IsdocumentVerify { get; set; }

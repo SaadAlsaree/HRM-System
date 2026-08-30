@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Domain.Entities;
+namespace HRM.Hub.Domain.Entities;
 
 public class EducationInformation : BaseEntity<Guid>
 {
@@ -11,9 +11,9 @@ public class EducationInformation : BaseEntity<Guid>
     public int AcademicAchievementId { get; set; }
     public int AcademicFieldId { get; set; }
     public int PreciseAcademicFieldId { get; set; }
-    public string NameOfIssuingCertificate { get; set; }
-    public DateOnly StartDate { get; set; }
-    public DateOnly EndDate { get; set; }
+    public string? NameOfIssuingCertificate { get; set; }
+    public DateOnly? StartDate { get; set; }
+    public DateOnly? EndDate { get; set; }
     public decimal Average { get; set; }
     public string GraduationYear { get; set; }
     public bool IsDuringRecruitment { get; set; }

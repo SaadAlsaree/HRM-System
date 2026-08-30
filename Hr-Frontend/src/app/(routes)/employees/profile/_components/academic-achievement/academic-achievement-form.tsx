@@ -31,11 +31,11 @@ const formSchema = z.object({
   documentNo: z.string().min(1, 'رقم الوثيقة مطلوب'),
   documentDate: z.string().min(1, 'تاريخ الوثيقة مطلوب'),
   documentSender: z.string().min(1, 'الجهة المرسلة مطلوبة'),
-  documentSendDate: z.string().min(1, 'تاريخ الإرسال مطلوب'),
+  documentSendDate: z.string().optional(),
   academicAchievementId: z.coerce.number().min(1, 'التحصيل الدراسي مطلوب'),
   academicFieldId: z.coerce.number().optional(),
   preciseAcademicFieldId: z.coerce.number().optional(),
-  nameOfIssuingCertificate: z.string().min(1, 'جهة منح الشهادة مطلوبة'),
+  nameOfIssuingCertificate: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
   graduationYear: z.string().optional(),
@@ -195,9 +195,20 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true);
     try {
+      const formattedValues = {
+        ...values,
+        documentSendDate: values.documentSendDate ? values.documentSendDate : undefined,
+        startDate: values.startDate ? values.startDate : undefined,
+        endDate: values.endDate ? values.endDate : undefined,
+        nameOfIssuingCertificate: values.nameOfIssuingCertificate ? values.nameOfIssuingCertificate : undefined,
+        documentDate: values.documentDate ? values.documentDate : undefined,
+        graduationYear: values.graduationYear ? values.graduationYear : undefined,
+        notes: values.notes ? values.notes : undefined
+      };
+
       if (data) {
         const dataToUpdate = {
-          ...values,
+          ...formattedValues,
           employeeId: data.employeeId || employeeId,
           lastUpdateBy: employeeId || ''
         };
@@ -205,7 +216,7 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
         toast.success('تم تعديل البيانات بنجاح .');
       } else {
         const dataToCreate = {
-          ...values,
+          ...formattedValues,
           employeeId: employeeId || '',
           createBy: employeeId || '',
           lastUpdateBy: undefined
