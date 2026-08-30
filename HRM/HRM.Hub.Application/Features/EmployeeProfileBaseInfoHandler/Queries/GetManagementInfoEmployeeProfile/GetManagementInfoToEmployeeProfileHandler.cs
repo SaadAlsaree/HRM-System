@@ -1,97 +1,121 @@
-﻿
+
 namespace HRM.Hub.Application.Features.EmployeeProfileBaseInfoHandler.Queries.GetManagementInfoEmployeeProfile;
+
 public class GetManagementInfoToEmployeeProfileHandler : IRequestHandler<
     GetManagementInfoToEmployeeProfileQuery,
     Response<GetManagementInfoToEmployeeProfileViewModel>>
 {
     private readonly IBaseRepository<ManagementInformation> _repositoryManagementInformation;
+    private readonly IBaseRepository<Employees> _repositoryEmployee;
 
     public GetManagementInfoToEmployeeProfileHandler(
-        IBaseRepository<ManagementInformation> repositoryManagementInformation)
+        IBaseRepository<ManagementInformation> repositoryManagementInformation,
+        IBaseRepository<Employees> repositoryEmployee)
     {
         _repositoryManagementInformation = repositoryManagementInformation ??
                                           throw new ArgumentNullException(nameof(repositoryManagementInformation));
+        _repositoryEmployee = repositoryEmployee ??
+                              throw new ArgumentNullException(nameof(repositoryEmployee));
     }
 
     public async Task<Response<GetManagementInfoToEmployeeProfileViewModel>> Handle(
         GetManagementInfoToEmployeeProfileQuery request,
         CancellationToken cancellationToken)
     {
-        var resp = await _repositoryManagementInformation
-            .Query(x =>
-                x.Id == request.EmployeeId &&
-                (x.IsInHiring || x.IsCurrent ||
-                 (x.Employee != null && x.Employee.Promotion != null && x.Employee.Promotion.StopPromotion)))
+        var managementInfo = await _repositoryManagementInformation
+            .Query(x => x.Id == request.EmployeeId)
+            .Include(x => x.EmploymentDegree)
             .Include(x => x.JobTitle)
             .Include(x => x.JobDescription)
             .Include(x => x.StopJobDegree)
-
             .Include(x => x.Directorate)
             .Include(x => x.SubDirectorate)
             .Include(x => x.Department)
             .Include(x => x.Position)
-
             .Include(x => x.Employee)
-            .ThenInclude(x => x.Promotion)
-            .ThenInclude(x => x.JobDegree)
+                .ThenInclude(x => x.Promotion)
+                    .ThenInclude(x => x.JobDegree)
             .Include(x => x.Employee)
-            .ThenInclude(x => x.Promotion)
-            .ThenInclude(x => x.JobCategory)
+                .ThenInclude(x => x.Promotion)
+                    .ThenInclude(x => x.JobCategory)
+            .Include(x => x.Employee)
+                .ThenInclude(x => x.EmployeePositions)
+                    .ThenInclude(p => p.Section)
+            .Include(x => x.Employee)
+                .ThenInclude(x => x.EmployeePositions)
+                    .ThenInclude(p => p.Unit)
+            .Include(x => x.Employee)
+                .ThenInclude(x => x.EmployeePositions)
+                    .ThenInclude(p => p.Position)
+            .Include(x => x.Employee)
+                .ThenInclude(x => x.EmployeePositions)
+                    .ThenInclude(p => p.Directorate)
+            .Include(x => x.Employee)
+                .ThenInclude(x => x.EmployeePositions)
+                    .ThenInclude(p => p.SubDirectorate)
+            .Include(x => x.Employee)
+                .ThenInclude(x => x.EmployeePositions)
+                    .ThenInclude(p => p.Department)
+            .FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
-            .ToListAsync(cancellationToken: cancellationToken);
-
-        GetManagementInfoToEmployeeProfileViewModel result;
-        if (resp.Count == 0)
+        Employees? employee = null;
+        if (managementInfo == null)
         {
-            result = new GetManagementInfoToEmployeeProfileViewModel();
-            return ErrorsMessage.NotFoundData.ToErrorMessage(result);
+            employee = await _repositoryEmployee
+                .Query(x => x.Id == request.EmployeeId)
+                .Include(x => x.Promotion)
+                    .ThenInclude(x => x.JobDegree)
+                .Include(x => x.Promotion)
+                    .ThenInclude(x => x.JobCategory)
+                .Include(x => x.EmployeePositions)
+                    .ThenInclude(p => p.Section)
+                .Include(x => x.EmployeePositions)
+                    .ThenInclude(p => p.Unit)
+                .Include(x => x.EmployeePositions)
+                    .ThenInclude(p => p.Position)
+                .Include(x => x.EmployeePositions)
+                    .ThenInclude(p => p.Directorate)
+                .Include(x => x.EmployeePositions)
+                    .ThenInclude(p => p.SubDirectorate)
+                .Include(x => x.EmployeePositions)
+                    .ThenInclude(p => p.Department)
+                .FirstOrDefaultAsync(cancellationToken: cancellationToken);
+
+            if (employee == null)
+            {
+                return ErrorsMessage.NotFoundData.ToErrorMessage(new GetManagementInfoToEmployeeProfileViewModel());
+            }
         }
 
-        var currentManagementInfo = resp.FirstOrDefault(x => x.IsCurrent);
-        var inHiringManagementInfo = resp.FirstOrDefault(x => x.IsInHiring);
-        var stopPromotionManagementInfo = resp.FirstOrDefault(x => x.Employee?.Promotion?.StopPromotion == true);
-        var mainManagementInfo = currentManagementInfo ?? inHiringManagementInfo ?? resp.First();
+        var employeeEntity = managementInfo?.Employee ?? employee;
+        var activePosition = employeeEntity?.EmployeePositions?.FirstOrDefault(p => p.Status == Status.Active && !p.IsDeleted)
+                             ?? employeeEntity?.EmployeePositions?.LastOrDefault();
 
-        result = new GetManagementInfoToEmployeeProfileViewModel
+        var result = new GetManagementInfoToEmployeeProfileViewModel
         {
-            DegreeNameIsCurrent = currentManagementInfo?.Employee?.Promotion?.JobDegree?.Name,
-
-            CategoryNameIsCurrent = currentManagementInfo?.Employee?.Promotion?.JobCategory?.Name,
-
-            DegreeNameIsInHiring = inHiringManagementInfo?.Employee?.Promotion?.JobDegree?.Name,
-
-            CategoryNameIsInHiring = inHiringManagementInfo?.Employee?.Promotion?.JobCategory?.Name,
-
-            StopJobDegreeName = stopPromotionManagementInfo?.StopJobDegree?.Name,
-
-            JobTitleName = currentManagementInfo?.JobTitle?.Name,
-
-            JobDescriptionName = currentManagementInfo?.JobDescription?.Name,
-
-            StopPromotion = currentManagementInfo?.Employee?.Promotion?.StopPromotion ??
-                            stopPromotionManagementInfo?.Employee?.Promotion?.StopPromotion ?? false,
-
-            DirectorateName = currentManagementInfo?.Directorate?.Name,
-
-            SubDirectorateName = currentManagementInfo?.SubDirectorate?.Name,
-
-            DepartmentName = currentManagementInfo?.Department?.Name,
-
-            PositionName = currentManagementInfo?.Position?.Name,
-
-
-            Id = mainManagementInfo.Id,
-
-            EmployeeId = mainManagementInfo.Id,
-
-            FullName = mainManagementInfo.Employee?.FullName,
-
-            LotNumber = mainManagementInfo.Employee?.LotNumber,
-
-            JobCode = mainManagementInfo.Employee?.JobCode,
-
-            Status = mainManagementInfo.StatusId,
-
+            DegreeNameIsCurrent = employeeEntity?.Promotion?.JobDegree?.Name ?? managementInfo?.EmploymentDegree?.Name,
+            CategoryNameIsCurrent = employeeEntity?.Promotion?.JobCategory?.Name,
+            DegreeNameIsInHiring = managementInfo?.EmploymentDegree?.Name ?? employeeEntity?.Promotion?.JobDegree?.Name,
+            CategoryNameIsInHiring = employeeEntity?.Promotion?.JobCategory?.Name,
+            StopJobDegreeName = managementInfo?.StopJobDegree?.Name,
+            JobTitleName = managementInfo?.JobTitle?.Name,
+            JobDescriptionName = managementInfo?.JobDescription?.Name,
+            StopPromotion = employeeEntity?.Promotion?.StopPromotion ?? false,
+            DueDateDegree = employeeEntity?.Promotion?.DueDateDegree,
+            DueDateCategory = employeeEntity?.Promotion?.DueDateCategory,
+            LastAllowanceDate = employeeEntity?.Promotion?.LastAllowanceDate,
+            DirectorateName = managementInfo?.Directorate?.Name ?? activePosition?.Directorate?.Name,
+            SubDirectorateName = managementInfo?.SubDirectorate?.Name ?? activePosition?.SubDirectorate?.Name,
+            DepartmentName = managementInfo?.Department?.Name ?? activePosition?.Department?.Name,
+            SectionName = activePosition?.Section?.Name,
+            UnitName = activePosition?.Unit?.Name,
+            PositionName = managementInfo?.Position?.Name ?? activePosition?.Position?.Name,
+            Id = request.EmployeeId,
+            EmployeeId = request.EmployeeId,
+            FullName = employeeEntity?.FullName,
+            LotNumber = employeeEntity?.LotNumber,
+            JobCode = employeeEntity?.JobCode,
+            Status = managementInfo?.StatusId ?? employeeEntity?.StatusId ?? Status.Active,
         };
 
         return SuccessMessage.Get.ToSuccessMessage(result);

@@ -4,7 +4,7 @@ import Pagination from '@/components/Pagination';
 import { columnsAnnualAllowance } from './_components/columns';
 import AnnualAllowanceTable from './_components/annual-allowance-table';
 import AnnualAllowanceToolbar from './_components/annual-allowance-toolbar';
-import { annualAllowanceService } from '@/services/annual-allowance.service';
+import { fetchServer } from '@/lib/fetchServer';
 
 interface Props {
     searchParams: {
@@ -19,7 +19,17 @@ const AnnualAllowancePage = async ({ searchParams }: Props) => {
     const PageSize = parseInt(searchParams.PageSize || "10");
     const employeeId = searchParams.employeeId;
 
-    const data = await annualAllowanceService.getAnnualAllowances({ Page, PageSize, employeeId });
+    const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>(
+        '/AnnualAllowance',
+        'GET',
+        {
+            params: {
+                Page,
+                PageSize,
+                ...(employeeId ? { EmployeeId: employeeId } : {})
+            }
+        }
+    );
     const annualAllowances = (data?.items ?? data?.data?.items) ?? [];
     const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 

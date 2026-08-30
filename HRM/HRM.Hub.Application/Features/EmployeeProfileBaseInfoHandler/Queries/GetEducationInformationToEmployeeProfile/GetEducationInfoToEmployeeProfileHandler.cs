@@ -1,4 +1,4 @@
-﻿
+
 using HRM.Hub.Application.Features.EducationInformationHandlers.Queries.GetEducationInformationById;
 using HRM.Hub.Application.Features.EmployeeProfileBaseInfoHandler.Queries.GetAdministrativeOrderToEmployeeProfile;
 
@@ -21,19 +21,17 @@ public class GetEducationInfoToEmployeeProfileHandler : IRequestHandler<
         CancellationToken cancellationToken)
     {
         var resp = await _repositoryEducationInformation
-            .Query(x =>
-                x.EmployeeId == request.EmployeeId && (x.IsInHiring || x.IsCurrent))
+            .Query(x => x.EmployeeId == request.EmployeeId)
             .Include(x => x.AcademicField)
             .Include(x => x.AcademicAchievement)
             .Include(x => x.Employee)
             .ToListAsync(cancellationToken: cancellationToken);
 
-
         if (resp.Count == 0)
             return ErrorsMessage.NotFoundData.ToErrorMessage<GetEducationInfoToEmployeeProfileViewModel>(null);
 
-        var currentEducationInfo = resp.FirstOrDefault(x => x.IsCurrent);
-        var inHiringEducationInfo = resp.FirstOrDefault(x => x.IsInHiring);
+        var currentEducationInfo = resp.FirstOrDefault(x => x.IsCurrent) ?? resp.LastOrDefault();
+        var inHiringEducationInfo = resp.FirstOrDefault(x => x.IsInHiring) ?? resp.FirstOrDefault();
         var mainEducationInfo = currentEducationInfo ?? inHiringEducationInfo ?? resp.First();
 
         var result = new GetEducationInfoToEmployeeProfileViewModel()

@@ -46,9 +46,11 @@ const RegionForm = ({ title, data, icon, variant }: Props) => {
    useEffect(() => {
       const loadGov = async () => {
          try {
-            const res = await governorateService.getGovernorate({ PageSize: 500, Page: 1 } as any);
+            const res = await governorateService.getGovernorate({ PageSize: 100, Page: 1 } as any);
             const items = res?.data?.items || res?.items || res?.data || [];
-            setGovernorates(Array.isArray(items) ? items : []);
+            if (Array.isArray(items)) {
+               setGovernorates(items);
+            }
          } catch (e) {
             console.error(e);
          }

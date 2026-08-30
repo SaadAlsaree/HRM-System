@@ -42,7 +42,7 @@ const ServiceCalculationProfile = ({ employeeId }: Props) => {
          setError(null);
          try {
             const response = await serviceCalculationService.getServiceCalculations({ employeeId, Page: 1, PageSize: 100 });
-            setData(response?.data?.items || []);
+            setData(response?.data?.items ?? response?.items ?? []);
          } catch (error) {
             console.error('Error fetching promotions:', error);
             setError('Failed to fetch promotions');

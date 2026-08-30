@@ -81,9 +81,9 @@ const HomeAddressForm = ({ title, data, icon, variant, employeeId }: Props) => {
       const loadAllLocations = async () => {
          try {
             const [govRes, provRes, terrRes] = await Promise.allSettled([
-               governorateService.getGovernorate({ PageSize: 500, Page: 1 } as any),
-               provinceService.getProvinces({ PageSize: 500, Page: 1 } as any),
-               territoryService.getTerritories({ PageSize: 500, Page: 1 } as any)
+               governorateService.getGovernorate({ PageSize: 100, Page: 1 } as any),
+               provinceService.getProvinces({ PageSize: 100, Page: 1 } as any),
+               territoryService.getTerritories({ PageSize: 100, Page: 1 } as any)
             ]);
 
             if (govRes.status === 'fulfilled') setGovernorate(extractItems(govRes.value));

@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.EmployeeProfileBaseInfoHandler.Queries.GetEmployeeInformation;
+namespace HRM.Hub.Application.Features.EmployeeProfileBaseInfoHandler.Queries.GetEmployeeInformation;
 
 public class
     GetEmployeeInformationHandler : IRequestHandler<GetEmployeeInformationQuery,
@@ -20,12 +20,18 @@ public class
         var result = await _repositoryEmployee.Query()
             .Include(x => x.Country)
             .Include(x => x.JobInformation).ThenInclude(j => j.TypeOfJob)
+            .Include(x => x.MarriageInformation)
             .FirstOrDefaultAsync(x => x.Id == request.EmployeeId, cancellationToken: cancellationToken);
 
 
 
         if (result == null)
             return ErrorsMessage.NotFoundData.ToErrorMessage<GetEmployeeInformationViewModel>(null);
+
+        var currentMarriage = result.MarriageInformation?.FirstOrDefault(m => m.IsCurrent && !m.IsDeleted)
+                              ?? result.MarriageInformation?.FirstOrDefault(m => !m.IsDeleted);
+        var totalChildrenCount = currentMarriage?.ChildrenCount 
+                                 ?? (result.MarriageInformation?.Any(m => !m.IsDeleted) == true ? result.MarriageInformation.Where(m => !m.IsDeleted).Sum(m => m.ChildrenCount ?? 0) : (int?)null);
 
         var avatar = "";
         var attachment = await _repositoryAttachments.Query()
@@ -58,6 +64,8 @@ public class
             IsReEmployed = result.JobInformation?.IsReEmployed,
             IsBehaviorCode = result.JobInformation?.IsBehaviorCode,
             EndOfServiceDate = result.JobInformation?.EndOfServiceDate,
+            WifeName = currentMarriage?.FullName,
+            ChildrenCount = totalChildrenCount,
             Avatar = avatar,
             FileExtension = attachment?.ExtinctionFile,
             EmployeeId = result.Id,

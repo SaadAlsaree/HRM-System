@@ -1,7 +1,5 @@
 namespace HRM.Hub.Application.Features.ServiceCalculationHandler.Queries.GetServiceCalculation;
 
-
-
 public class GetServiceCalculationHandler : GetAllWithCountHandler<ServiceCalculation, GetServiceCalculationViewModel, GetServiceCalculationQuery>, IRequestHandler<GetServiceCalculationQuery, Response<PagedResult<GetServiceCalculationViewModel>>>
 {
     public GetServiceCalculationHandler(IBaseRepository<ServiceCalculation> repositoryServiceCalculation)
@@ -20,13 +18,11 @@ public class GetServiceCalculationHandler : GetAllWithCountHandler<ServiceCalcul
         IsPoliticalTermination = z.IsPoliticalTermination,
         Notes = z.Notes,
         Status = z.StatusId,
-        StatusName = z.StatusId.GetDisplayName(),
         JobCode = z.Employee.JobCode,
         LotNumber = z.Employee.LotNumber,
-
     };
 
-    public override Func<IQueryable<ServiceCalculation>, IOrderedQueryable<ServiceCalculation>> OrderBy => order => order.OrderBy(z => z.Id);
+    public override Func<IQueryable<ServiceCalculation>, IOrderedQueryable<ServiceCalculation>> OrderBy => order => order.OrderByDescending(z => z.CreateAt);
 
     public async Task<Response<PagedResult<GetServiceCalculationViewModel>>> Handle(GetServiceCalculationQuery request, CancellationToken cancellationToken)
     {

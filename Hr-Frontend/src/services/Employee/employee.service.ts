@@ -156,10 +156,11 @@ class EmployeeService extends ApiClient {
     }
 
     // update Employee/UpdateWork/{EmployeeId}
-    public async updateEmployeeWorkingStatus(EmployeeId: string, workingStatus: WorkingStatus): Promise<any> {
+    public async updateEmployeeWorkingStatus(EmployeeId: string, workingStatus: WorkingStatus | number): Promise<any> {
         return this.request<any>({
             method: 'PUT',
             url: `/Employee/UpdateWork/${EmployeeId}`,
+            params: { workingStatus },
             data: { workingStatus }
         });
     }

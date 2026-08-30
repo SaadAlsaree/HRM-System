@@ -3,14 +3,13 @@ import Pagination from '@/components/Pagination';
 import { columnsAcademicAchievement } from './_components/columns';
 import AcademicAchievementToolbar from './_components/academic-achievement-toolbar';
 import AcademicAchievementTable from './_components/academic-achievement-table';
-import { correctingAcademicAchievementService } from '@/services/correcting-academic-achievement.service';
-import { academicCertificateTypeService } from '@/services/system-settings/academic-certificate-type.service';
+import { fetchServer } from '@/lib/fetchServer';
 import { Separator } from '@/components/ui/separator';
 
 interface Props {
    searchParams: {
-      page: string;
-      PageSize: string;
+      page?: string;
+      PageSize?: string;
    };
 }
 
@@ -56,15 +55,33 @@ export interface IAcademicAchievement {
 }
 
 const AcademicAchievementPage = async ({ searchParams }: Props) => {
-   const Page = parseInt(searchParams.page) || 1;
-   const PageSize = parseInt(searchParams.PageSize) || 10;
+   const Page = parseInt(searchParams.page || '1') || 1;
+   const PageSize = parseInt(searchParams.PageSize || '10') || 10;
 
-   const data = await correctingAcademicAchievementService.getCorrectingAcademicAchievement({ Page, PageSize });
-   const academicAchievementData = data?.data?.items ?? [];
-   const totalCount = data?.data?.totalCount ?? 0;
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>(
+      '/CorrectingAcademicAchievement',
+      'GET',
+      {
+         params: {
+            Page,
+            PageSize
+         }
+      }
+   );
+   const academicAchievementData = (data?.items ?? data?.data?.items) ?? [];
+   const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 
-   const academicCertificate = await academicCertificateTypeService.getAcademicCertificateTypes();
-   const academicCertificateData = academicCertificate?.data?.items ?? [];
+   const academicCertificate = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>(
+      '/AcademicCertificateType',
+      'GET',
+      {
+         params: {
+            Page: 1,
+            PageSize: 100
+         }
+      }
+   );
+   const academicCertificateData = (academicCertificate?.items ?? academicCertificate?.data?.items) ?? [];
 
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>

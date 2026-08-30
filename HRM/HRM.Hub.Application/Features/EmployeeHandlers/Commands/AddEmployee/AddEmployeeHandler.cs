@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.EmployeeHandlers.Commands.AddEmployee;
+namespace HRM.Hub.Application.Features.EmployeeHandlers.Commands.AddEmployee;
 
 public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<bool>>
 {
@@ -104,6 +104,8 @@ public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<b
                 JobDescriptionId = request.JobDescriptionId,
                 StatusId = Status.Unverified,
                 IsDeleted = false,
+                IsCurrent = true,
+                IsInHiring = true,
                 Notes = "تم اضافة موظف"
             },
             LeavesBalances = new LeavesBalance()

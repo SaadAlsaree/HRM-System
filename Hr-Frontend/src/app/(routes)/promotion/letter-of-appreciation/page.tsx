@@ -4,12 +4,12 @@ import Pagination from '@/components/Pagination';
 import { columnsLetterOfAppreciation } from './_components/columns';
 import EditJobTitleToolbar from './_components/letter-appreciation-toolbar';
 import LetterOfAppreciationTable from './_components/letter-appreciation-table';
-import { thanksSeniorityService } from '@/services/thanks-seniority.service';
+import { fetchServer } from '@/lib/fetchServer';
 
 interface Props {
     searchParams: {
-        page: string;
-        PageSize: string;
+        page?: string;
+        PageSize?: string;
     };
 }
 
@@ -35,10 +35,19 @@ export interface ILetterOfAppreciation {
 }
 
 const LetterOfAppreciationPage = async ({ searchParams }: Props) => {
-    const Page = parseInt(searchParams.page) || 1;
-    const PageSize = parseInt(searchParams.PageSize) || 10;
+    const Page = parseInt(searchParams.page || '1') || 1;
+    const PageSize = parseInt(searchParams.PageSize || '10') || 10;
 
-    const data = await thanksSeniorityService.getThanksSeniorities({ Page, PageSize});
+    const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>(
+        '/ThanksSeniority',
+        'GET',
+        {
+            params: {
+                Page,
+                PageSize
+            }
+        }
+    );
     const letterOfAppreciationData = (data?.items ?? data?.data?.items) ?? [];
     const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 

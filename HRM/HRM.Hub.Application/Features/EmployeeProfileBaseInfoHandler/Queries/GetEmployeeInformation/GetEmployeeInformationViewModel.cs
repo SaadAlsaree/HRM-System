@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.EmployeeProfileBaseInfoHandler.Queries.GetEmployeeInformation;
+namespace HRM.Hub.Application.Features.EmployeeProfileBaseInfoHandler.Queries.GetEmployeeInformation;
 public class GetEmployeeInformationViewModel : BaseViewModel<Guid>
 {
     public string StatisticalIndex { get; set; }
@@ -23,5 +23,7 @@ public class GetEmployeeInformationViewModel : BaseViewModel<Guid>
     public bool? IsPinned { get; set; }
 
     public DateOnly? EndOfServiceDate { get; set; }
+    public string WifeName { get; set; }
+    public int? ChildrenCount { get; set; }
 
 }

@@ -94,7 +94,7 @@ const ServiceLinePage = ({ EducationInfo, EmployeeInfo, ManagementInfo, data }: 
             <div className='xl:col-span-3'>
                <div className='w-full flex flex-col gap-2'>
                   <h1>الدرجة الوظيفية</h1>
-                  <Input value={formatValue(ManagementInfo?.degreeNameIsCurrent)} disabled />
+                  <Input value={formatValue(ManagementInfo?.degreeNameIsCurrent ?? ManagementInfo?.degreeNameIsInHiring)} disabled />
                </div>
             </div>
 

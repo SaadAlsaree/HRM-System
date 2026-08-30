@@ -4,12 +4,12 @@ import Pagination from '@/components/Pagination';
 import { columnsAccelerateAchievement } from './_components/columns';
 import AccelerateAchievementToolbar from './_components/accelerate-degree-toolbar';
 import AccelerateAchievementTable from './_components/accelerate-degree-table';
-import { changeDegreeService } from '@/services/change-degree.service';
+import { fetchServer } from '@/lib/fetchServer';
 
 interface Props {
    searchParams: {
-      page: string;
-      PageSize: string;
+      page?: string;
+      PageSize?: string;
    };
 }
 
@@ -53,10 +53,19 @@ export interface IAccelerateAchievement {
 }
 
 const AccelerateAchievementPage = async ({ searchParams }: Props) => {
-   const Page = parseInt(searchParams.page) || 1;
-   const PageSize = parseInt(searchParams.PageSize) || 10;
+   const Page = parseInt(searchParams.page || '1') || 1;
+   const PageSize = parseInt(searchParams.PageSize || '10') || 10;
 
-   const data = await changeDegreeService.getChangeDegree({ Page, PageSize });
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>(
+      '/ChangeDegree',
+      'GET',
+      {
+         params: {
+            Page,
+            PageSize
+         }
+      }
+   );
    const accelerateAchievement = (data?.items ?? data?.data?.items) ?? [];
    const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 

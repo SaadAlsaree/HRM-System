@@ -1,5 +1,5 @@
 'use client';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -13,6 +13,18 @@ import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import { Pencil } from 'lucide-react';
 
+const workingStatusOptions = [
+   { label: 'مستمر في الخدمة', value: 0 },
+   { label: 'متوفي', value: 1 },
+   { label: 'شهيد', value: 2 },
+   { label: 'استقالة', value: 3 },
+   { label: 'نقل خدمات', value: 4 },
+   { label: 'تقاعد', value: 5 },
+   { label: 'عزل', value: 6 },
+   { label: 'خدمة مقطوعة', value: 7 },
+   { label: 'خدمة منسوخة', value: 8 }
+];
+
 type Props = {
    data: IEmployeeInfo;
    onAvatarChange?: (newData: IEmployeeInfo) => void;
@@ -21,24 +33,80 @@ type Props = {
 const ProfileHeader = ({ data, onAvatarChange }: Props) => {
    const fileInputRef = useRef<HTMLInputElement>(null);
    const [isUploading, setIsUploading] = useState(false);
+   const [isUpdatingStatus, setIsUpdatingStatus] = useState(false);
+   const [isUpdatingPinned, setIsUpdatingPinned] = useState(false);
+   const [currentStatus, setCurrentStatus] = useState<string | undefined>(
+      data?.statusWorkingId !== undefined && data?.statusWorkingId !== null ? String(data.statusWorkingId) : undefined
+   );
+   const [isPinned, setIsPinned] = useState<boolean>(Boolean(data?.isPinned));
    const router = useRouter();
+
+   useEffect(() => {
+      if (data?.statusWorkingId !== undefined && data?.statusWorkingId !== null) {
+         setCurrentStatus(String(data.statusWorkingId));
+      }
+   }, [data?.statusWorkingId]);
+
+   useEffect(() => {
+      setIsPinned(Boolean(data?.isPinned));
+   }, [data?.isPinned]);
+
    const handleAvatarClick = () => {
       fileInputRef.current?.click();
    };
 
    const handelPinned = async () => {
+      const empId = data?.employeeId || data?.id;
+      if (!empId) {
+         toast.error('تعذر العثور على معرف الموظف');
+         return;
+      }
+
+      const nextPinned = !isPinned;
+      setIsPinned(nextPinned);
+      setIsUpdatingPinned(true);
+
       try {
-         const response = await employeeService.updateEmployeePinned(data.employeeId, { isPinned: !data?.isPinned });
-         console.log(response);
+         await employeeService.updateEmployeePinned(empId, { isPinned: nextPinned });
          toast.success('تم تحديث الحالة بنجاح');
          router.refresh();
       } catch (error) {
          console.error('Error updating pinned status:', error);
+         toast.error('حدث خطأ أثناء التحديث');
+         setIsPinned(!nextPinned);
+      } finally {
+         setIsUpdatingPinned(false);
+      }
+   };
+
+   const handleStatusChange = async (value: string) => {
+      const empId = data?.employeeId || data?.id;
+      if (!empId) {
+         toast.error('تعذر العثور على معرف الموظف');
+         return;
+      }
+
+      const previousStatus = currentStatus;
+      setCurrentStatus(value);
+      setIsUpdatingStatus(true);
+
+      try {
+         const numStatus = Number(value);
+         await employeeService.updateEmployeeWorkingStatus(empId, numStatus);
+         toast.success('تم تحديث حالة الموظف بنجاح');
+         router.refresh();
+      } catch (error) {
+         console.error('Error updating working status:', error);
+         toast.error('حدث خطأ أثناء تحديث حالة الموظف');
+         setCurrentStatus(previousStatus);
+      } finally {
+         setIsUpdatingStatus(false);
       }
    };
 
    const addAvatar = async (event: React.ChangeEvent<HTMLInputElement>) => {
-      if (!event.target.files?.length || !data?.employeeId) return;
+      const empId = data?.employeeId || data?.id;
+      if (!event.target.files?.length || !empId) return;
 
       const file = event.target.files[0];
 
@@ -47,13 +115,13 @@ const ProfileHeader = ({ data, onAvatarChange }: Props) => {
 
          // Create proper payload object instead of FormData
          await employeeService.addEmployeeAvatar({
-            EmployeeId: data.employeeId,
+            EmployeeId: empId,
             File: file,
-            CreateBy: data.employeeId // Using employeeId as CreateBy
+            CreateBy: empId // Using employeeId as CreateBy
          });
 
          // Get updated employee info
-         const response = await employeeService.getEmployeeById(data.employeeId);
+         const response = await employeeService.getEmployeeById(empId);
 
          if (response?.data) {
             let updatedData = response.data;
@@ -115,7 +183,11 @@ const ProfileHeader = ({ data, onAvatarChange }: Props) => {
 
             <div className='mt-3'>
                <p className='text-sm text-gray-600 '>مثبت على الملاك</p>
-               <Checkbox checked={data?.isPinned} onCheckedChange={handelPinned} />
+               <Checkbox
+                  checked={isPinned}
+                  onCheckedChange={handelPinned}
+                  disabled={isUpdatingPinned}
+               />
             </div>
          </div>
 
@@ -147,13 +219,20 @@ const ProfileHeader = ({ data, onAvatarChange }: Props) => {
             <div className='flex items-center'>
                <div className='flex-1'>
                   <p className='text-sm text-gray-600'>الحالة</p>
-                  <Select>
+                  <Select
+                     value={currentStatus}
+                     onValueChange={handleStatusChange}
+                     disabled={isUpdatingStatus}
+                  >
                      <SelectTrigger>
                         <SelectValue placeholder='اختر الحالة' />
                      </SelectTrigger>
                      <SelectContent>
-                        <SelectItem value='active'>مستمر في الخدمة</SelectItem>
-                        <SelectItem value='inactive'>منقطع الخدمة</SelectItem>
+                        {workingStatusOptions.map((option) => (
+                           <SelectItem key={option.value} value={option.value.toString()}>
+                              {option.label}
+                           </SelectItem>
+                        ))}
                      </SelectContent>
                   </Select>
                </div>

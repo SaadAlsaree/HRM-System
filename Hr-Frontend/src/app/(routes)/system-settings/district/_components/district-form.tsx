@@ -46,9 +46,11 @@ const DistrictForm = ({ title, data, icon, variant }: Props) => {
    useEffect(() => {
       const loadProvinces = async () => {
          try {
-            const res = await provinceService.getProvinces({ PageSize: 500, Page: 1 } as any);
+            const res = await provinceService.getProvinces({ PageSize: 100, Page: 1 } as any);
             const items = res?.data?.items || res?.items || res?.data || [];
-            setProvinces(Array.isArray(items) ? items : []);
+            if (Array.isArray(items)) {
+               setProvinces(items);
+            }
          } catch (e) {
             console.error(e);
          }

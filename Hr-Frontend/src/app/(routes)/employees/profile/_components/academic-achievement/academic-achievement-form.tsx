@@ -280,9 +280,9 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
                     name='originalDocument'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>عنوان الوثيقة الدراسية</FormLabel>
+                        <FormLabel>التحصيل الدراسي عند التعين</FormLabel>
                         <FormControl>
-                          <Input placeholder='عنوان الوثيقة' type='text' {...field} />
+                          <Input placeholder='التحصيل الدراسي ' type='text' {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -362,7 +362,7 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
                     name='academicAchievementId'
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>التحصيل الدراسي</FormLabel>
+                        <FormLabel>التحصيل الدراسي بعد التعين</FormLabel>
                         <Select
                           value={field.value ? String(field.value) : ''}
                           onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}

@@ -61,6 +61,9 @@ export interface IEmployeeManagementInfo {
    unitName?: string;
    positionName?: string;
    stopPromotion?: boolean;
+   dueDateDegree?: string;
+   dueDateCategory?: string;
+   lastAllowanceDate?: string;
 }
 
 export interface IEmployeeInfo {

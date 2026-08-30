@@ -93,7 +93,7 @@ const ProfileTabs = ({ AdministrativeOrder, EducationInfo, EmployeeInfo, Managem
                   value='education'
                   className='active:bg-primary data-[state=active]:bg-primary data-[state=active]:text-white rounded-lg'
                >
-                  التحصيل العلمي
+                  التحصيل الدراسي
                </TabsTrigger>
                <TabsTrigger
                   value='penalties'
@@ -157,10 +157,10 @@ const ProfileTabs = ({ AdministrativeOrder, EducationInfo, EmployeeInfo, Managem
                <ContactInformationPage employeeId={empId} />
             </TabsContent>
             <TabsContent value='grades' className='mt-0'>
-               <GradesTable employeeId={empId} />
+               <GradesTable employeeId={empId} managementInfo={ManagementInfo} />
             </TabsContent>
             <TabsContent value='categories' className='mt-0'>
-               <CategoriesTable employeeId={empId} />
+               <CategoriesTable employeeId={empId} managementInfo={ManagementInfo} />
             </TabsContent>
             <TabsContent value='education' className='mt-0'>
                <AcademicAchievementPage employeeId={empId} />

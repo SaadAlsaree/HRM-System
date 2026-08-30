@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.EmployeeProfileBaseInfoHandler.Queries.GetManagementInfoEmployeeProfile;
+namespace HRM.Hub.Application.Features.EmployeeProfileBaseInfoHandler.Queries.GetManagementInfoEmployeeProfile;
 public class GetManagementInfoToEmployeeProfileViewModel:BaseViewModel<Guid>
 {
     public string DegreeNameIsInHiring { get; set; }
@@ -15,5 +15,8 @@ public class GetManagementInfoToEmployeeProfileViewModel:BaseViewModel<Guid>
     public string UnitName { get; set; }
     public string PositionName { get; set; }
     public bool StopPromotion { get; set; }
+    public DateOnly? DueDateDegree { get; set; }
+    public DateOnly? DueDateCategory { get; set; }
+    public DateOnly? LastAllowanceDate { get; set; }
 
 }
