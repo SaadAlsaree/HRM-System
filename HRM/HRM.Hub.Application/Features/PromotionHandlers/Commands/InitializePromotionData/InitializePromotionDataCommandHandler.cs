@@ -18,19 +18,33 @@ public class InitializePromotionDataCommandHandler : IRequestHandler<InitializeP
 
     public async Task<Response<bool>> Handle(InitializePromotionDataCommand request, CancellationToken cancellationToken)
     {
+        // Promotion shares the employee's PK (one-to-one) and is created together with the employee
+        // (status Pending/Unverified, not Active). Look it up by Id only — including soft-deleted
+        // rows — otherwise the Create below would fail with a duplicate primary key.
         var existingPromotion = await _promotionRepository.GetQueryable()
-            .FirstOrDefaultAsync(p => p.Id == request.EmployeeId && p.StatusId == Status.Active, cancellationToken);
+            .IgnoreQueryFilters()
+            .FirstOrDefaultAsync(p => p.Id == request.EmployeeId, cancellationToken);
 
         if (existingPromotion != null)
         {
             existingPromotion.JobDegreeId = request.JobDegreeId;
             existingPromotion.JobCategoryId = request.JobCategoryId;
             existingPromotion.DueDateDegree = request.DueDateDegree;
+            // Re-derive the period start from the entered due date on the next calculation.
+            existingPromotion.DegreeStartDate = null;
             existingPromotion.DueDateCategory = request.DueDateCategory;
             existingPromotion.LastAllowanceDate = request.LastAllowanceDate;
             existingPromotion.Note = "تهيئة بيانات أولية";
+            existingPromotion.LastUpdateAt = DateTime.UtcNow;
+            if (existingPromotion.IsDeleted)
+            {
+                existingPromotion.IsDeleted = false;
+                existingPromotion.DeletedAt = null;
+                existingPromotion.DeletedBy = null;
+            }
 
-            _promotionRepository.Update(existingPromotion);
+            if (!_promotionRepository.Update(existingPromotion))
+                return ErrorsMessage.FailOnUpdate.ToErrorMessage(false);
         }
         else
         {

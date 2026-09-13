@@ -15,6 +15,8 @@ public class GetEducationInfoByIdViewModel : BaseViewModel<Guid>
     public string GraduationYear { get; set; }
     public bool IsDuringRecruitment { get; set; }
     public bool IsdocumentVerify { get; set; }
+    public bool IsInHiring { get; set; }
+    public bool IsCurrent { get; set; }
     public string CountryName { get; set; }
     public string StudyTypeName { get; set; }
     public string Notes { get; set; }

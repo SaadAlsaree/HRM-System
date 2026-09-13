@@ -129,7 +129,7 @@ const InitializationFormDialog = () => {
                                 name="dueDateDegree"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>تاريخ استحقاق الدرجة</FormLabel>
+                                        <FormLabel>تاريخ تسكين الدرجة</FormLabel>
                                         <FormControl>
                                             <Input type="date" {...field} />
                                         </FormControl>

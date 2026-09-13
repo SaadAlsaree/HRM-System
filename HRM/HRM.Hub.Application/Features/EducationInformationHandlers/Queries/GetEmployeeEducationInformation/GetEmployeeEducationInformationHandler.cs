@@ -26,6 +26,8 @@ public override Expression<Func<EducationInformation, GetEmployeeEducationInform
     GraduationYear = z.GraduationYear,
     IsDuringRecruitment = z.IsDuringRecruitment,
     IsdocumentVerify = z.IsDocumentVerify,
+    IsInHiring = z.IsInHiring,
+    IsCurrent = z.IsCurrent,
     CountryName = z.Country != null ? z.Country.Name : null,
     StudyTypeName = z.StudyType != null ? z.StudyType.Name : null,
     Status = z.StatusId,

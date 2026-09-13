@@ -7,7 +7,21 @@ import { columnsEducationInfo } from './columns';
 import { ScrollArea, ScrollBar } from '@/components/ui/scroll-area';
 import moment from 'moment';
 import AcademicAchievementAttachment from './academic-achievement-attachment';
-import { AlignJustify, Edit2 } from 'lucide-react';
+import { AlignJustify, CheckCircle2, Edit2 } from 'lucide-react';
+import { toast } from 'sonner';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+   AlertDialog,
+   AlertDialogAction,
+   AlertDialogCancel,
+   AlertDialogContent,
+   AlertDialogDescription,
+   AlertDialogFooter,
+   AlertDialogHeader,
+   AlertDialogTitle,
+   AlertDialogTrigger
+} from '@/components/ui/alert-dialog';
 import AcademicAchievementForm from './academic-achievement-form';
 import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
@@ -38,6 +52,8 @@ export interface IEducationInfo {
    countryName?: string;
    studyTypeName?: string;
    notes?: string;
+   isInHiring?: boolean;
+   isCurrent?: boolean;
 }
 
 type Props = {
@@ -50,7 +66,23 @@ const AcademicAchievementTable = ({ employeeId }: Props) => {
    const [academicAchievements, setAcademicAchievements] = useState<IEducationInfo[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
-   const { refreshKey } = useEmployeeProfileRefresh();
+   const [settingCurrentId, setSettingCurrentId] = useState<string | null>(null);
+   const { refreshKey, triggerRefresh } = useEmployeeProfileRefresh();
+
+   const handleSetCurrent = async (id: string) => {
+      setSettingCurrentId(id);
+      try {
+         const res = await educationInfoService.setCurrentEducationInfo(id);
+         if (res?.succeeded !== true && res?.Succeeded !== true) {
+            toast.error(res?.message || 'فشل اعتماد الشهادة.');
+            return;
+         }
+         toast.success('تم اعتماد الشهادة وإعادة احتساب الترفيع .');
+         triggerRefresh();
+      } finally {
+         setSettingCurrentId(null);
+      }
+   };
 
    useEffect(() => {
       const fetchAcademicAchievements = async () => {
@@ -115,6 +147,34 @@ const AcademicAchievementTable = ({ employeeId }: Props) => {
                   {!loading && !error && academicAchievements.map((item) => (
                      <TableRow key={item.id}>
                         <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
+                        <TableCell>
+                           {item?.isCurrent ? (
+                              <Badge className='gap-1 bg-green-600 hover:bg-green-600'>
+                                 <CheckCircle2 className='h-3 w-3' />
+                                 معتمدة
+                              </Badge>
+                           ) : (
+                              <AlertDialog>
+                                 <AlertDialogTrigger asChild>
+                                    <Button variant='outline' size='sm' disabled={settingCurrentId !== null}>
+                                       {settingCurrentId === item.id ? 'جاري الاعتماد...' : 'اعتماد'}
+                                    </Button>
+                                 </AlertDialogTrigger>
+                                 <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                       <AlertDialogTitle>اعتماد الشهادة</AlertDialogTitle>
+                                       <AlertDialogDescription>
+                                          سيتم اعتماد شهادة ({item?.academicAchievementName || '-'}) كشهادة حالية للموظف بدلاً من الشهادة المعتمدة سابقاً، وإعادة احتساب الترفيع والعلاوة. هل تريد المتابعة؟
+                                       </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                       <AlertDialogCancel>إلغاء</AlertDialogCancel>
+                                       <AlertDialogAction onClick={() => handleSetCurrent(item.id as string)}>اعتماد</AlertDialogAction>
+                                    </AlertDialogFooter>
+                                 </AlertDialogContent>
+                              </AlertDialog>
+                           )}
+                        </TableCell>
                         <TableCell>{item?.countryName || '-'}</TableCell>
                         <TableCell>{item?.originalDocument || '-'}</TableCell>
                         <TableCell>{item?.documentNo || '-'}</TableCell>

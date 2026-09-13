@@ -25,13 +25,17 @@ public class GetEducationInfoHandler :
         GraduationYear = z.GraduationYear,
         IsDuringRecruitment = z.IsDuringRecruitment,
         IsDocumentVerify = z.IsDocumentVerify,
+        IsInHiring = z.IsInHiring,
+        IsCurrent = z.IsCurrent,
         CountryName = z.Country != null ? z.Country.Name : null,
         StudyTypeName = z.StudyType != null ? z.StudyType.Name : null,
         Status = z.StatusId, 
         Notes = z.Notes 
     };
 
-    public override Func<IQueryable<EducationInformation>, IOrderedQueryable<EducationInformation>> OrderBy => order => order.OrderBy(z => z.Id);
+    public override Func<IQueryable<EducationInformation>, IOrderedQueryable<EducationInformation>> OrderBy => order => order
+        .OrderByDescending(z => z.IsCurrent)
+        .ThenByDescending(z => z.CreateAt);
 
     public async Task<Response<PagedResult<GetEducationInfoViewModel>>> Handle(GetEducationInfoQuery request, CancellationToken cancellationToken)
     {

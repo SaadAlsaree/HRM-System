@@ -2,6 +2,7 @@ using System.Net;
 using HRM.Hub.Application.Features.Attachment.Commands.CreateAttachment;
 using HRM.Hub.Application.Features.Attachment.Queries.GetAttachment;
 using HRM.Hub.Application.Features.EducationInformationHandlers.Commands.AddEducationInfo;
+using HRM.Hub.Application.Features.EducationInformationHandlers.Commands.SetCurrentEducationInfo;
 using HRM.Hub.Application.Features.EducationInformationHandlers.Commands.UpdateEducationInformation;
 using HRM.Hub.Application.Features.EducationInformationHandlers.Queries.ExportFileEducationInformation;
 using HRM.Hub.Application.Features.EducationInformationHandlers.Queries.GetEducationInformation;
@@ -85,6 +86,16 @@ public class EducationInformationController : Base<EducationInformationControlle
     {
         command.Id = EducationInfoId;
         return await Okey(() => _mediator.Send(command));
+    }
+
+    // Marks this certificate as the employee's approved (current) one and recalculates promotion dates.
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPatch("{EducationInfoId:Guid}/SetCurrent")]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<bool>>> SetCurrent(Guid EducationInfoId)
+    {
+        return await Okey(() => _mediator.Send(new SetCurrentEducationInfoCommand { Id = EducationInfoId }));
     }
 
     [ServiceFilter(typeof(LogActionArguments))]

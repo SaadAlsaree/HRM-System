@@ -66,6 +66,11 @@ const formatDateForInput = (dateString?: string | null) => {
   return date.toISOString().split('T')[0];
 };
 
+// The API client swallows HTTP errors and returns the body (or {}), so success must be read from the payload.
+type ApiResult = { succeeded?: boolean; Succeeded?: boolean; message?: string; Message?: string; detail?: string; title?: string } | null | undefined;
+const isSucceeded = (res: ApiResult) => res?.succeeded === true || res?.Succeeded === true;
+const getErrorMessage = (res: ApiResult, fallback: string) => res?.message || res?.Message || res?.detail || res?.title || fallback;
+
 const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Props) => {
   const [open, setOpen] = useState(false);
   const [isSubmitting, setSubmitting] = useState(false);
@@ -242,7 +247,12 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
           employeeId: data.employeeId || employeeId,
           lastUpdateBy: employeeId || ''
         };
-        await educationInfoService.updateEducationInfo(data.id as string, dataToUpdate);
+        const res = await educationInfoService.updateEducationInfo(data.id as string, dataToUpdate);
+        if (!isSucceeded(res)) {
+          toast.error(getErrorMessage(res, 'فشل تعديل البيانات.'));
+          setSubmitting(false);
+          return;
+        }
         toast.success('تم تعديل البيانات بنجاح .');
       } else {
         const dataToCreate = {
@@ -251,7 +261,12 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
           createBy: employeeId || '',
           lastUpdateBy: undefined
         };
-        await educationInfoService.createEducationInfo(dataToCreate);
+        const res = await educationInfoService.createEducationInfo(dataToCreate);
+        if (!isSucceeded(res)) {
+          toast.error(getErrorMessage(res, 'فشل حفظ البيانات.'));
+          setSubmitting(false);
+          return;
+        }
         toast.success('تم حفظ البيانات بنجاح .');
       }
       form.reset();

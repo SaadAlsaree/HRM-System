@@ -81,17 +81,21 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
             ct);
 
         var latestChangeDegree = employee.ChangeDegree?
+            .Where(x => !x.IsDeleted)
             .OrderByDescending(x => x.OrderDate ?? DateOnly.MinValue)
             .ThenByDescending(x => x.CreateAt)
             .FirstOrDefault();
 
         var promotionBaseDate = ResolveBaseDate(
+            employee.Promotion,
             latestChangeDegree?.NewDegreeDueDate,
-            employee.Promotion.DueDateDegree,
             employee.JobInformation?.HireDate,
             promotionRule.BaseMonths);
 
         var promotionDate = promotionBaseDate.AddMonths(promotionRule.BaseMonths);
+        // Without a rule or JobDegree.NextPromotion the period is 0 months and the "due date" would simply equal the
+        // period start (e.g. the hire date), so no due date is produced.
+        var hasPromotionPeriod = promotionRule.BaseMonths > 0;
         var details = new List<PromotionAllowanceCalculationDetail>();
 
         details.Add(CreateDetail(
@@ -106,7 +110,21 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
             promotionRule.BaseMonths,
             0));
 
-        promotionDate = CalculateActualServiceSum(employee, PromotionAllowanceCalculationKind.Promotion, promotionDate, details);
+        if (!hasPromotionPeriod)
+        {
+            details.Add(CreateDetail(
+                employee.Id,
+                PromotionAllowanceCalculationKind.Promotion,
+                "RULE_MISSING",
+                nameof(PromotionAllowanceRule),
+                "",
+                $"لا توجد قاعدة ترفيع ولا مدة ترفيع معرّفة للدرجة ({employee.Promotion.JobDegree?.Name}), لم يُحتسب تاريخ استحقاق الدرجة.",
+                promotionBaseDate,
+                promotionBaseDate,
+                0,
+                0));
+        }
+
         promotionDate = ApplyServiceCalculationAdjustments(
             employee,
             PromotionAllowanceCalculationKind.Promotion,
@@ -150,6 +168,7 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
             ct);
 
         var allowanceBaseDate = lastAllowanceDate;
+        var hasAllowancePeriod = allowanceRule.BaseMonths > 0;
         var allowanceBaseDueDate = allowanceBaseDate.AddMonths(allowanceRule.BaseMonths);
         var allowanceCurrentDate = allowanceBaseDueDate;
         var allowanceDetails = new List<PromotionAllowanceCalculationDetail>();
@@ -168,7 +187,21 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
             DeltaDays = 0
         });
 
-        allowanceCurrentDate = CalculateActualServiceSum(employee, PromotionAllowanceCalculationKind.Allowance, allowanceCurrentDate, allowanceDetails);
+        if (!hasAllowancePeriod)
+        {
+            allowanceDetails.Add(CreateDetail(
+                employee.Id,
+                PromotionAllowanceCalculationKind.Allowance,
+                "RULE_MISSING",
+                nameof(AnnualAllowanceRule),
+                "",
+                $"لا توجد قاعدة علاوة ولا مدة علاوة معرّفة للفئة ({employee.Promotion.JobCategory?.Name}), لم يُحتسب تاريخ استحقاق الفئة.",
+                allowanceBaseDate,
+                allowanceBaseDate,
+                0,
+                0));
+        }
+
         allowanceCurrentDate = ApplyServiceCalculationAdjustments(
             employee,
             PromotionAllowanceCalculationKind.Allowance,
@@ -192,11 +225,11 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
             out var consumedThanksAllowanceAllowance,
             out var _);
 
-        var allowanceSummary = BuildAllowanceSummary(allowanceCurrentDate, allowanceDetails);
+        var allowanceSummary = BuildAllowanceSummary(hasAllowancePeriod ? allowanceCurrentDate : null, allowanceDetails);
         // --- End allowance block ---
 
         var runId = Guid.NewGuid();
-        var promotionSummary = BuildSummary(promotionDate, details);
+        var promotionSummary = BuildSummary(hasPromotionPeriod ? promotionDate : null, details);
         var run = new PromotionAllowanceCalculationRun
         {
             Id = runId,
@@ -204,15 +237,20 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
             Trigger = trigger,
             PromotionBaseDate = promotionBaseDate,
             PromotionBaseMonths = promotionRule.BaseMonths,
-            PromotionDueDate = promotionDate,
+            PromotionDueDate = hasPromotionPeriod ? promotionDate : null,
             AllowanceBaseDate = allowanceBaseDate,
             AllowanceBaseMonths = allowanceRule.BaseMonths,
-            AllowanceDueDate = allowanceCurrentDate,
+            AllowanceDueDate = hasAllowancePeriod ? allowanceCurrentDate : null,
             Summary = $"{promotionSummary} | {allowanceSummary}",
             StatusId = Status.Active
         };
 
-        employee.Promotion.DueDateDegree = promotionDate;
+        if (hasPromotionPeriod)
+            employee.Promotion.DueDateDegree = promotionDate;
+        // The allowance base (LastAllowanceDate or hire date) never reads DueDateCategory, so saving the result is safe;
+        // before, the category due date was never updated by the calculation and stayed at its manual value.
+        if (hasAllowancePeriod)
+            employee.Promotion.DueDateCategory = allowanceCurrentDate;
         employee.Promotion.LastUpdateAt = DateTime.UtcNow;
 
         var isNewEmployeeService = false;
@@ -445,15 +483,32 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
         return score;
     }
 
-    private static DateOnly ResolveBaseDate(DateOnly? latestChangeDate, DateOnly? currentDueDate, DateOnly? hireDate, int baseMonths)
+    // The period start must come from a stable source: every run overwrites DueDateDegree with the adjusted
+    // result, so deriving the start from it again re-applied thanks, penalties and services on each recalculation.
+    private static DateOnly ResolveBaseDate(Promotion promotion, DateOnly? latestChangeDate, DateOnly? hireDate, int baseMonths)
     {
         if (latestChangeDate.HasValue)
-            return latestChangeDate.Value;
+        {
+            // A promotion created after the last degree change starts a later period than that change.
+            return promotion.DegreeStartDate > latestChangeDate ? promotion.DegreeStartDate.Value : latestChangeDate.Value;
+        }
 
-        if (currentDueDate.HasValue)
-            return currentDueDate.Value.AddMonths(-baseMonths);
+        if (!promotion.DegreeStartDate.HasValue)
+        {
+            // Derived once and saved with the promotion: a DueDateDegree still present here was entered manually
+            // (initialization or promotion edit, which reset DegreeStartDate) and is the unadjusted legal due date.
+            // With no period configured the start cannot be derived from a due date; don't persist a wrong start.
+            if (promotion.DueDateDegree.HasValue && baseMonths <= 0)
+                return promotion.DueDateDegree.Value;
 
-        return hireDate ?? DateOnly.FromDateTime(DateTime.Today);
+            var derivedStart = promotion.DueDateDegree?.AddMonths(-baseMonths) ?? hireDate;
+            if (!derivedStart.HasValue)
+                return DateOnly.FromDateTime(DateTime.Today);
+
+            promotion.DegreeStartDate = derivedStart;
+        }
+
+        return promotion.DegreeStartDate.Value;
     }
 
     private static DateOnly ApplyMonthDelta(DateOnly date, int deltaMonths)
@@ -514,38 +569,6 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
             return studyLeave.AffectsPromotion ?? false;
 
         return studyLeave.AffectsAllowance ?? false;
-    }
-
-    private static DateOnly CalculateActualServiceSum(
-        Employees employee,
-        PromotionAllowanceCalculationKind kind,
-        DateOnly currentDate,
-        List<PromotionAllowanceCalculationDetail> details)
-    {
-        var totalMonths = employee.ServiceCalculations?
-            .Where(x => !x.IsDeleted && x.CountOfMonth.HasValue && x.CountOfMonth.Value > 0 && x.TypeOfService != null)
-            .Where(x => MatchesScope(x.TypeOfService.EffectScope, kind))
-            .Sum(x => x.CountOfMonth.Value) ?? 0;
-
-        if (totalMonths == 0)
-            return currentDate;
-
-        var before = currentDate;
-        currentDate = currentDate.AddMonths(-totalMonths);
-
-        details.Add(CreateDetail(
-            employee.Id,
-            kind,
-            "ACTUAL_SERVICE",
-            nameof(ServiceCalculation),
-            "",
-            $"إجمالي الخدمة الفعلية المحسوبة: {totalMonths} شهر.",
-            before,
-            currentDate,
-            -totalMonths,
-            0));
-
-        return currentDate;
     }
 
     private static DateOnly ApplyServiceCalculationAdjustments(
@@ -769,8 +792,9 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
         return currentDate;
     }
 
+    // A null date means no period is configured: say so instead of printing the unadjusted start date.
     private static string BuildSummary(
-        DateOnly promotionDate,
+        DateOnly? promotionDate,
         IEnumerable<PromotionAllowanceCalculationDetail> details)
     {
         var reasons = details
@@ -784,11 +808,12 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
             ? "بدون تعديلات إضافية."
             : string.Join(" | ", reasons);
 
-        return $"الترفيع: {promotionDate:yyyy-MM-dd}. {reasonsText}";
+        var dateText = promotionDate.HasValue ? $"{promotionDate:yyyy-MM-dd}" : "غير محتسب";
+        return $"الترفيع: {dateText}. {reasonsText}";
     }
 
     private static string BuildAllowanceSummary(
-        DateOnly allowanceDate,
+        DateOnly? allowanceDate,
         IEnumerable<PromotionAllowanceCalculationDetail> details)
     {
         var reasons = details
@@ -802,6 +827,7 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
             ? "بدون تعديلات إضافية."
             : string.Join(" | ", reasons);
 
-        return $"العلاوة السنوية: {allowanceDate:yyyy-MM-dd}. {reasonsText}";
+        var dateText = allowanceDate.HasValue ? $"{allowanceDate:yyyy-MM-dd}" : "غير محتسب";
+        return $"العلاوة السنوية: {dateText}. {reasonsText}";
     }
 }

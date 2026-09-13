@@ -8,20 +8,30 @@ namespace HRM.Hub.Application.Features.EducationInformationHandlers.Commands.Add
 public class AddEducationInfoHandler : CreateHandler<EducationInformation, AddEducationInfoCommand>, IRequestHandler<AddEducationInfoCommand, Response<bool>>
 {
     private readonly IBaseRepository<EducationInformation> _repositoryApplicableLaws;
+    private readonly IPromotionAllowanceCalculationService _calculationService;
+    private Guid _createdId;
 
-    public AddEducationInfoHandler(IBaseRepository<EducationInformation> repositoryApplicableLaws)
+    public AddEducationInfoHandler(
+        IBaseRepository<EducationInformation> repositoryApplicableLaws,
+        IPromotionAllowanceCalculationService calculationService)
         : base(repositoryApplicableLaws)
     {
         _repositoryApplicableLaws = repositoryApplicableLaws;
+        _calculationService = calculationService;
     }
-    protected override Expression<Func<EducationInformation, bool>> ExistencePredicate(AddEducationInfoCommand request) => z => z.EmployeeId == request.EmployeeId;
+    // An employee can hold several certificates; only the same certificate (same achievement and
+    // document number) counts as a duplicate.
+    protected override Expression<Func<EducationInformation, bool>> ExistencePredicate(AddEducationInfoCommand request) =>
+        z => z.EmployeeId == request.EmployeeId
+             && z.AcademicAchievementId == request.AcademicAchievementId
+             && z.DocumentNo == request.DocumentNo;
 
     
-    private async Task ChangeStatusToOld(AddEducationInfoCommand request, CancellationToken cancellationToken)
+    private async Task ChangeStatusToOld(Guid employeeId, Guid newCurrentId, CancellationToken cancellationToken)
     {
         // get all old current
         var oldEducationInfo = await _repositoryApplicableLaws
-            .Query(x => x.EmployeeId == request.EmployeeId)
+            .Query(x => x.EmployeeId == employeeId && x.Id != newCurrentId && x.IsCurrent)
             .ToListAsync(cancellationToken: cancellationToken);
 
         if (oldEducationInfo.Count > 0)
@@ -39,9 +49,10 @@ public class AddEducationInfoHandler : CreateHandler<EducationInformation, AddEd
     
     protected override EducationInformation MapToEntity(AddEducationInfoCommand request)
     {
+        _createdId = Guid.NewGuid();
         return new EducationInformation
         {
-            Id = Guid.NewGuid(),
+            Id = _createdId,
             EmployeeId = request.EmployeeId,
             OriginalDocument = request.OriginalDocument,
             DocumentNo = request.DocumentNo,
@@ -68,8 +79,18 @@ public class AddEducationInfoHandler : CreateHandler<EducationInformation, AddEd
 
     public async Task<Response<bool>> Handle(AddEducationInfoCommand request, CancellationToken cancellationToken)
     {
-        await ChangeStatusToOld(request, cancellationToken);
-        return await HandleBase(request, cancellationToken);
+        var result = await HandleBase(request, cancellationToken);
+        if (!result.Succeeded)
+            return result;
+
+        // The new certificate becomes the current one; demote the others only after it was saved,
+        // so a rejected insert no longer leaves the employee without a current certificate.
+        await ChangeStatusToOld(request.EmployeeId, _createdId, cancellationToken);
+
+        // The academic achievement selects the promotion/allowance rule, so recalculate.
+        _ = await _calculationService.CalculateAsync(request.EmployeeId, "education-information-created", cancellationToken);
+
+        return result;
     }
 
     

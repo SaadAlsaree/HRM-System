@@ -1,5 +1,6 @@
 export const columnsEducationInfo: { label: string; value: string; className?: string }[] = [
     { label: '#', value: 'id', className: 'font-bold' },
+    { label: 'الشهادة المعتمدة', value: 'isCurrent', className: 'font-bold' },
     { label: 'البلد', value: 'country', className: 'hidden md:table-cell font-bold' },
     { label: 'عنوان الوثيقة دراسية', value: 'originalDocument', className: 'hidden md:table-cell font-bold' },
     { label: 'رقم الوثيقة', value: 'documentNo', className: 'hidden md:table-cell font-bold' },

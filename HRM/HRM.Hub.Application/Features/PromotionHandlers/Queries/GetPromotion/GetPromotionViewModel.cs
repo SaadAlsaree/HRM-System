@@ -23,6 +23,9 @@ public class GetPromotionViewModel:BaseViewModel<Guid>
     public Guid? NewEducationInformationId { get; set; }
     public string NewEducationInformationName { get; set; }
     public DateOnly? DueDateDegree { get; set; }
+    // Date the employee was placed in the current degree — the start of the current promotion period.
+    public DateOnly? DegreeStartDate { get; set; }
+    public DateOnly? LastChangeDegreeDate { get; set; }
 
     public DateOnly? DueDateCategory { get; set; }
 

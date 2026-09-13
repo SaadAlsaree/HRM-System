@@ -21,6 +21,8 @@ namespace HRM.Hub.Application.Features.PromotionHandlers.Commands.CreatePromotio
 
             if (existingPromotion != null)
             {
+                var previousDegreeId = existingPromotion.JobDegreeId;
+
                 if (request.DegreeToId.HasValue && request.DegreeToId.Value > 0)
                     existingPromotion.JobDegreeId = request.DegreeToId.Value;
                 else if (request.DegreeFromId.HasValue && request.DegreeFromId.Value > 0)
@@ -34,8 +36,19 @@ namespace HRM.Hub.Application.Features.PromotionHandlers.Commands.CreatePromotio
                 if (request.SentPromotionGroupId.HasValue)
                     existingPromotion.SentPromotionGroupId = request.SentPromotionGroupId;
 
-                if (request.DueDateDegree.HasValue)
+                if (previousDegreeId != existingPromotion.JobDegreeId)
+                {
+                    // The promotion takes effect immediately: the new degree's period starts on the entered due date
+                    // (the date the employee became eligible), and the next due date is recalculated from it.
+                    existingPromotion.DegreeStartDate = request.DueDateDegree ?? DateOnly.FromDateTime(DateTime.Today);
+                    existingPromotion.DueDateDegree = null;
+                }
+                else if (request.DueDateDegree.HasValue && request.DueDateDegree != existingPromotion.DueDateDegree)
+                {
+                    // Same degree, corrected due date: re-derive the period start from it.
                     existingPromotion.DueDateDegree = request.DueDateDegree;
+                    existingPromotion.DegreeStartDate = null;
+                }
 
                 if (request.DueDateCategory.HasValue)
                     existingPromotion.DueDateCategory = request.DueDateCategory;
@@ -53,13 +66,16 @@ namespace HRM.Hub.Application.Features.PromotionHandlers.Commands.CreatePromotio
             }
             else
             {
+                var isPromotedToNewDegree = request.DegreeToId.HasValue && request.DegreeToId.Value > 0;
                 var newPromotion = new Promotion
                 {
                     Id = request.EmployeeId,
                     SentPromotionGroupId = request.SentPromotionGroupId,
                     JobDegreeId = request.DegreeToId ?? request.DegreeFromId ?? 0,
                     JobCategoryId = request.JobCategoryToId ?? request.JobCategoryFromId ?? 0,
-                    DueDateDegree = request.DueDateDegree,
+                    // Same rule as above: a promotion to a new degree starts its period on the entered due date.
+                    DueDateDegree = isPromotedToNewDegree ? null : request.DueDateDegree,
+                    DegreeStartDate = isPromotedToNewDegree ? request.DueDateDegree ?? DateOnly.FromDateTime(DateTime.Today) : null,
                     DueDateCategory = request.DueDateCategory,
                     ServiceRecycle = request.ServiceRecycle,
                     Note = request.Note ?? string.Empty,

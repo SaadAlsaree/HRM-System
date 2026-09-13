@@ -3,6 +3,7 @@ using System;
 using HRM.Hub.Persistence.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace HRM.Hub.Persistence.Migrations
 {
     [DbContext(typeof(HumanResourcesDbContext))]
-    partial class HumanResourcesDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260913180414_MakeEducationStudyDatesNullable")]
+    partial class MakeEducationStudyDatesNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -4108,9 +4111,6 @@ namespace HRM.Hub.Persistence.Migrations
 
                     b.Property<Guid?>("CreateBy")
                         .HasColumnType("uuid");
-
-                    b.Property<DateOnly?>("DegreeStartDate")
-                        .HasColumnType("date");
 
                     b.Property<DateTime?>("DeletedAt")
                         .HasColumnType("timestamp without time zone");

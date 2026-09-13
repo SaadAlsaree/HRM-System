@@ -78,6 +78,14 @@ class EducationInfoService extends ApiClient {
         });
     }
 
+    // PATCH /EducationInformation/{id}/SetCurrent — marks the certificate as the employee's approved one
+    public async setCurrentEducationInfo(EducationInfoId: string): Promise<any> {
+        return this.request<any>({
+            method: 'PATCH',
+            url: `/EducationInformation/${EducationInfoId}/SetCurrent`
+        });
+    }
+
     public async patchEducationInfo(payload: patchEducationInfoPayload): Promise<any> {
         return this.request<any>({
             method: 'PATCH',

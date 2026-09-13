@@ -46,6 +46,16 @@ public class GetPromotionHandler  : GetAllWithCountHandler<Promotion, GetPromoti
         StatusName = string.Empty,
         EmployeeId = z.Employee != null ? z.Employee.Id : z.Id, // Since Promotion.Id is the FK
         DueDateDegree = z.DueDateDegree,
+        // Not calculated yet and no manual due date: the calculation would start the period at the hire date.
+        DegreeStartDate = z.DegreeStartDate ?? (z.DueDateDegree == null && z.Employee.JobInformation != null
+            ? (DateOnly?)z.Employee.JobInformation.HireDate
+            : null),
+        LastChangeDegreeDate = z.Employee.ChangeDegree
+            .Where(c => !c.IsDeleted)
+            .OrderByDescending(c => c.OrderDate ?? DateOnly.MinValue)
+            .ThenByDescending(c => c.CreateAt)
+            .Select(c => (DateOnly?)c.NewDegreeDueDate)
+            .FirstOrDefault(),
         DueDateCategory = z.DueDateCategory,
         ServiceRecycle = z.ServiceRecycle,
         SentPromotionGroupId = z.SentPromotionGroupId,
@@ -76,6 +86,10 @@ public class GetPromotionHandler  : GetAllWithCountHandler<Promotion, GetPromoti
         foreach (var item in result)
         {
             item.StatusName = item.Status.GetDisplayName();
+
+            // Same rule as the promotion calculation: the later of the stored period start and the last degree change.
+            if (item.LastChangeDegreeDate > item.DegreeStartDate || !item.DegreeStartDate.HasValue)
+                item.DegreeStartDate = item.LastChangeDegreeDate ?? item.DegreeStartDate;
             
             if (item.DegreeFromId != null && item.DegreeFromId != 0)
             {

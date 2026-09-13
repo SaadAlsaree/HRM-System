@@ -3,10 +3,14 @@ namespace HRM.Hub.Application.Features.EmployeeHandlers.Commands.AddEmployee;
 public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<bool>>
 {
     private readonly IBaseRepository<Employees> _repositoryEmployee;
+    private readonly IPromotionAllowanceCalculationService _calculationService;
 
-    public AddEmployeeHandler(IBaseRepository<Employees> repositoryEmployee)
+    public AddEmployeeHandler(
+        IBaseRepository<Employees> repositoryEmployee,
+        IPromotionAllowanceCalculationService calculationService)
     {
         _repositoryEmployee = repositoryEmployee;
+        _calculationService = calculationService;
     }
 
     public async Task<Response<bool>> Handle(AddEmployeeCommend request, CancellationToken cancellationToken)
@@ -90,7 +94,8 @@ public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<b
             Promotion = new Promotion()
             {
                 JobCategoryId = request.JobCategoryId,
-                JobDegreeId = request.JobDegreeId
+                JobDegreeId = request.JobDegreeId,
+                DegreeStartDate = request.HireDate
             },
             ManagementInformation = new ManagementInformation()
             {
@@ -136,6 +141,19 @@ public class AddEmployeeHandler : IRequestHandler<AddEmployeeCommend, Response<b
                 Message = "تعذر حفظ البيانات الوظيفية، يرجى التأكد من اختيار الدرجة والفئة والعنوان الوظيفي والمنصب",
                 Code = "FailOnCreate"
             });
+        }
+
+        // Compute the next promotion/allowance due dates right away so a new employee does not
+        // stay without DueDateDegree until another related record is added or verified.
+        // The employee is already saved at this point, so a calculation failure must not turn
+        // the response into an error (the user would retry and hit JobCodeExist).
+        try
+        {
+            _ = await _calculationService.CalculateAsync(employeeId, "employee-created", cancellationToken);
+        }
+        catch
+        {
+            // The calculation runs again on the next promotion-related change.
         }
 
         return SuccessMessage.Create.ToSuccessMessage(true);

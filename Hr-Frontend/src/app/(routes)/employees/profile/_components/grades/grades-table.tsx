@@ -8,7 +8,7 @@ import { columnsGrades } from './columns';
 import { useFetchClient } from '@/lib/fetchClient';
 import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 import { IEmployeeManagementInfo } from '../../[id]/page';
-import { Award,  Calendar, CheckCircle2, ShieldAlert, FileText, Sparkles, Clock } from 'lucide-react';
+import { Award, Calendar, CalendarCheck, CheckCircle2, ShieldAlert, FileText, Sparkles, Clock } from 'lucide-react';
 
 export interface IChangeDegree {
    id?: string;
@@ -46,6 +46,7 @@ export interface IPromotionInfo {
    jobCategoryToId?: number;
    jobCategoryToName?: string;
    dueDateDegree?: string;
+   degreeStartDate?: string;
    dueDateCategory?: string;
    lastAllowanceDate?: string;
    serviceRecycle?: number;
@@ -132,7 +133,7 @@ const GradesTable = ({ employeeId, managementInfo }: Props) => {
 
    // Resolve active current grade values
    const currentDegree = promotionData?.degreeFromName || managementInfo?.degreeNameIsCurrent || '---';
-   const hiringDegree = managementInfo?.degreeNameIsInHiring || '---';
+   const degreeStartDate = promotionData?.degreeStartDate ? String(promotionData.degreeStartDate).split('T')[0] : 'غير محدد';
    const stopDegree = managementInfo?.stopJobDegreeName || 'غير محدد';
    const degreeDueDate = promotionData?.dueDateDegree || managementInfo?.dueDateDegree || '---';
    const isStopPromotion = managementInfo?.stopPromotion ?? promotionData?.stopPromotion ?? false;
@@ -204,7 +205,7 @@ const GradesTable = ({ employeeId, managementInfo }: Props) => {
                      {/* 2. Next Promotion Due Date */}
                      <div className='p-3.5 rounded-xl border bg-card/60 shadow-xs flex flex-col justify-between gap-1'>
                         <div className='flex items-center justify-between text-xs text-muted-foreground'>
-                           <span>تاريخ استحقاق الترفيع القادم</span>
+                           <span>تاريخ استحقاق تسكين الترفيع القادم</span>
                            <Calendar className='h-4 w-4 text-amber-600' />
                         </div>
                         <div className='text-base font-bold text-foreground mt-1'>
@@ -213,16 +214,16 @@ const GradesTable = ({ employeeId, managementInfo }: Props) => {
                         <span className='text-[11px] text-muted-foreground'>موعد استحقاق الترقية القادمة</span>
                      </div>
 
-                     {/* 3. Hiring Grade */}
+                     {/* 3. Current Grade Placement Date */}
                      <div className='p-3.5 rounded-xl border bg-card/60 shadow-xs flex flex-col justify-between gap-1'>
                         <div className='flex items-center justify-between text-xs text-muted-foreground'>
-                           <span>الدرجة عند التعيين</span>
-                           <FileText className='h-4 w-4 text-slate-500' />
+                           <span>تاريخ تسكين الدرجة الحالية</span>
+                           <CalendarCheck className='h-4 w-4 text-emerald-600' />
                         </div>
                         <div className='text-base font-bold text-foreground mt-1'>
-                           {hiringDegree}
+                           {degreeStartDate}
                         </div>
-                        <span className='text-[11px] text-muted-foreground'>الدرجة الأولى عند بداية التعيين</span>
+                        <span className='text-[11px] text-muted-foreground'>بداية احتساب مدة الترفيع القادم</span>
                      </div>
 
                      {/* 4. Stop Degree */}

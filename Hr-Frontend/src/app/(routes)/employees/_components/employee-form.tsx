@@ -271,12 +271,14 @@ export default function EmployeeForm({
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const subDirectorateOptions = useMemo(() => subDirectoratesList?.map((item: any) => ({
       value: item.id ?? item.Id,
+      directorateId: item.directorateId ?? item.DirectorateId,
       label: item.name ?? item.Name
    })) ?? [], [subDirectoratesList]);
 
    // eslint-disable-next-line @typescript-eslint/no-explicit-any
    const departmentOptions = useMemo(() => departmentsList?.map((item: any) => ({
       value: item.id ?? item.Id,
+      subDirectorateId: item.subDirectorateId ?? item.SubDirectorateId,
       label: item.name ?? item.Name
    })) ?? [], [departmentsList]);
 
@@ -325,6 +327,40 @@ export default function EmployeeForm({
          (option) => !watchedDegreeId || option.degreeId === watchedDegreeId
       );
    }, [jobTitleOptions, watchedDegreeId]);
+
+   // Cascading selects for the administrative structure: directorate -> sub-directorate -> department.
+   const watchedDirectorateIdRaw = form.watch('directorateId');
+   const watchedDirectorateId = watchedDirectorateIdRaw ? Number(watchedDirectorateIdRaw) : 0;
+   const watchedSubDirectorateIdRaw = form.watch('subDirectorateId');
+   const watchedSubDirectorateId = watchedSubDirectorateIdRaw ? Number(watchedSubDirectorateIdRaw) : 0;
+
+   const filteredSubDirectorateOptions = useMemo(() => {
+      return subDirectorateOptions.filter(
+         (option) => !watchedDirectorateId || Number(option.directorateId) === watchedDirectorateId
+      );
+   }, [subDirectorateOptions, watchedDirectorateId]);
+
+   const filteredDepartmentOptions = useMemo(() => {
+      return departmentOptions.filter(
+         (option) => !watchedSubDirectorateId || Number(option.subDirectorateId) === watchedSubDirectorateId
+      );
+   }, [departmentOptions, watchedSubDirectorateId]);
+
+   // Clear the lower levels when the user picks a parent they don't belong to.
+   const handleDirectorateChange = (directorateId: number | undefined) => {
+      const selectedSub = subDirectorateOptions.find((o) => Number(o.value) === Number(form.getValues('subDirectorateId')));
+      if (selectedSub && Number(selectedSub.directorateId) !== directorateId) {
+         form.setValue('subDirectorateId', undefined as unknown as number);
+         form.setValue('departmentId', undefined as unknown as number);
+      }
+   };
+
+   const handleSubDirectorateChange = (subDirectorateId: number | undefined) => {
+      const selectedDepartment = departmentOptions.find((o) => Number(o.value) === Number(form.getValues('departmentId')));
+      if (selectedDepartment && Number(selectedDepartment.subDirectorateId) !== subDirectorateId) {
+         form.setValue('departmentId', undefined as unknown as number);
+      }
+   };
 
    // Track previous degree to only reset category/title on intentional user degree change
    const [prevDegreeId, setPrevDegreeId] = useState<number>(data?.jobDegreeId ? Number(data.jobDegreeId) : 0);
@@ -1046,7 +1082,11 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>الدائرة</FormLabel>
                                        <Select
-                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          onValueChange={(val) => {
+                                             const directorateId = val ? Number(val) : undefined;
+                                             field.onChange(directorateId);
+                                             handleDirectorateChange(directorateId);
+                                          }}
                                           value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
                                        >
                                           <FormControl>
@@ -1075,7 +1115,11 @@ export default function EmployeeForm({
                                     <FormItem>
                                        <FormLabel>المديرية</FormLabel>
                                        <Select
-                                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                          onValueChange={(val) => {
+                                             const subDirectorateId = val ? Number(val) : undefined;
+                                             field.onChange(subDirectorateId);
+                                             handleSubDirectorateChange(subDirectorateId);
+                                          }}
                                           value={field.value !== undefined && field.value !== null ? String(field.value) : ''}
                                        >
                                           <FormControl>
@@ -1084,7 +1128,7 @@ export default function EmployeeForm({
                                              </SelectTrigger>
                                           </FormControl>
                                           <SelectContent>
-                                             {subDirectorateOptions.map((option: { value: number | string; label: string }) => (
+                                             {filteredSubDirectorateOptions.map((option: { value: number | string; label: string }) => (
                                                 <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>
@@ -1113,7 +1157,7 @@ export default function EmployeeForm({
                                              </SelectTrigger>
                                           </FormControl>
                                           <SelectContent>
-                                             {departmentOptions.map((option: { value: number | string; label: string }) => (
+                                             {filteredDepartmentOptions.map((option: { value: number | string; label: string }) => (
                                                 <SelectItem key={option.value} value={option.value.toString()}>
                                                    {option.label}
                                                 </SelectItem>

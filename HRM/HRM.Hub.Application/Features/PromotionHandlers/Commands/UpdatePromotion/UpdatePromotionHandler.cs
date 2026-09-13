@@ -27,7 +27,13 @@ namespace HRM.Hub.Application.Features.PromotionHandlers.Commands.UpdatePromotio
             entity.SentPromotionGroupId = request.SentPromotionGroupId;
             entity.JobDegreeId = request.DegreeToId ?? request.DegreeFromId ?? entity.JobDegreeId;
             entity.JobCategoryId = request.JobCategoryToId ?? request.JobCategoryFromId ?? entity.JobCategoryId;
-            if (request.DueDateDegree.HasValue) entity.DueDateDegree = request.DueDateDegree;
+            // The edit dialog always sends the current (already adjusted) due date; only a changed value is a manual
+            // correction that re-derives the period start. Otherwise every edit would re-apply the adjustments.
+            if (request.DueDateDegree.HasValue && request.DueDateDegree != entity.DueDateDegree)
+            {
+                entity.DueDateDegree = request.DueDateDegree;
+                entity.DegreeStartDate = null;
+            }
             if (request.DueDateCategory.HasValue) entity.DueDateCategory = request.DueDateCategory;
             entity.ServiceRecycle = request.ServiceRecycle;
             entity.Note = request.Note;
