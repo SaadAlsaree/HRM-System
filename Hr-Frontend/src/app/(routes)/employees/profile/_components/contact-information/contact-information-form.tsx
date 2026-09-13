@@ -12,7 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { IContactInformation } from '.';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { Separator } from '@/components/ui/separator';
 import { Plus } from 'lucide-react';
 import Spinner from '@/components/spinner';
@@ -88,27 +88,39 @@ const ContactInformationForm = ({ title, employeeId, icon, variant, data }: Prop
       }
    }, [open, data, form]);
 
+   const params = useParams();
+   const empId = employeeId || data?.employeeId || (params?.id as string) || '';
+
    async function onSubmit(values: z.infer<typeof formSchema>) {
       setSubmitting(true);
       try {
-         const empId = employeeId || data?.employeeId || '';
          if (data) {
             const dataToUpdate = {
                lastUpdateBy: empId,
                employeeId: empId,
                ...values,
-               levelOfRelationshipId: Number(values.levelOfRelationshipId)
+               levelOfRelationshipId: values.levelOfRelationshipId ? Number(values.levelOfRelationshipId) : null
             };
-            await contactInformationService.updateContactInformation(data.id as string, dataToUpdate);
+            const res = await contactInformationService.updateContactInformation(data.id as string, dataToUpdate);
+            if (res?.succeeded === false) {
+               toast.error(res?.message || 'فشل تعديل البيانات.');
+               setSubmitting(false);
+               return;
+            }
             toast.success('تم تعديل البيانات بنجاح .');
          } else {
             const dataToSave = {
                ...values,
                employeeId: empId,
                createBy: empId,
-               levelOfRelationshipId: Number(values.levelOfRelationshipId)
+               levelOfRelationshipId: values.levelOfRelationshipId ? Number(values.levelOfRelationshipId) : null
             };
-            await contactInformationService.createContactInformation(dataToSave);
+            const res = await contactInformationService.createContactInformation(dataToSave);
+            if (res?.succeeded === false) {
+               toast.error(res?.message || 'فشل حفظ البيانات.');
+               setSubmitting(false);
+               return;
+            }
             toast.success('تم حفظ البيانات بنجاح .');
          }
          setSubmitting(false);

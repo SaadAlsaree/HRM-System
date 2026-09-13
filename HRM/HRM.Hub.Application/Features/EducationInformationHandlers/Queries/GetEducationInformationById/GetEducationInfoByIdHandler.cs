@@ -1,4 +1,4 @@
-﻿
+
 using HRM.Hub.Application.Features.UtilityServices.BaseUtility.Query.GetById;
 
 namespace HRM.Hub.Application.Features.EducationInformationHandlers.Queries.GetEducationInformationById;
@@ -17,20 +17,19 @@ public class GetEducationInfoByIdHandler : GetByIdHandler<EducationInformation, 
         DocumentDate = z.DocumentDate,
         DocumentSender = z.DocumentSender,
         DocumentSendDate = z.DocumentSendDate,
-        AcademicAchievementName = z.AcademicAchievement.Name,
-        AcademicFieldName = z.AcademicField.Name,
-        PreciseAcademicFieldName = z.PreciseAcademicField.Name,
+        AcademicAchievementName = z.AcademicAchievement != null ? z.AcademicAchievement.Name : null,
+        AcademicFieldName = z.AcademicField != null ? z.AcademicField.Name : null,
+        PreciseAcademicFieldName = z.PreciseAcademicField != null ? z.PreciseAcademicField.Name : null,
         NameOfIssuingCertificate = z.NameOfIssuingCertificate,
         StartDate = z.StartDate,
         EndDate = z.EndDate,
         GraduationYear = z.GraduationYear,
         IsDuringRecruitment = z.IsDuringRecruitment,
         IsdocumentVerify = z.IsDocumentVerify,
-        CountryName = z.Country.Name,
-        StudyTypeName = z.StudyType.Name,
+        CountryName = z.Country != null ? z.Country.Name : null,
+        StudyTypeName = z.StudyType != null ? z.StudyType.Name : null,
         Notes = z.Notes,
         Status = z.StatusId
-
     };
     public async Task<Response<GetEducationInfoByIdViewModel>> Handle(GetEducationInfoByIdQuery request, CancellationToken cancellationToken)
     {

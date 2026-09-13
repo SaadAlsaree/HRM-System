@@ -82,13 +82,11 @@ public class GetPromotionHandler  : GetAllWithCountHandler<Promotion, GetPromoti
                 var currentDegree = jobDegrees.FirstOrDefault(d => d.Id == item.DegreeFromId);
                 if (currentDegree != null)
                 {
-                    var nextDegreeId = currentDegree.NextPromotion != 0 ? currentDegree.NextPromotion : jobDegrees.FirstOrDefault(d => d.Index == currentDegree.Index - 1)?.Id;
-                    
-                    if (nextDegreeId != null && nextDegreeId != 0)
+                    var nextDegree = ResolveNextJobDegree(currentDegree, jobDegrees);
+                    if (nextDegree != null)
                     {
-                        var nextDegree = jobDegrees.FirstOrDefault(d => d.Id == nextDegreeId);
-                        item.DegreeToId = nextDegree?.Id;
-                        item.DegreeToName = nextDegree?.Name ?? string.Empty;
+                        item.DegreeToId = nextDegree.Id;
+                        item.DegreeToName = nextDegree.Name ?? string.Empty;
                     }
                 }
             }
@@ -98,13 +96,11 @@ public class GetPromotionHandler  : GetAllWithCountHandler<Promotion, GetPromoti
                 var currentCategory = jobCategories.FirstOrDefault(c => c.Id == item.JobCategoryFromId);
                 if (currentCategory != null)
                 {
-                    var nextCategoryId = currentCategory.NextPromotion != 0 ? currentCategory.NextPromotion : jobCategories.FirstOrDefault(c => c.Index == currentCategory.Index - 1)?.Id;
-                    
-                    if (nextCategoryId != null && nextCategoryId != 0)
+                    var nextCategory = ResolveNextJobCategory(currentCategory, jobCategories);
+                    if (nextCategory != null)
                     {
-                        var nextCategory = jobCategories.FirstOrDefault(c => c.Id == nextCategoryId);
-                        item.JobCategoryToId = nextCategory?.Id;
-                        item.JobCategoryToName = nextCategory?.Name ?? string.Empty;
+                        item.JobCategoryToId = nextCategory.Id;
+                        item.JobCategoryToName = nextCategory.Name ?? string.Empty;
                     }
                 }
             }
@@ -118,5 +114,84 @@ public class GetPromotionHandler  : GetAllWithCountHandler<Promotion, GetPromoti
             Items = result,
             TotalCount = count
         });
+    }
+
+    private static readonly System.Collections.Generic.Dictionary<string, int> DegreeNameRanks = new(System.StringComparer.OrdinalIgnoreCase)
+    {
+        { "العاشرة", 10 },
+        { "التاسعة", 9 },
+        { "الثامنة", 8 },
+        { "السابعة", 7 },
+        { "السادسة", 6 },
+        { "الخامسة", 5 },
+        { "الرابعة", 4 },
+        { "الثالثة", 3 },
+        { "الثانية", 2 },
+        { "الأولى", 1 },
+        { "الاولى", 1 }
+    };
+
+    private static int GetDegreeRank(JobDegree? degree)
+    {
+        if (degree == null)
+            return 99;
+
+        if (!string.IsNullOrWhiteSpace(degree.Name))
+        {
+            foreach (var kvp in DegreeNameRanks)
+            {
+                if (degree.Name.Contains(kvp.Key, StringComparison.OrdinalIgnoreCase))
+                    return kvp.Value;
+            }
+        }
+
+        if (degree.Index >= 1 && degree.Index <= 10)
+            return degree.Index;
+
+        return 99;
+    }
+
+    private static JobDegree? ResolveNextJobDegree(JobDegree currentDegree, System.Collections.Generic.List<JobDegree> allDegrees)
+    {
+        int currentRank = GetDegreeRank(currentDegree);
+
+        // Grade 1 (الدرجة الأولى) is the highest civil service rank - no promotion above it
+        if (currentRank <= 1)
+            return null;
+
+        if (currentRank <= 10)
+        {
+            int targetRank = currentRank - 1;
+
+            // 1. Primary: match by semantic Arabic rank (العاشرة=10 -> التاسعة=9 -> الثامنة=8 -> ...)
+            var targetByRank = allDegrees.FirstOrDefault(d => !d.IsDeleted && GetDegreeRank(d) == targetRank);
+            if (targetByRank != null)
+                return targetByRank;
+
+            // 2. Secondary: match by Index == targetRank
+            var targetByIndex = allDegrees.FirstOrDefault(d => !d.IsDeleted && d.Index == targetRank);
+            if (targetByIndex != null)
+                return targetByIndex;
+        }
+
+        // Fallback for custom degrees: next smaller index
+        return allDegrees
+            .Where(d => d.Id != currentDegree.Id && d.Index < currentDegree.Index && !d.IsDeleted)
+            .OrderByDescending(d => d.Index)
+            .FirstOrDefault();
+    }
+
+    private static JobCategory? ResolveNextJobCategory(JobCategory currentCategory, System.Collections.Generic.List<JobCategory> allCategories)
+    {
+        // Category / Stage ascends: 1 -> 2 -> 3 -> ... -> 11
+        var nextByIndex = allCategories
+            .Where(c => c.Id != currentCategory.Id && c.Index > currentCategory.Index && !c.IsDeleted)
+            .OrderBy(c => c.Index)
+            .FirstOrDefault();
+
+        if (nextByIndex != null)
+            return nextByIndex;
+
+        return allCategories.FirstOrDefault(c => !c.IsDeleted && c.Index == currentCategory.Index + 1);
     }
 }

@@ -1,4 +1,4 @@
-﻿using HRM.Hub.Application.Features.ContactInformationHandlers.Commands.CreateContactInformation;
+using HRM.Hub.Application.Features.ContactInformationHandlers.Commands.CreateContactInformation;
 
 namespace HRM.Hub.Application.Features.ContactInformationHandlers.Commands.CreateContactInformation;
 
@@ -8,13 +8,14 @@ public class CreateContactInformationHandler : CreateHandler<ContactInformation,
     {
     }
 
-    protected override Expression<Func<ContactInformation, bool>> ExistencePredicate(CreateContactInformationCommand request) => x => x.PhoneNumber == request.PhoneNumber;
-
+    protected override Expression<Func<ContactInformation, bool>> ExistencePredicate(CreateContactInformationCommand request) => 
+        x => x.EmployeeId == request.EmployeeId && x.PhoneNumber == request.PhoneNumber;
 
     protected override ContactInformation MapToEntity(CreateContactInformationCommand request)
     {
         return new ContactInformation
         {
+            Id = Guid.NewGuid(),
             EmployeeId = request.EmployeeId,
             ContactName = request.ContactName,
             LevelOfRelationshipId = request.LevelOfRelationshipId,

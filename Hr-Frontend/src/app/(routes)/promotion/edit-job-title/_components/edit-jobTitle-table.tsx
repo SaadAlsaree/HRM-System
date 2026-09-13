@@ -49,17 +49,24 @@ const EditJobTitleTable = ({ editJobTitleData, columns }: Props) => {
             </TableRow>
          </TableHeader>
          <TableBody>
-            {editJobTitleData.map((item) => (
+            {(!editJobTitleData || editJobTitleData.length === 0) && (
+               <TableRow>
+                  <TableCell colSpan={columns.length + 1} className='text-center py-6 text-muted-foreground'>
+                     لا توجد بيانات تعديل عنوان وظيفي
+                  </TableCell>
+               </TableRow>
+            )}
+            {editJobTitleData?.map((item) => (
                <TableRow key={item.id}>
-                  <TableCell>{item.jobCode}</TableCell>
-                  <TableCell>{item.fullName}</TableCell>
-                  <TableCell>{item.lotNumber}</TableCell>
-                  <TableCell>{item.oldJobTitleName}</TableCell>
-                  <TableCell>{item.newJobTitleName}</TableCell>
-                  <TableCell>{item.oldJobDescriptionName}</TableCell>
-                  <TableCell>{item.newJobDescriptionName}</TableCell>
-                  <TableCell>{item.orderNo}</TableCell>
-                  <TableCell>{moment(item.orderDate).format('YYYY-MM-DD')}</TableCell>
+                  <TableCell>{item.jobCode || '-'}</TableCell>
+                  <TableCell>{item.fullName || '-'}</TableCell>
+                  <TableCell>{item.lotNumber || '-'}</TableCell>
+                  <TableCell>{item.oldJobTitleName || '-'}</TableCell>
+                  <TableCell>{item.newJobTitleName || '-'}</TableCell>
+                  <TableCell>{item.oldJobDescriptionName || '-'}</TableCell>
+                  <TableCell>{item.newJobDescriptionName || '-'}</TableCell>
+                  <TableCell>{item.orderNo || '-'}</TableCell>
+                  <TableCell>{item.orderDate ? moment(item.orderDate).format('YYYY-MM-DD') : '-'}</TableCell>
                   <TableCell>
                      <EditJobTitleAttachment employeeId={item.employeeId} PrimaryTableId={item.id} />
                   </TableCell>

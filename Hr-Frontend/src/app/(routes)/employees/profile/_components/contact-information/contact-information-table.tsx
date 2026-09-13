@@ -56,7 +56,7 @@ const ContactInformationTable = ({ columns, data, employeeId }: Props) => {
             {data?.map((item) => (
                <TableRow key={item.id}>
                   <TableCell>{item?.id?.toString().toUpperCase().split('-', 1)}</TableCell>
-                  <TableCell>{item?.fullName || item?.contactName}</TableCell>
+                  <TableCell>{item?.contactName || item?.fullName}</TableCell>
                   <TableCell>{item?.levelOfRelationshipName}</TableCell>
                   <TableCell>{item?.phoneNumber}</TableCell>
                   <TableCell>

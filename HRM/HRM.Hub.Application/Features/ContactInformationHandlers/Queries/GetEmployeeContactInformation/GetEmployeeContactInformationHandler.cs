@@ -1,4 +1,4 @@
-﻿
+
 namespace HRM.Hub.Application.Features.ContactInformationHandlers.Queries.GetEmployeeContactInformation;
 
 public class GetEmployeeContactInformationHandler :
@@ -13,14 +13,14 @@ public class GetEmployeeContactInformationHandler :
         Id = z.Id,
         Status = z.StatusId,
         Notes = z.Notes,
-        LotNumber = z.Employee.LotNumber,
-        JobCode = z.Employee.JobCode,
-        FullName = z.Employee.FullName,
+        LotNumber = z.Employee != null ? z.Employee.LotNumber : null,
+        JobCode = z.Employee != null ? z.Employee.JobCode : null,
+        FullName = z.Employee != null ? z.Employee.FullName : null,
         EmployeeId = z.EmployeeId,
         PhoneNumber = z.PhoneNumber,
         ContactName = z.ContactName,
         LevelOfRelationshipId = z.LevelOfRelationshipId,
-        LevelOfRelationshipName = z.LevelOfRelationship.Name,
+        LevelOfRelationshipName = z.LevelOfRelationship != null ? z.LevelOfRelationship.Name : null,
     };
 
     public override Func<IQueryable<ContactInformation>, IOrderedQueryable<ContactInformation>> OrderBy => order => order.OrderBy(z => z.Id);

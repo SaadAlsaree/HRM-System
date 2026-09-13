@@ -81,9 +81,9 @@ public class EmployeeController : Base<EmployeeController>
 
     [ServiceFilter(typeof(LogActionArguments))]
     [HttpPut("{EmployeeId:Guid}")]
-    [ProducesResponseType(typeof(Response<GetEmployeeViewModel>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType(typeof(Response<bool>), (int)HttpStatusCode.OK)]
     [ProducesResponseType((int)HttpStatusCode.BadRequest)]
-    public async Task<ActionResult<Response<GetEmployeeViewModel>>> Update(
+    public async Task<ActionResult<Response<bool>>> Update(
         Guid EmployeeId,
         [FromBody] UpdateEmployeeCommand command)
     {

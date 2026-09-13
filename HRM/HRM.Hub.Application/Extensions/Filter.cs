@@ -12,9 +12,15 @@ public static class FilterExtensions
             if (value != null)
             {
                 var entityProperties = typeof(TEntity).GetProperty(property.Name);
-                if (entityProperties != null && entityProperties.PropertyType.IsEnum)
+                if (entityProperties != null && (entityProperties.PropertyType.IsEnum || Nullable.GetUnderlyingType(entityProperties.PropertyType)?.IsEnum == true))
                 {
-                    var enumType = entityProperties.PropertyType;
+                    if (value is Status statusVal && statusVal == Status.None)
+                        continue;
+
+                    if (value.ToString() == "None" || Convert.ToInt32(value) == -1)
+                        continue;
+
+                    var enumType = Nullable.GetUnderlyingType(entityProperties.PropertyType) ?? entityProperties.PropertyType;
                     var enumValue = Enum.Parse(enumType, value.ToString());
                     query = query.Where(GenerateEqualityExpression<TEntity, object>(property.Name, enumValue));
                 }

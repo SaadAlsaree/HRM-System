@@ -18,11 +18,13 @@ import { IEducationInfo } from './academic-achievement-table';
 import { educationInfoService } from '@/services/education-info.service';
 import { Checkbox } from '@/components/ui/checkbox';
 //Services
-import { academicCertificateTypeService } from '@/services/system-settings/academic-certificate-type.service';
+import { academicAchievementService } from '@/services/system-settings/academic-chievement.service';
+import { academicFieldService } from '@/services/system-settings/academic-field.service';
+import { preciseAcademicFieldService } from '@/services/system-settings/precise-academic-field.service';
 import { studyTypeService } from '@/services/system-settings/study-type.service';
 import { countryService } from '@/services/system-settings/country.service';
 import { useQuery } from '@tanstack/react-query';
-import { AcademicCertificateType, Country, StudyType } from '@/types';
+import { AcademicAchievement, AcademicField, Country, PreciseAcademicField, StudyType } from '@/types';
 import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 const formSchema = z.object({
@@ -33,8 +35,8 @@ const formSchema = z.object({
   documentSender: z.string().min(1, 'الجهة المرسلة مطلوبة'),
   documentSendDate: z.string().optional(),
   academicAchievementId: z.coerce.number().min(1, 'التحصيل الدراسي مطلوب'),
-  academicFieldId: z.coerce.number().optional(),
-  preciseAcademicFieldId: z.coerce.number().optional(),
+  academicFieldId: z.coerce.number().min(1, 'التخصص مطلوب'),
+  preciseAcademicFieldId: z.coerce.number().min(1, 'التخصص الدقيق مطلوب'),
   nameOfIssuingCertificate: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
@@ -70,43 +72,69 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
   const { triggerRefresh } = useEmployeeProfileRefresh();
   const router = useRouter();
 
-  const { data: academicAchievement } = useQuery<AcademicCertificateType[]>({
+  const { data: academicAchievement } = useQuery<AcademicAchievement[]>({
     queryKey: ['academic-achievement-options'],
     queryFn: async () => {
-      const res = await academicCertificateTypeService.getAcademicCertificateTypes();
-      return res?.data?.items || res?.items || [];
+      const res = await academicAchievementService.getAcademicAchievements({ Page: 1, PageSize: 100 });
+      return res?.data?.items || res?.items || (Array.isArray(res?.data) ? res.data : []);
+    }
+  });
+
+  const { data: academicFields } = useQuery<AcademicField[]>({
+    queryKey: ['academic-field-options'],
+    queryFn: async () => {
+      const res = await academicFieldService.getAcademicFields({ Page: 1, PageSize: 100 });
+      return res?.data?.items || res?.items || (Array.isArray(res?.data) ? res.data : []);
+    }
+  });
+
+  const { data: preciseAcademicFields } = useQuery<PreciseAcademicField[]>({
+    queryKey: ['precise-academic-field-options'],
+    queryFn: async () => {
+      const res = await preciseAcademicFieldService.getPreciseAcademicField({ Page: 1, PageSize: 100 });
+      return res?.data?.items || res?.items || (Array.isArray(res?.data) ? res.data : []);
     }
   });
 
   const { data: country } = useQuery<Country[]>({
     queryKey: ['country-options'],
     queryFn: async () => {
-      const res = await countryService.getCountries();
-      return res?.data?.items || res?.items || [];
+      const res = await countryService.getCountries({ Page: 1, PageSize: 100 });
+      return res?.data?.items || res?.items || (Array.isArray(res?.data) ? res.data : []);
     }
   });
 
   const { data: studyType } = useQuery<StudyType[]>({
     queryKey: ['study-type-options'],
     queryFn: async () => {
-      const res = await studyTypeService.getStudyTypes();
-      return res?.data?.items || res?.items || [];
+      const res = await studyTypeService.getStudyTypes({ Page: 1, PageSize: 100 });
+      return res?.data?.items || res?.items || (Array.isArray(res?.data) ? res.data : []);
     }
   });
 
   const countryOptions = (country || []).map((c: Country) => ({
-    label: c.name,
+    label: c.name || '',
     value: c.id
   }));
   
   const studyTypeOptions = (studyType || []).map((s: StudyType) => ({
-    label: s.name,
+    label: s.name || '',
     value: s.id
   }));
   
-  const academicAchievementOptions = (academicAchievement || []).map((a: AcademicCertificateType) => ({
-    label: a.name,
+  const academicAchievementOptions = (academicAchievement || []).map((a: AcademicAchievement) => ({
+    label: a.name || '',
     value: a.id
+  }));
+
+  const academicFieldOptions = (academicFields || []).map((f: AcademicField) => ({
+    label: f.name || '',
+    value: f.id
+  }));
+
+  const preciseAcademicFieldOptions = (preciseAcademicFields || []).map((p: PreciseAcademicField) => ({
+    label: p.name || '',
+    value: p.id
   }));
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -120,8 +148,8 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
       documentSender: '',
       documentSendDate: '',
       academicAchievementId: undefined,
-      academicFieldId: 1,
-      preciseAcademicFieldId: 1,
+      academicFieldId: undefined,
+      preciseAcademicFieldId: undefined,
       nameOfIssuingCertificate: '',
       startDate: '',
       endDate: '',
@@ -140,6 +168,8 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
     if (open && data) {
       const matchedCountry = countryOptions.find(c => c.label === data.countryName)?.value;
       const matchedAcademic = academicAchievementOptions.find(a => a.label === data.academicAchievementName)?.value;
+      const matchedAcademicField = academicFieldOptions.find(f => f.label === data.academicFieldName)?.value;
+      const matchedPreciseAcademicField = preciseAcademicFieldOptions.find(p => p.label === data.preciseAcademicFieldName)?.value;
       const matchedStudyType = studyTypeOptions.find(s => s.label === data.studyTypeName)?.value;
 
       form.reset({
@@ -151,15 +181,15 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
         documentSender: data.documentSender || '',
         documentSendDate: formatDateForInput(data.documentSendDate),
         academicAchievementId: (data as any).academicAchievementId || matchedAcademic || undefined,
-        academicFieldId: (data as any).academicFieldId || 1,
-        preciseAcademicFieldId: (data as any).preciseAcademicFieldId || 1,
+        academicFieldId: (data as any).academicFieldId || matchedAcademicField || undefined,
+        preciseAcademicFieldId: (data as any).preciseAcademicFieldId || matchedPreciseAcademicField || undefined,
         nameOfIssuingCertificate: data.nameOfIssuingCertificate || '',
         startDate: formatDateForInput(data.startDate),
         endDate: formatDateForInput(data.endDate),
         graduationYear: data.graduationYear ? String(data.graduationYear) : '',
         studyTypeId: (data as any).studyTypeId || matchedStudyType || undefined,
         isDuringRecruitment: data.isDuringRecruitment ?? false,
-        isDocumentVerify: data.isDocumentVerify ?? false,
+        isDocumentVerify: (data as any).isDocumentVerify ?? (data as any).isdocumentVerify ?? false,
         isInHiring: (data as any).isInHiring ?? false,
         notes: data.notes || '',
         createBy: '',
@@ -175,8 +205,8 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
         documentSender: '',
         documentSendDate: '',
         academicAchievementId: undefined,
-        academicFieldId: 1,
-        preciseAcademicFieldId: 1,
+        academicFieldId: undefined,
+        preciseAcademicFieldId: undefined,
         nameOfIssuingCertificate: '',
         startDate: '',
         endDate: '',
@@ -190,7 +220,7 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
         lastUpdateBy: ''
       });
     }
-  }, [open, data, employeeId, country, academicAchievement, studyType, form]);
+  }, [open, data, employeeId, country, academicAchievement, academicFields, preciseAcademicFields, studyType, form]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setSubmitting(true);
@@ -407,6 +437,68 @@ const AcademicAchievementForm = ({ data, icon, title, variant, employeeId }: Pro
                         <FormControl>
                           <Input placeholder='جهة منح الشهادة' type='text' {...field} />
                         </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+              </div>
+
+              <div className='grid grid-cols-12 gap-4'>
+                <div className='col-span-6'>
+                  <FormField
+                    control={form.control}
+                    name='academicFieldId'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>التخصص</FormLabel>
+                        <Select
+                          value={field.value ? String(field.value) : ''}
+                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder='اختر التخصص' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {academicFieldOptions?.map((option) => (
+                              <SelectItem key={option.value} value={String(option.value || '')}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+
+                <div className='col-span-6'>
+                  <FormField
+                    control={form.control}
+                    name='preciseAcademicFieldId'
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>التخصص الدقيق</FormLabel>
+                        <Select
+                          value={field.value ? String(field.value) : ''}
+                          onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                        >
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder='اختر التخصص الدقيق' />
+                            </SelectTrigger>
+                          </FormControl>
+                          <SelectContent>
+                            {preciseAcademicFieldOptions?.map((option) => (
+                              <SelectItem key={option.value} value={String(option.value || '')}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                         <FormMessage />
                       </FormItem>
                     )}

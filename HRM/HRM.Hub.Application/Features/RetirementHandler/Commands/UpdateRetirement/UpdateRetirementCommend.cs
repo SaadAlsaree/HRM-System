@@ -1,4 +1,6 @@
 using HRM.Hub.Application.Helper;
+using MediatR;
+using System;
 
 namespace HRM.Hub.Application.Features.RetirementHandler.Commands.UpdateRetirement;
 
@@ -19,12 +21,9 @@ public class UpdateRetirementCommend : IRequest<Response<bool>>
     public Guid? EmployeePositionId { get; set; }
     public DateTime? EndDateOfService { get; set; }
     public DateTime? Birthdate { get; set; }
-    public int RetirementDate { get; set; }
+    public int? RetirementDate { get; set; }
     public string AdministrativeOrderNo { get; set; }
-    public DateTime AdministrativeOrderDate { get; set; }
+    public DateTime? AdministrativeOrderDate { get; set; }
     public bool IsPoliticallyDismissed { get; set; }
     public string Note { get; set; }
-
-
-
 }

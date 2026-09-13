@@ -80,24 +80,43 @@ const EditJobTitleForm = ({ data, icon, title, variant }: Props) => {
     const router = useRouter();
 
     useEffect(() => {
+        if (open) {
             getJobTitleList();
             getJobDescriptionList();
-        }, []);
+            if (data) {
+                form.reset({
+                    employeeId: data.employeeId || '',
+                    newJobTitleId: data.newJobTitleId,
+                    newJobDescriptionId: data.newJobDescriptionId,
+                    orderNo: data.orderNo || '',
+                    orderDate: data.orderDate ? data.orderDate.split('T')[0] : '',
+                    note: data.note || '',
+                });
+            } else {
+                form.reset({
+                    employeeId: '',
+                    newJobTitleId: undefined,
+                    newJobDescriptionId: undefined,
+                    orderNo: '',
+                    orderDate: '',
+                    note: '',
+                });
+                setSelectedUser(null);
+            }
+        }
+    }, [open, data]);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
             employeeId: data?.employeeId ?? '',
-            newJobTitleId: data?.newJobTitleId ,
+            newJobTitleId: data?.newJobTitleId,
             newJobDescriptionId: data?.newJobDescriptionId,
             orderNo: data?.orderNo ?? '',
-            orderDate: data?.orderDate ?? '',
+            orderDate: data?.orderDate ? data.orderDate.split('T')[0] : '',
             note: data?.note ?? '',
-           
         },
     });
-
-
 
    async function onSubmit(values: z.infer<typeof formSchema>) {
              setSubmitting(true);
@@ -106,20 +125,21 @@ const EditJobTitleForm = ({ data, icon, title, variant }: Props) => {
                    const payload = {
                       ...values,
                       employeeId: selectedUser?.employeeId ?? data.employeeId ?? '',
-                      oldJobTitleId: selectedUser?.jobTitleId,
-                      oldJobDescriptionId: selectedUser?.jobDescriptionId,
+                      oldJobTitleId: selectedUser?.jobTitleId ?? data.oldJobTitleId ?? undefined,
+                      oldJobDescriptionId: selectedUser?.jobDescriptionId ?? data.oldJobDescriptionId ?? undefined,
                       newJobTitleId: values.newJobTitleId,
                       newJobDescriptionId: values.newJobDescriptionId,
                       orderNo: values.orderNo,
                       orderDate: values.orderDate,
                       note: values.note
                    };
-                   await changeJobTitlesService.updateChangeJobTitles(data.id as string, payload);
-                   toast(
-                      <pre className=' w-[340px] rounded-md'>
-                         <h1 className='text-xl'>تم تعديل البيانات بنجاح .</h1>
-                      </pre>
-                   );
+                   const res = await changeJobTitlesService.updateChangeJobTitles(data.id as string, payload);
+                   if (res?.succeeded === false) {
+                      toast.error(res?.message || 'حدث خطأ أثناء تعديل البيانات');
+                      setSubmitting(false);
+                      return;
+                   }
+                   toast.success('تم تعديل البيانات بنجاح .');
                    form.reset();
                    setSubmitting(false);
                    setSelectedUser(null);
@@ -129,34 +149,35 @@ const EditJobTitleForm = ({ data, icon, title, variant }: Props) => {
                   const payload = {
                      ...values,
                      employeeId: selectedUser?.employeeId ?? '',
-                     oldJobTitleId: selectedUser?.jobTitleId,
-                     oldJobDescriptionId: selectedUser?.jobDescriptionId,
+                     oldJobTitleId: selectedUser?.jobTitleId ?? undefined,
+                     oldJobDescriptionId: selectedUser?.jobDescriptionId ?? undefined,
                      newJobTitleId: values.newJobTitleId,
                      newJobDescriptionId: values.newJobDescriptionId,
                      orderNo: values.orderNo,
                      orderDate: values.orderDate,
                      note: values.note
                   };
-                   if (selectedUser === null) {
+                   if (selectedUser === null && !values.employeeId) {
                       toast.error('يجب اختيار موظف');
                       setSubmitting(false);
                       return;
                    }
-                   await changeJobTitlesService.createChangeJobTitles(payload);
-                   
-                   toast(
-                      <pre className=' w-[340px] rounded-md'>
-                         <h1 className='text-xl'>تم حفظ البيانات بنجاح .</h1>
-                      </pre>
-                   );
+                   const res = await changeJobTitlesService.createChangeJobTitles(payload);
+                   if (res?.succeeded === false) {
+                      toast.error(res?.message || 'حدث خطأ أثناء حفظ البيانات');
+                      setSubmitting(false);
+                      return;
+                   }
+                   toast.success('تم حفظ البيانات بنجاح .');
                    form.reset();
                    setSubmitting(false);
+                   setSelectedUser(null);
                    router.refresh();
                    setOpen(false);
                 }
              } catch (error) {
                 console.error('Form submission error', error);
-                toast.error('Failed to submit the form. Please try again.');
+                toast.error('حدث خطأ أثناء حفظ البيانات. يرجى المحاولة مرة أخرى.');
                 setSelectedUser(null);
                 form.reset();
                 setSubmitting(false);
@@ -240,7 +261,7 @@ const EditJobTitleForm = ({ data, icon, title, variant }: Props) => {
                                     render={({ field }) => (
                                         <FormItem>
                                         <FormLabel>العنوان الوظيفي الجديد</FormLabel>
-                                        <Select onValueChange={field.onChange}>
+                                        <Select value={field.value !== undefined && field.value !== null ? String(field.value) : ''} onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder='العنوان الوظيفي الجديد' />
@@ -268,7 +289,7 @@ const EditJobTitleForm = ({ data, icon, title, variant }: Props) => {
                                     render={({ field }) => (
                                         <FormItem>
                                         <FormLabel>الوصف الوظيفي الجديد</FormLabel>
-                                        <Select onValueChange={field.onChange}>
+                                        <Select value={field.value !== undefined && field.value !== null ? String(field.value) : ''} onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder='الوصف الوظيفي الجديد' />

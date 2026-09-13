@@ -389,6 +389,10 @@ const data = {
                url: '/system-settings/book-type'
             },
             {
+               title: 'نوع القدم',
+               url: '/system-settings/type-of-seniority'
+            },
+            {
                title: 'نوع مستمسكات الموظف',
                url: '/system-settings/employee-document-type'
             },

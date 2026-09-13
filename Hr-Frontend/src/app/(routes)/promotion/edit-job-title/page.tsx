@@ -41,7 +41,7 @@ const EditJobTitlePage = async ({ searchParams }: Props) => {
    const Page = parseInt(searchParams.page) || 1;
    const PageSize = parseInt(searchParams.PageSize) || 10;
 
-   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/ChangeJobTitle', 'GET', { params: { Page, PageSize } });
+   const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>('/ChangeJobTitles', 'GET', { params: { Page, PageSize } });
    const editJobTitleData = (data?.items ?? data?.data?.items) ?? [];
    const totalCount = (data?.totalCount ?? data?.data?.totalCount) ?? 0;
 

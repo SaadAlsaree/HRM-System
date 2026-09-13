@@ -66,12 +66,12 @@ const RetirementTable = ({ columns, retirementList }: Props) => {
                         <TableCell>{item?.jobDegreeName}</TableCell>
                         <TableCell>{item?.jobCategoryName}</TableCell>
                         <TableCell>{item?.jobTitleName}</TableCell>
-                        <TableCell>{item?.decisionToFixAge}</TableCell>
-                        <TableCell>{item?.endDateOfService}</TableCell>
-                        <TableCell>{item?.birthdate}</TableCell>
-                        <TableCell>{item?.retirementDate}</TableCell>
-                        <TableCell>{item?.administrativeOrderNo}</TableCell>
-                        <TableCell>{item?.administrativeOrderDate?.split('T', 1)}</TableCell>
+                        <TableCell>{item?.decisionToFixAge || '----'}</TableCell>
+                        <TableCell>{item?.endDateOfService ? item.endDateOfService.split('T')[0] : '----'}</TableCell>
+                        <TableCell>{item?.birthdate ? item.birthdate.split('T')[0] : '----'}</TableCell>
+                        <TableCell>{item?.retirementDate ?? '----'}</TableCell>
+                        <TableCell>{item?.administrativeOrderNo || '----'}</TableCell>
+                        <TableCell>{item?.administrativeOrderDate ? item.administrativeOrderDate.split('T')[0] : '----'}</TableCell>
                         <TableCell>{item?.isPoliticallyDismissed ? 'نعم' : 'لا'}</TableCell>
                         <TableCell>
                            <SelectStatus id={item?.id as string} status={item?.status?.toString()} onChange={handleStatusChange} />

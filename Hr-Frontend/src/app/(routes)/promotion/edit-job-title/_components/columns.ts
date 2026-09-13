@@ -1,7 +1,7 @@
 export const columnsEditJobTitle: { label: string; value: string; className?: string }[] = [
     { label: 'الرقم الوظيفي', value: 'jobCode', className: 'font-bold' },
     { label: 'اسم الموظف', value: 'fullName', className: 'font-bold' },
-    { label: 'رقم الاضبارة', value: 'typeOfServiceId', className: 'font-bold' },
+    { label: 'رقم الاضبارة', value: 'lotNumber', className: 'font-bold' },
     { label: "العنوان الوظيفي السابق", value: 'oldJobTitleName', className: 'font-bold' },
     { label: "العنوان الوظيفي الجديد", value: 'newJobTitleName', className: 'font-bold' },
     { label: "الوصف الوظيفي السابق", value: 'oldJobDescriptionName', className: 'font-bold' },

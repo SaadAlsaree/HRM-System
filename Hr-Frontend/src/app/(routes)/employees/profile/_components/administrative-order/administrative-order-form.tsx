@@ -15,8 +15,6 @@ import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import Spinner from '@/components/spinner';
 import { IAdministrativeOrder } from '.';
-import { DatetimePicker } from '@/components/ui/datetime-picker';
-import { formatDate } from '@/utils/format-date';
 import { administrativeOrderService } from '@/services/administrative-order.service';
 import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
@@ -26,6 +24,13 @@ const administrativeOrderTypeOptions = [
    { label: 'الأمر الأداري بالمباشرة', value: 3 },
    { label: 'الأمر الأداري بتثبيت العمر', value: 4 }
 ];
+
+const formatDateForInput = (dateString?: string | null) => {
+   if (!dateString) return '';
+   const date = new Date(dateString);
+   if (Number.isNaN(date.getTime())) return dateString.split('T')[0] || dateString;
+   return date.toISOString().split('T')[0];
+};
 
 const formSchema = z.object({
    administrativeOrderType: z.coerce.number(),
@@ -58,7 +63,7 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
          administrativeOrderType: data?.administrativeOrderType,
          bookTitle: data?.bookTitle ?? '',
          orderNo: data?.orderNo ?? '',
-         orderDate: data?.orderDate,
+         orderDate: formatDateForInput(data?.orderDate),
          CreateBy: data?.CreateBy ?? '',
          lastUpdateBy: data?.lastUpdateBy ?? ''
       }
@@ -71,7 +76,7 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
             administrativeOrderType: data?.administrativeOrderType,
             bookTitle: data?.bookTitle ?? '',
             orderNo: data?.orderNo ?? '',
-            orderDate: data?.orderDate ? data.orderDate.split('T')[0] : '',
+            orderDate: formatDateForInput(data?.orderDate),
             CreateBy: data?.CreateBy ?? '',
             lastUpdateBy: data?.lastUpdateBy ?? ''
          });
@@ -91,7 +96,7 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
    async function onSubmit(values: z.infer<typeof formSchema>) {
       setSubmitting(true);
       try {
-         const formattedDate = formatDate(new Date(values.orderDate));
+         const formattedDate = values.orderDate ? (values.orderDate.includes('T') ? values.orderDate.split('T')[0] : values.orderDate) : '';
          if (data) {
             const dataToUpdate = {
                orderNo: values.orderNo,
@@ -108,11 +113,14 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
             refresh();
             router.refresh();
          } else {
-            values.employeeId = employeeId;
-            values.orderDate = formattedDate;
-            values.lastUpdateBy = undefined;
-            values.CreateBy = employeeId;
-            await administrativeOrderService.createAdministrativeOrder(values);
+            const dataToCreate = {
+               ...values,
+               employeeId: employeeId,
+               orderDate: formattedDate,
+               lastUpdateBy: undefined,
+               CreateBy: employeeId
+            };
+            await administrativeOrderService.createAdministrativeOrder(dataToCreate);
 
             toast.success('تم حفظ البيانات بنجاح.');
             form.reset();
@@ -159,10 +167,13 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
                               render={({ field }) => (
                                  <FormItem>
                                     <FormLabel>نوع الأمر</FormLabel>
-                                    <Select onValueChange={field.onChange} defaultValue={field?.value?.toString()}>
+                                    <Select
+                                       onValueChange={(val) => field.onChange(val ? Number(val) : undefined)}
+                                       value={field?.value !== undefined && field?.value !== null ? field.value.toString() : ''}
+                                    >
                                        <FormControl>
                                           <SelectTrigger>
-                                             <SelectValue placeholder='' />
+                                             <SelectValue placeholder='اختر نوع الأمر' />
                                           </SelectTrigger>
                                        </FormControl>
                                        <SelectContent>
@@ -216,15 +227,16 @@ const AdministrativeOrderForm = ({ data, icon, title, variant, employeeId }: Pro
                            />
                         </div>
 
-                        <div className='col-span-6 mt-2.5'>
+                        <div className='col-span-6'>
                            <FormField
                               control={form.control}
                               name='orderDate'
                               render={({ field }) => (
                                  <FormItem className='flex flex-col'>
                                     <FormLabel>تاريخ التعين</FormLabel>
-                                    <DatetimePicker {...field} value={new Date(field.value)} format={[['days', 'months', 'years']]} />
-
+                                    <FormControl>
+                                       <Input placeholder='' type='date' {...field} value={field.value || ''} />
+                                    </FormControl>
                                     <FormMessage />
                                  </FormItem>
                               )}

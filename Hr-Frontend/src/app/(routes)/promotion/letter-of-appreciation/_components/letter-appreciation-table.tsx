@@ -22,7 +22,7 @@ const LetterOfAppreciationTable = ({ letterOfAppreciationData, columns }: Props)
 
    const handleStatusChange = async (value: string | number | null, id: string | number | null) => {
       try {
-         const response = await thanksSeniorityService.patchThanksSeniority({ id: Number(id) || 0, statusId: Number(value) });
+         const response = await thanksSeniorityService.patchThanksSeniority({ id: (id as string) || '', statusId: Number(value) });
          toast.success(response?.message || 'تم تحديث الحالة بنجاح.');
          router.refresh();
       } catch (error) {
@@ -46,7 +46,14 @@ const LetterOfAppreciationTable = ({ letterOfAppreciationData, columns }: Props)
             </TableRow>
          </TableHeader>
          <TableBody>
-            {letterOfAppreciationData.map((item) => (
+            {(!letterOfAppreciationData || letterOfAppreciationData.length === 0) && (
+               <TableRow>
+                  <TableCell colSpan={columns.length + 1} className='text-center py-6 text-muted-foreground'>
+                     لا توجد بيانات لكتب الشكر والقدم
+                  </TableCell>
+               </TableRow>
+            )}
+            {letterOfAppreciationData?.map((item) => (
                <TableRow key={item.id}>
                   <TableCell>{item.jobCode}</TableCell>
                   <TableCell>{item.fullName}</TableCell>
@@ -76,8 +83,10 @@ const LetterOfAppreciationTable = ({ letterOfAppreciationData, columns }: Props)
                      </Popover>
                   </TableCell>
                   <TableCell>
-                     <div className='flex items-center gap-2'>
-                        <SelectStatus id={item.id} status={item.statusName} onChange={handleStatusChange} />
+                     <SelectStatus id={item.id} status={item.statusName} onChange={handleStatusChange} />
+                  </TableCell>
+                  <TableCell>
+                     <div className='flex items-center justify-center gap-2'>
                         <LetterOfAppreciationForm title='' icon={<Settings2 className='h-4 w-4' />} data={item} variant='ghost' />
                      </div>
                   </TableCell>

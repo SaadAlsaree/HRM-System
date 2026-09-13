@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.ContactInformationHandlers.Queries.GetContactInformationById;
+namespace HRM.Hub.Application.Features.ContactInformationHandlers.Queries.GetContactInformationById;
 
 public class GetContactInformationByIdHandler : GetByIdHandler<ContactInformation, GetContactInformationByIdViewModel, GetContactInformationByIdQuery>, IRequestHandler<GetContactInformationByIdQuery, Response<GetContactInformationByIdViewModel>>
 {
@@ -10,15 +10,14 @@ public class GetContactInformationByIdHandler : GetByIdHandler<ContactInformatio
     {
         Id = z.Id,
         Notes = z.Notes,
-        FullName = z.Employee.FullName,
+        FullName = z.Employee != null ? z.Employee.FullName : null,
         EmployeeId = z.EmployeeId,
-        JobCode = z.Employee.JobCode,
+        JobCode = z.Employee != null ? z.Employee.JobCode : null,
         Status = z.StatusId,
         ContactName = z.ContactName,
         LevelOfRelationshipId = z.LevelOfRelationshipId,
-        LevelOfRelationshipName = z.LevelOfRelationship.Name,
+        LevelOfRelationshipName = z.LevelOfRelationship != null ? z.LevelOfRelationship.Name : null,
         PhoneNumber = z.PhoneNumber,
-
     };
     public async Task<Response<GetContactInformationByIdViewModel>> Handle(GetContactInformationByIdQuery request, CancellationToken cancellationToken)
     {

@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.ThanksAndSeniorityHandlers.Queries.GetThanksAndSeniority;
+namespace HRM.Hub.Application.Features.ThanksAndSeniorityHandlers.Queries.GetThanksAndSeniority;
 
 public class GetThanksAndSeniorityViewModel:BaseViewModel<Guid>
 {

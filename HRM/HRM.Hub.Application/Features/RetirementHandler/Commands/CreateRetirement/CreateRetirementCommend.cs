@@ -1,4 +1,7 @@
 using HRM.Hub.Application.Helper;
+using HRM.Hub.Domain.Common.Enums;
+using MediatR;
+using System;
 
 namespace HRM.Hub.Application.Features.RetirementHandler.Commands.CreateRetirement;
 
@@ -17,9 +20,9 @@ public class CreateRetirementCommend : IRequest<Response<bool>>
     public Guid? EmployeePositionId { get; set; }
     public DateTime? EndDateOfService { get; set; }
     public DateTime? Birthdate { get; set; }
-    public int RetirementDate { get; set; }
+    public int? RetirementDate { get; set; }
     public string AdministrativeOrderNo { get; set; }
-    public DateTime AdministrativeOrderDate { get; set; }
+    public DateTime? AdministrativeOrderDate { get; set; }
     public bool IsPoliticallyDismissed { get; set; }
     public string Note { get; set; }
     [SwaggerIgnore] public Status Status { get; set; } = Status.Active;

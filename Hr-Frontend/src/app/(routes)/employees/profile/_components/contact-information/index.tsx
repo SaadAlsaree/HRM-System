@@ -15,6 +15,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import ContactInformationTable from './contact-information-table';
 import { columnsContactInformation } from './columns';
 
+import { useParams } from 'next/navigation';
 import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
 export interface IContactInformation {
@@ -33,9 +34,11 @@ export interface IContactInformation {
 }
 
 type Props = {
-   employeeId: string;
+   employeeId?: string;
 };
 const ContactInformationPage = ({ employeeId }: Props) => {
+   const params = useParams();
+   const effectiveEmployeeId = employeeId || (params?.id as string) || '';
    const [data, setData] = useState<IContactInformation[] | null>(null);
    const [loading, setLoading] = useState(true);
    const [error, setError] = useState<string | undefined>();
@@ -44,17 +47,18 @@ const ContactInformationPage = ({ employeeId }: Props) => {
    const { refreshKey } = useEmployeeProfileRefresh();
 
    useEffect(() => {
-      if (!employeeId) {
+      if (!effectiveEmployeeId) {
          setData([]);
          setLoading(false);
          return;
       }
       setLoading(true);
       contactInformationService
-         .getContactInformation({ employeeId, Page: currentPage, PageSize: 20 })
+         .getContactInformation({ employeeId: effectiveEmployeeId, Page: currentPage, PageSize: 20 })
          .then((response) => {
-            setData(response?.data?.items || []);
-            setTotalPages(response?.data?.totalPages || 0);
+            const items = response?.data?.items || response?.items || (Array.isArray(response?.data) ? response.data : []);
+            setData(Array.isArray(items) ? items : []);
+            setTotalPages(response?.data?.totalPages || response?.totalPages || 0);
             setError(undefined);
          })
          .catch((err) => {
@@ -63,7 +67,7 @@ const ContactInformationPage = ({ employeeId }: Props) => {
          .finally(() => {
             setLoading(false);
          });
-   }, [currentPage, employeeId, refreshKey]);
+   }, [currentPage, effectiveEmployeeId, refreshKey]);
 
    const handlePageChange = (page: number) => {
       setCurrentPage(page);
@@ -71,7 +75,7 @@ const ContactInformationPage = ({ employeeId }: Props) => {
    return (
       <div className='flex flex-col border rounded-lg bg-white dark:bg-gray-900 gap-2'>
          <div className='w-full'>
-            <ContactInformationToolbar employeeId={employeeId} />
+            <ContactInformationToolbar employeeId={effectiveEmployeeId} />
          </div>
          <Separator />
          <div className='w-full'>
@@ -83,7 +87,7 @@ const ContactInformationPage = ({ employeeId }: Props) => {
                   <Skeleton className='h-12 w-full mb-2' />
                </div>
             )}
-            <ContactInformationTable data={(data || []) as IContactInformation[]} columns={columnsContactInformation} employeeId={employeeId} />
+            <ContactInformationTable data={(data || []) as IContactInformation[]} columns={columnsContactInformation} employeeId={effectiveEmployeeId} />
             <Separator />
             {/* Pagination */}
             <div className='p-4'>

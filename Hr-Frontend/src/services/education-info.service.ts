@@ -26,10 +26,10 @@ export interface EducationInfoPayload {
     isInHiring?: boolean;
 }
 
-export interface UpdateEducationInfoPayload {
-    notes?: string;
+export interface UpdateEducationInfoPayload extends EducationInfoPayload {
     status?: Status;
 }
+
 
 interface EducationInfoParams extends IPagination {
     employeeId?: string;

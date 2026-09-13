@@ -11,6 +11,8 @@ import { AlignJustify, Edit2 } from 'lucide-react';
 import AcademicAchievementForm from './academic-achievement-form';
 import { useEmployeeProfileRefresh } from '@/hooks/use-employee-profile-refresh';
 
+import { useParams } from 'next/navigation';
+
 export interface IEducationInfo {
    id?: string;
    employeeId?: string;
@@ -43,6 +45,8 @@ type Props = {
 };
 
 const AcademicAchievementTable = ({ employeeId }: Props) => {
+   const params = useParams();
+   const effectiveEmployeeId = employeeId || (params?.id as string) || '';
    const [academicAchievements, setAcademicAchievements] = useState<IEducationInfo[]>([]);
    const [loading, setLoading] = useState(false);
    const [error, setError] = useState<string | null>(null);
@@ -50,14 +54,15 @@ const AcademicAchievementTable = ({ employeeId }: Props) => {
 
    useEffect(() => {
       const fetchAcademicAchievements = async () => {
-         if (!employeeId) {
+         if (!effectiveEmployeeId) {
             setAcademicAchievements([]);
             return;
          }
          setLoading(true);
          try {
-            const response = await educationInfoService.getEducationInfo({ employeeId });
-            setAcademicAchievements(response?.data?.items || []);
+            const response = await educationInfoService.getEducationInfo({ employeeId: effectiveEmployeeId });
+            const items = response?.data?.items || response?.items || (Array.isArray(response?.data) ? response.data : []);
+            setAcademicAchievements(Array.isArray(items) ? items : []);
             setError(null);
          } catch (err) {
             console.error('Error fetching academic achievements:', err);
@@ -67,7 +72,7 @@ const AcademicAchievementTable = ({ employeeId }: Props) => {
          }
       };
       fetchAcademicAchievements();
-   }, [employeeId, refreshKey]);
+   }, [effectiveEmployeeId, refreshKey]);
 
    return (
       <div className='border rounded-lg p-2 bg-white dark:bg-gray-900'>

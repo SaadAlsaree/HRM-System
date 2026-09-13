@@ -24,19 +24,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { typeOfSeniorityServiceClient } from '@/services/system-settings/type-of-seniority.service';
 
 const formSchema = z.object({
-    employeeId: z.string().min(1, 'الرقم الوظيفي مطلوب'),
-    fullName: z.string().min(1, 'اسم الموظف مطلوب'),
-    typeOfBook: z.string().min(1, 'الحقل مطلوب'),
-    typeOfSeniority: z.string().min(1, 'الحقل مطلوب'),
-    bookNo: z.string().min(1, 'الحقل مطلوب'),
-    dateOfBook: z.string().min(1, 'الحقل مطلوب'),
-    bookIssueName: z.string().min(1, 'الحقل مطلوب'),
-    reason: z.string().min(1, 'الحقل مطلوب'),
-    calculationDate: z.string().min(1, 'الحقل مطلوب'),
-    countOfMonths: z.string().min(1, 'الحقل مطلوب'),
+    employeeId: z.coerce.string().min(1, 'الرقم الوظيفي مطلوب'),
+    fullName: z.coerce.string().min(1, 'اسم الموظف مطلوب'),
+    typeOfBook: z.coerce.string().min(1, 'الحقل مطلوب'),
+    typeOfSeniority: z.coerce.string().min(1, 'الحقل مطلوب'),
+    bookNo: z.coerce.string().min(1, 'الحقل مطلوب'),
+    dateOfBook: z.coerce.string().min(1, 'الحقل مطلوب'),
+    bookIssueName: z.coerce.string().min(1, 'الحقل مطلوب'),
+    reason: z.coerce.string().min(1, 'الحقل مطلوب'),
+    calculationDate: z.coerce.string().min(1, 'الحقل مطلوب'),
+    countOfMonths: z.coerce.string().min(1, 'الحقل مطلوب'),
     isDocumentVerify: z.boolean().optional().default(false),
-    status: z.string().optional(),
-    note: z.string().optional(),
+    status: z.coerce.string().optional(),
+    note: z.coerce.string().optional(),
 });
 
 type Props = {
@@ -50,116 +50,136 @@ const LetterOfAppreciationForm = ({ data, icon, title, variant }: Props) => {
     const [open, setOpen] = useState(false);
     const [isSubmitting, setSubmitting] = useState(false);
     const [selectedUser, setSelectedUser] = useState<IEmployeeSearch | null>(null);
-     const [bookTypeList, setBookTypeList] = useState<IselectType[]>([]);
-     const [seniorityTypeList, setSeniorityTypeList] = useState<IselectType[]>([]);
+    const [bookTypeList, setBookTypeList] = useState<IselectType[]>([]);
+    const [seniorityTypeList, setSeniorityTypeList] = useState<IselectType[]>([]);
     
-        const getBooksType = async () => {
-            const categoryList = await typeOfBookService.getTypeOfBooks({Page: 1, PageSize: 100});
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
-                {
-                    label: item.name,
-                    value: item.id.toString()
-                }
-            ))
-            setBookTypeList(newCategoryList);
-        }
-        const getSeniorityType = async () => {
-            const categoryList = await typeOfSeniorityServiceClient.getTypeOfSeniority({Page: 1, PageSize: 100});
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
-                {
-                    label: item.name,
-                    value: item.id.toString()
-                }
-            ))
-            setSeniorityTypeList(newCategoryList);
-        }
+    const getBooksType = async () => {
+        const categoryList = await typeOfBookService.getTypeOfBooks({Page: 1, PageSize: 100});
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
+            {
+                label: item.name,
+                value: item.id.toString()
+            }
+        ))
+        setBookTypeList(newCategoryList);
+    }
+    const getSeniorityType = async () => {
+        const categoryList = await typeOfSeniorityServiceClient.getTypeOfSeniority({Page: 1, PageSize: 100});
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const newCategoryList = (categoryList?.items ?? categoryList?.data?.items ?? []).map((item: any) => (
+            {
+                label: item.name,
+                value: item.id.toString()
+            }
+        ))
+        setSeniorityTypeList(newCategoryList);
+    }
     
-    
-       const handleUserSelect = (user: IEmployeeSearch | null) => {
-          setSelectedUser(user);
-          form.setValue('employeeId', user?.employeeId ?? '');
-          form.setValue('fullName', user?.fullName ?? '');
-       };
+    const handleUserSelect = (user: IEmployeeSearch | null) => {
+        setSelectedUser(user);
+        form.setValue('employeeId', user?.employeeId ?? '');
+        form.setValue('fullName', user?.fullName ?? '');
+    };
     const router = useRouter();
-    useEffect(() => {
-            getBooksType();
-            getSeniorityType();
-        }, []);
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
         defaultValues: {
-            employeeId: data?.employeeId ?? '',
-            fullName: data?.fullName ?? '',
-            typeOfBook: data?.typeOfBook??'',
-            typeOfSeniority: data?.typeOfSeniority??'',
-            bookNo: data?.bookNo??'',
-            dateOfBook: data?.dateOfBook??'',
-            bookIssueName: data?.bookIssueName??'',
-            reason: data?.reason??'',
-            calculationDate: data?.calculationDate??'',
-            countOfMonths: data?.countOfMonths?? '0',
-            isDocumentVerify: data?.isDocumentVerify??false,
-            status: data?.statusName ?? '',
-            note: data?.note ?? '',
-           
+            employeeId: data?.employeeId ? String(data.employeeId) : '',
+            fullName: data?.fullName ? String(data.fullName) : '',
+            typeOfBook: data?.typeOfBook !== undefined && data?.typeOfBook !== null ? String(data.typeOfBook) : '',
+            typeOfSeniority: data?.typeOfSeniority !== undefined && data?.typeOfSeniority !== null ? String(data.typeOfSeniority) : '',
+            bookNo: data?.bookNo ? String(data.bookNo) : '',
+            dateOfBook: data?.dateOfBook ? String(data.dateOfBook) : '',
+            bookIssueName: data?.bookIssueName ? String(data.bookIssueName) : '',
+            reason: data?.reason ? String(data.reason) : '',
+            calculationDate: data?.calculationDate ? String(data.calculationDate) : '',
+            countOfMonths: data?.countOfMonths !== undefined && data?.countOfMonths !== null ? String(data.countOfMonths) : '0',
+            isDocumentVerify: data?.isDocumentVerify ?? false,
+            status: data?.statusName ? String(data.statusName) : '',
+            note: data?.note ? String(data.note) : '',
         },
     });
 
-        async function onSubmit(values: z.infer<typeof formSchema>) {
+    useEffect(() => {
+        if (open) {
+            getBooksType();
+            getSeniorityType();
+            if (data) {
+                form.reset({
+                    employeeId: data.employeeId ? String(data.employeeId) : '',
+                    fullName: data.fullName ? String(data.fullName) : '',
+                    typeOfBook: data.typeOfBook !== undefined && data.typeOfBook !== null ? String(data.typeOfBook) : '',
+                    typeOfSeniority: data.typeOfSeniority !== undefined && data.typeOfSeniority !== null ? String(data.typeOfSeniority) : '',
+                    bookNo: data.bookNo ? String(data.bookNo) : '',
+                    dateOfBook: data.dateOfBook ? String(data.dateOfBook) : '',
+                    bookIssueName: data.bookIssueName ? String(data.bookIssueName) : '',
+                    reason: data.reason ? String(data.reason) : '',
+                    calculationDate: data.calculationDate ? String(data.calculationDate) : '',
+                    countOfMonths: data.countOfMonths !== undefined && data.countOfMonths !== null ? String(data.countOfMonths) : '0',
+                    isDocumentVerify: data.isDocumentVerify ?? false,
+                    status: data.statusName ? String(data.statusName) : '',
+                    note: data.note ? String(data.note) : '',
+                });
+            }
+        }
+    }, [open, data]);
+
+    async function onSubmit(values: z.infer<typeof formSchema>) {
               setSubmitting(true);
               try {
                  if (data) {
                     const payload = {
                        ...values,
                        employeeId: [selectedUser?.employeeId ?? data.employeeId ?? ''],
+                       createType: 1,
                        typeOfBook: parseInt(values.typeOfBook),
                        typeOfSeniority: parseInt(values.typeOfSeniority),
                        countOfMonths: parseInt(values.countOfMonths),
                     };
-                    await thanksSeniorityService.updateThanksSeniority(data.id as string, payload);
-                    console.log('payload', payload);
-                    toast(
-                       <pre className=' w-[340px] rounded-md'>
-                          <h1 className='text-xl'>تم تعديل البيانات بنجاح .</h1>
-                       </pre>
-                    );
+                    const res = await thanksSeniorityService.updateThanksSeniority(data.id as string, payload);
+                    if (res?.succeeded === false) {
+                       toast.error(res?.message || 'حدث خطأ أثناء تعديل البيانات');
+                       setSubmitting(false);
+                       return;
+                    }
+                    toast.success('تم تعديل البيانات بنجاح .');
                     form.reset();
                     setSubmitting(false);
                     setSelectedUser(null);
                     router.refresh();
                     setOpen(false);
                  } else {
-                    const payload = {
-                       ...values,
-                       employeeId: [selectedUser?.employeeId ?? ''],
-                       typeOfBook: parseInt(values.typeOfBook),
-                       typeOfSeniority: parseInt(values.typeOfSeniority),
-                       countOfMonths: parseInt(values.countOfMonths),
-
-                    };
-                    if (selectedUser === null) {
+                    if (selectedUser === null && !values.employeeId) {
                        toast.error('يجب اختيار موظف');
                        setSubmitting(false);
                        return;
                     }
-                    await thanksSeniorityService.createThanksSeniority(payload);
-                    console.log('payload', payload);
-                    toast(
-                       <pre className=' w-[340px] rounded-md'>
-                          <h1 className='text-xl'>تم حفظ البيانات بنجاح .</h1>
-                       </pre>
-                    );
+                    const payload = {
+                       ...values,
+                       employeeId: [selectedUser?.employeeId || values.employeeId],
+                       createType: 1,
+                       typeOfBook: parseInt(values.typeOfBook),
+                       typeOfSeniority: parseInt(values.typeOfSeniority),
+                       countOfMonths: parseInt(values.countOfMonths),
+                    };
+                    const res = await thanksSeniorityService.createThanksSeniority(payload);
+                    if (res?.succeeded === false) {
+                       toast.error(res?.message || 'حدث خطأ أثناء حفظ البيانات');
+                       setSubmitting(false);
+                       return;
+                    }
+                    toast.success('تم حفظ البيانات بنجاح .');
                     form.reset();
                     setSubmitting(false);
+                    setSelectedUser(null);
                     router.refresh();
                     setOpen(false);
                  }
               } catch (error) {
                  console.error('Form submission error', error);
-                 toast.error('Failed to submit the form. Please try again.');
+                 toast.error('حدث خطأ أثناء حفظ البيانات. يرجى المحاولة مرة أخرى.');
                  setSelectedUser(null);
                  form.reset();
                  setSubmitting(false);
@@ -226,7 +246,7 @@ const LetterOfAppreciationForm = ({ data, icon, title, variant }: Props) => {
                                     render={({ field }) => (
                                         <FormItem>
                                         <FormLabel>نوع الكتاب</FormLabel>
-                                        <Select onValueChange={field.onChange}>
+                                        <Select value={field.value ? String(field.value) : ''} onValueChange={field.onChange}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder='نوع الكتاب' />
@@ -254,7 +274,7 @@ const LetterOfAppreciationForm = ({ data, icon, title, variant }: Props) => {
                                     render={({ field }) => (
                                         <FormItem>
                                         <FormLabel>نوع القدم</FormLabel>
-                                        <Select onValueChange={field.onChange}>
+                                        <Select value={field.value ? String(field.value) : ''} onValueChange={field.onChange}>
                                             <FormControl>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder='نوع القدم' />

@@ -7,8 +7,9 @@ type Props = {
    employee?: EmployeeList;
 };
 const EmployeeCard = ({ employee }: Props) => {
+   const profileId = employee?.id || employee?.employeeId || '';
    return (
-      <Link href={`/employees/profile/${employee?.employeeId}`}>
+      <Link href={`/employees/profile/${profileId}`}>
          <div className='flex items-center justify-center border rounded-lg bg-white dark:bg-gray-900 w-[300px] transition-colors duration-300 hover:shadow-md active:shadow-none cursor-pointer'>
             <div className='flex flex-col items-center justify-center p-4'>
                <div className='flex items-center justify-center w-24 h-24 rounded-full bg-gray-200 dark:bg-gray-800'>

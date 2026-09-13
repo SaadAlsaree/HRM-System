@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.PromotionHandlers.Queries.GetBonusesAndPromotions;
+namespace HRM.Hub.Application.Features.PromotionHandlers.Queries.GetBonusesAndPromotions;
 public class GetBonusesAndPromotionsHandler : IRequestHandler<GetBonusesAndPromotionsQuery, Response<PagedResult<GetBonusesAndPromotionsViewModel>>>
 
 {
@@ -53,7 +53,7 @@ public class GetBonusesAndPromotionsHandler : IRequestHandler<GetBonusesAndPromo
             JobTitleName = x.Employee.ManagementInformation.JobTitle.Name,
             LotNumber = x.Employee.LotNumber,
             NextIndexJobCategory = x.JobCategory.Index + 1,
-            NextIndexJobDegree = x.JobDegree.Index + 1,
+            NextIndexJobDegree = x.JobDegree.Index - 1,
             Status = x.StatusId,
             Notes = x.Note,
         }).OrderBy(x => x.JobCode);

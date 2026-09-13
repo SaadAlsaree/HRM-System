@@ -39,7 +39,7 @@ const LetterOfAppreciationPage = async ({ searchParams }: Props) => {
     const PageSize = parseInt(searchParams.PageSize || '10') || 10;
 
     const data = await fetchServer<{ items?: any[]; totalCount?: number; data?: { items?: any[]; totalCount?: number } }>(
-        '/ThanksSeniority',
+        '/ThanksAndSeniority',
         'GET',
         {
             params: {

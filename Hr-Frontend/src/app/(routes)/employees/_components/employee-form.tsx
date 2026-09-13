@@ -365,8 +365,14 @@ export default function EmployeeForm({
    async function onSubmit(values: FormValues) {
       setSubmitting(true);
       try {
-         values.birthDate = formatDate(new Date(values.birthDate));
-         values.hireDate = formatDate(new Date(values.hireDate));
+         if (values.birthDate) {
+            const match = String(values.birthDate).match(/^\d{4}-\d{2}-\d{2}/);
+            values.birthDate = match ? match[0] : formatDate(new Date(values.birthDate));
+         }
+         if (values.hireDate) {
+            const match = String(values.hireDate).match(/^\d{4}-\d{2}-\d{2}/);
+            values.hireDate = match ? match[0] : formatDate(new Date(values.hireDate));
+         }
          if (data || propEmployeeId) {
             const rawData = data as (EmployeePayload & { id?: string; employeeId?: string }) | undefined;
             const isValidGuid = (id?: string | null): id is string =>
@@ -954,7 +960,7 @@ export default function EmployeeForm({
                                  name='hireDate'
                                  render={({ field }) => (
                                     <FormItem className='flex flex-col'>
-                                       <FormLabel>تاريخ التعين</FormLabel>
+                                       <FormLabel>تاريخ المباشرة بالتعين</FormLabel>
                                        <Input
                                           type='date'
                                           {...field}

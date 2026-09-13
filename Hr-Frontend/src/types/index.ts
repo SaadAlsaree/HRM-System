@@ -9626,6 +9626,24 @@ export interface UpdateEmployeeCommand {
     religion?: string | null;
     /** @format int32 */
     countryId?: number | null;
+    hireDate?: string | null;
+    typeOfJobId?: number | null;
+    medicalTest?: boolean | null;
+    isBehaviorCode?: boolean | null;
+    isMovedFromOutside?: boolean | null;
+    isReEmployed?: boolean | null;
+    isStillWorking?: number | null;
+    positionId?: number | null;
+    directorateId?: number | null;
+    subDirectorateId?: number | null;
+    departmentId?: number | null;
+    sectionId?: number | null;
+    unitId?: number | null;
+    jobDegreeId?: number | null;
+    jobCategoryId?: number | null;
+    employmentDegreeId?: number | null;
+    jobTitleId?: number | null;
+    jobDescriptionId?: number | null;
 }
 
 export interface UpdateEmployeeCourseCommand {

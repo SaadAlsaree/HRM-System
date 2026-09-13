@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.ThanksAndSeniorityHandlers.Commands.CreateThanksAndSeniority;
+namespace HRM.Hub.Application.Features.ThanksAndSeniorityHandlers.Commands.CreateThanksAndSeniority;
 
 public class CreateThanksAndSeniorityCommand:IRequest<Response<bool>>
 {

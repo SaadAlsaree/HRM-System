@@ -1,4 +1,4 @@
-﻿namespace HRM.Hub.Application.Features.PromotionHandlers.Queries.GetByIdBonusesAndPromotions;
+namespace HRM.Hub.Application.Features.PromotionHandlers.Queries.GetByIdBonusesAndPromotions;
 public class GetByIdBonusesAndPromotionsHandler : IRequestHandler<GetByIdBonusesAndPromotionsQuery, Response<GetByIdBonusesAndPromotionsViewModel>>
 
 {
@@ -46,7 +46,7 @@ public class GetByIdBonusesAndPromotionsHandler : IRequestHandler<GetByIdBonuses
             JobTitleName = x.Employee.ManagementInformation.JobTitle.Name,
             LotNumber = x.Employee.LotNumber,
             NextIndexJobCategory = x.JobCategory.Index + 1,
-            NextIndexJobDegree = x.JobDegree.Index + 1,
+            NextIndexJobDegree = x.JobDegree.Index - 1,
             Status = x.StatusId,
             Notes = x.Note,
         }).OrderBy(x => x.JobCode);

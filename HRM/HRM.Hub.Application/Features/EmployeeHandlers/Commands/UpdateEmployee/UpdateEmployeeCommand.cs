@@ -1,6 +1,10 @@
 using HRM.Hub.Application.Helper;
+using HRM.Hub.Domain.Common.Enums;
+using MediatR;
+using System;
 
 namespace HRM.Hub.Application.Features.EmployeeHandlers.Commands.UpdateEmployee;
+
 public class UpdateEmployeeCommand : IRequest<Response<bool>>
 {
     [SwaggerIgnore]
@@ -25,7 +29,7 @@ public class UpdateEmployeeCommand : IRequest<Response<bool>>
     public string BirthPlace { get; set; }
     public DateOnly BirthDate { get; set; }
     public SocialStatusEnum SocialStatus { get; set; }
-    public int StatusWorkingId { get; set; }
+    public WorkingStatusEnum StatusWorkingId { get; set; }
     public string Notes { get; set; }
     public string Nationalism { get; set; }
     public string Religion { get; set; }
@@ -33,9 +37,32 @@ public class UpdateEmployeeCommand : IRequest<Response<bool>>
     public int? CountryId { get; set; }
 
     [SwaggerIgnore]
-
     public string FullName { get; set; }
     [SwaggerIgnore]
-
     public string MotherFullName { get; set; }
+
+    // JobInformation (حالة الموظف والتعيين)
+    public DateOnly? HireDate { get; set; }
+    public int? TypeOfJobId { get; set; }
+    public bool? MedicalTest { get; set; }
+    public bool? IsBehaviorCode { get; set; }
+    public bool? IsMovedFromOutside { get; set; }
+    public bool? IsReEmployed { get; set; }
+    public int? IsStillWorking { get; set; }
+    public DateOnly? EndOfServiceDate { get; set; }
+
+    // ManagementInformation & EmployeePosition (الهيكل الإداري والمنصب)
+    public int? PositionId { get; set; }
+    public int? DirectorateId { get; set; }
+    public int? SubDirectorateId { get; set; }
+    public int? DepartmentId { get; set; }
+    public int? SectionId { get; set; }
+    public int? UnitId { get; set; }
+
+    // Job Functional Data (البيانات الوظيفية)
+    public int? JobDegreeId { get; set; }
+    public int? JobCategoryId { get; set; }
+    public int? EmploymentDegreeId { get; set; }
+    public int? JobTitleId { get; set; }
+    public int? JobDescriptionId { get; set; }
 }
