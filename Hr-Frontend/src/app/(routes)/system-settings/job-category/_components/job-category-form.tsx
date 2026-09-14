@@ -19,7 +19,8 @@ import { jobCategoryService } from '@/services/system-settings/job-category.serv
 const formSchema = z.object({
    degreeId: z.string(),
    increaseAmount: z.string(),
-   name: z.string().min(3).max(35)
+   name: z.string().min(3).max(35),
+   nextPromotion: z.coerce.number({ invalid_type_error: 'أدخل عدد الأشهر' }).int('أدخل عدداً صحيحاً').min(0, 'لا يمكن أن تكون سالبة').max(600, 'الحد الأقصى 600 شهر')
 });
 
 type Props = {
@@ -45,7 +46,8 @@ const JobCategoryForm = ({ jobDegreeList, title, data, icon, variant }: Props) =
       defaultValues: {
          degreeId: data ? data.degreeId?.toString() : '',
          name: data ? data.name : '',
-         increaseAmount: data ? data.increaseAmount.toString() : ''
+         increaseAmount: data ? data.increaseAmount.toString() : '',
+         nextPromotion: data?.nextPromotion ?? 0
       }
    });
 
@@ -153,6 +155,23 @@ const JobCategoryForm = ({ jobDegreeList, title, data, icon, variant }: Props) =
                                  <Input placeholder='الزيادة' type='number' {...field} />
                               </FormControl>
 
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     <FormField
+                        control={form.control}
+                        name='nextPromotion'
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>مدة العلاوة (بالأشهر)</FormLabel>
+                              <FormControl>
+                                 <Input placeholder='مثال: 12' type='number' min={0} max={600} {...field} />
+                              </FormControl>
+                              <p className='text-xs text-muted-foreground'>
+                                 تُستخدم عند عدم وجود قاعدة علاوة مطابقة. 0 تعني غير محددة.
+                              </p>
                               <FormMessage />
                            </FormItem>
                         )}

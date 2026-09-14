@@ -5,6 +5,7 @@ public class GetJobCategoryViewModel
     public int DegreeId { get; set; }
     public string DegreeName { get; set; }
     public decimal IncreaseAmount { get; set; }
+    public int NextPromotion { get; set; }
 
     public string Name { get; set; }
     public string StatusName { get; set; }

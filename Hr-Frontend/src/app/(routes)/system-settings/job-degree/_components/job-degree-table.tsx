@@ -52,6 +52,7 @@ const JobDegreeTable = ({ columns, data }: Props) => {
                   <TableCell>{item.id}</TableCell>
                   <TableCell>{item.name}</TableCell>
                   <TableCell>{item.increaseAmount}</TableCell>
+                  <TableCell>{item.nextPromotion ? `${item.nextPromotion} شهر` : 'غير محددة'}</TableCell>
 
                   <TableCell>{<SelectStatus id={item?.id} status={item?.status?.toString()} onChange={handleStatusChange} />}</TableCell>
                   <TableCell>

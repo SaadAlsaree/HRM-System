@@ -13,6 +13,7 @@ namespace HRM.Hub.Application.Features.UtilityServices.JobCategoryUtility.Querie
             DegreeId = z.DegreeId,
             DegreeName = z.Degree.Name,
             IncreaseAmount = z.IncreaseAmount,
+            NextPromotion = z.NextPromotion,
             Name = z.Name,
             Status = z.StatusId,
 

@@ -337,6 +337,10 @@ const data = {
                url: '/system-settings/job-category'
             },
             {
+               title: 'قواعد الترفيع والعلاوة',
+               url: '/system-settings/promotion-rules'
+            },
+            {
                title: 'الأختصاص الدقيق',
                url: '/system-settings/specialization'
             },

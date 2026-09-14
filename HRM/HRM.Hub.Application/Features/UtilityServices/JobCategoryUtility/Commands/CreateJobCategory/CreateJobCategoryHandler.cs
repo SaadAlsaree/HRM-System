@@ -17,6 +17,7 @@ public class CreateJobCategoryHandler : CreateHandler<JobCategory, CreateJobCate
         {
             DegreeId = request.DegreeId,
             IncreaseAmount = request.IncreaseAmount,
+            NextPromotion = request.NextPromotion,
             Name = request.Name,
             Index = _index,
         };

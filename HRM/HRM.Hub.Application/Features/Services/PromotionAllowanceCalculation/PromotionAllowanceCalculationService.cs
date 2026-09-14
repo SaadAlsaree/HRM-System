@@ -247,6 +247,10 @@ public class PromotionAllowanceCalculationService : IPromotionAllowanceCalculati
 
         if (hasPromotionPeriod)
             employee.Promotion.DueDateDegree = promotionDate;
+        else if (employee.Promotion.DegreeStartDate.HasValue)
+            // The period start is known, so the stored due date came from a period (rule/duration) that no longer
+            // exists; clear it instead of keeping a stale date. A manual due date (start still null) is kept.
+            employee.Promotion.DueDateDegree = null;
         // The allowance base (LastAllowanceDate or hire date) never reads DueDateCategory, so saving the result is safe;
         // before, the category due date was never updated by the calculation and stayed at its manual value.
         if (hasAllowancePeriod)

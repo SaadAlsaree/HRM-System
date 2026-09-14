@@ -80,6 +80,16 @@ public sealed class PromotionsController : Base<PromotionsController>
         return await Okey(() => _mediator.Send(command));
     }
 
+    // Recalculates promotion/allowance due dates for all employees (after changing periods or rules).
+    [ServiceFilter(typeof(LogActionArguments))]
+    [HttpPost("RecalculateAll")]
+    [ProducesResponseType(typeof(Response<HRM.Hub.Application.Features.PromotionHandlers.Commands.RecalculateAllPromotions.RecalculateAllPromotionsResult>), (int)HttpStatusCode.OK)]
+    [ProducesResponseType((int)HttpStatusCode.BadRequest)]
+    public async Task<ActionResult<Response<HRM.Hub.Application.Features.PromotionHandlers.Commands.RecalculateAllPromotions.RecalculateAllPromotionsResult>>> RecalculateAll()
+    {
+        return await Okey(() => _mediator.Send(new HRM.Hub.Application.Features.PromotionHandlers.Commands.RecalculateAllPromotions.RecalculateAllPromotionsCommand()));
+    }
+
     [ServiceFilter(typeof(LogActionArguments))]
     [HttpPut("{PromotionId:Guid}")]
     [ProducesResponseType(typeof(Response<GetPromotionViewModel>), (int)HttpStatusCode.OK)]

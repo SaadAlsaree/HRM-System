@@ -14,6 +14,8 @@ namespace HRM.Hub.Application.Features.UtilityServices.JobDegreeUtility.Queries.
             Status = z.StatusId,
 
             IncreaseAmount = z.IncreaseAmount,
+            NextPromotion = z.NextPromotion,
+            Index = z.Index,
         };
 
         public override Func<IQueryable<JobDegree>, IOrderedQueryable<JobDegree>> OrderBy => order => order.OrderBy(z => z.Id);

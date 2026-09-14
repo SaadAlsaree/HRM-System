@@ -4,6 +4,8 @@ public class CreateJobDegreeValidator : AbstractValidator<CreateJobDegreeCommend
     public CreateJobDegreeValidator()
     {
 
-        // Write Your Validation here
+        RuleFor(x => x.NextPromotion)
+            .InclusiveBetween(0, 600)
+            .WithMessage("مدة الترفيع يجب أن تكون بين 0 و 600 شهر");
     }
 }

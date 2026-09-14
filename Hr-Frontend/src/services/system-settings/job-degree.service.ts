@@ -7,6 +7,8 @@ import { IPagination } from '@/types'
 export interface JobDegreePayload {
     increaseAmount: number | string | null;
     name: string;
+    // Months until the next promotion (fallback when no promotion rule matches)
+    nextPromotion?: number;
 }
 
 interface patchJobDegreePayload {

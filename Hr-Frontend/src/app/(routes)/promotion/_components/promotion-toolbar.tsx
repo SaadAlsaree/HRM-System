@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 import InitializationFormDialog from './initialization-form-dialog';
+import RecalculateAllButton from './recalculate-all-button';
 
 const PromotionToolbar = () => {
     const [selectedUser, setSelectedUser] = useState<IEmployeeSearch | null>(null);
@@ -28,6 +29,7 @@ const PromotionToolbar = () => {
                 <div className='text-xl text-muted-foreground'>الترقيات والعلاوات.</div>
 
                 <div className='flex items-center gap-2'>
+                    <RecalculateAllButton />
                     <InitializationFormDialog />
                     <Button asChild>
                         <Link href="/promotion/create">إضافة ترقية جديدة</Link>

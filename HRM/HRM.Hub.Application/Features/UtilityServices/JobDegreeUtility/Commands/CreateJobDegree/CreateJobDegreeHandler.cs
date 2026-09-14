@@ -18,6 +18,7 @@ public class CreateJobDegreeHandler : CreateHandler<JobDegree, CreateJobDegreeCo
         {
             Name = request.Name,
             IncreaseAmount = request.IncreaseAmount,
+            NextPromotion = request.NextPromotion,
             Index = _index,
         };
     }

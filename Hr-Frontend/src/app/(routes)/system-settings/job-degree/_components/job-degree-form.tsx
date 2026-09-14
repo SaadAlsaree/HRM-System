@@ -17,7 +17,8 @@ import { jobDegreeService } from '@/services/system-settings/job-degree.service'
 
 const formSchema = z.object({
    name: z.string().min(2).max(35),
-   increaseAmount: z.string().min(1).max(20)
+   increaseAmount: z.string().min(1).max(20),
+   nextPromotion: z.coerce.number({ invalid_type_error: 'أدخل عدد الأشهر' }).int('أدخل عدداً صحيحاً').min(0, 'لا يمكن أن تكون سالبة').max(600, 'الحد الأقصى 600 شهر')
 });
 
 type Props = {
@@ -35,7 +36,8 @@ const JobDegreeForm = ({ title, data, icon, variant }: Props) => {
       resolver: zodResolver(formSchema),
       defaultValues: {
          name: data ? data.name : '',
-         increaseAmount: data ? data.increaseAmount.toString() : ''
+         increaseAmount: data ? data.increaseAmount.toString() : '',
+         nextPromotion: data?.nextPromotion ?? 0
       }
    });
 
@@ -120,6 +122,23 @@ const JobDegreeForm = ({ title, data, icon, variant }: Props) => {
                                  <Input placeholder='الزيادة' type='text' {...field} />
                               </FormControl>
 
+                              <FormMessage />
+                           </FormItem>
+                        )}
+                     />
+
+                     <FormField
+                        control={form.control}
+                        name='nextPromotion'
+                        render={({ field }) => (
+                           <FormItem>
+                              <FormLabel>مدة الترفيع (بالأشهر)</FormLabel>
+                              <FormControl>
+                                 <Input placeholder='مثال: 48' type='number' min={0} max={600} {...field} />
+                              </FormControl>
+                              <p className='text-xs text-muted-foreground'>
+                                 تُستخدم عند عدم وجود قاعدة ترفيع مطابقة. 0 تعني غير محددة.
+                              </p>
                               <FormMessage />
                            </FormItem>
                         )}

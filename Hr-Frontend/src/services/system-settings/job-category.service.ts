@@ -8,6 +8,8 @@ export interface JobCategoryPayload {
     degreeId: number | string | null;
     increaseAmount: number | string | null;
     name: string;
+    // Months until the next annual allowance (fallback when no allowance rule matches)
+    nextPromotion?: number;
 }
 
 

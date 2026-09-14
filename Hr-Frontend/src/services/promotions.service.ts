@@ -59,6 +59,14 @@ class PromotionsService extends ApiClient {
         });
     }
 
+    // POST /Promotions/RecalculateAll — recalculates due dates for all employees after changing periods or rules
+    public async recalculateAll(): Promise<any> {
+        return this.request<any>({
+            method: 'POST',
+            url: '/Promotions/RecalculateAll'
+        });
+    }
+
     public async initializePromotionData(payload: any): Promise<any> {
         return this.request<any>({
             method: 'POST',

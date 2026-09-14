@@ -4,6 +4,8 @@ public class CreateJobCategoryValidator : AbstractValidator<CreateJobCategoryCom
     public CreateJobCategoryValidator()
     {
 
-        // Write Your Validation here
+        RuleFor(x => x.NextPromotion)
+            .InclusiveBetween(0, 600)
+            .WithMessage("مدة العلاوة يجب أن تكون بين 0 و 600 شهر");
     }
 }

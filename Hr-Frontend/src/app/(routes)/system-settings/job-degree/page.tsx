@@ -10,6 +10,7 @@ export interface IJobDegree {
    id: number;
    name: string;
    increaseAmount: number;
+   nextPromotion?: number;
    status?: string;
 }
 

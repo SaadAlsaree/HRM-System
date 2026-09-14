@@ -11,6 +11,7 @@ export interface IJobCategory {
    degreeId?: number;
    degreeName: number;
    increaseAmount: number;
+   nextPromotion?: number;
    status?: string;
 }
 
